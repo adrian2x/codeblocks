@@ -1,4 +1,5 @@
 from flask import Flask
+from server.firebase import db
 
 app = Flask(__name__)
 
