@@ -1,0 +1,91 @@
+@import 'atomic-theme';
+
+.clear {
+  border-color: transparent !important;
+}
+
+$window-padding: 1rem;
+
+.post-form {
+  input[type='text'],
+  textarea {
+    @extend .clear;
+    color: var(--font-color);
+    margin-left: 0.5rem !important;
+    max-width: calc(100% - $window-padding);
+
+    &:focus {
+      box-shadow: none !important;
+    }
+  }
+}
+
+%round-btn {
+  $size: 0.6rem;
+  width: $size;
+  height: $size;
+  border-radius: 50%;
+  margin-right: 0.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.code-background {
+  --gradient-stops: #7303c0, #ec38bc;
+  background-image: linear-gradient(to left, var(--gradient-stops));
+  padding: $window-padding;
+  border-radius: 0.5rem;
+  margin: 1rem auto;
+
+  .code-window {
+    background-color: var(--bg-color);
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--color-darkGrey);
+
+    // &:hover {
+    //   box-shadow: 0 0 0 1px var(--color-primary);
+    // }
+
+    .buttons {
+      padding: 0.5rem;
+
+      & > div {
+        @extend %round-btn;
+      }
+    }
+
+    .btn-1 {
+      background: #ff5d5b;
+      border: 2px solid #cf544d;
+    }
+
+    .btn-2 {
+      background: #ffbb39;
+      border: 2px solid #cfa64e;
+    }
+
+    .btn-3 {
+      background: #00cd4e;
+      border: 2px solid #0ea642;
+    }
+
+    textarea {
+      @extend .clear;
+      margin: 0;
+      padding-top: 1rem;
+
+      &:focus {
+        box-shadow: none;
+      }
+    }
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  input[type='text'],
+  textarea {
+    color: var(--font-color);
+    background-color: var(--bg-color);
+  }
+}
