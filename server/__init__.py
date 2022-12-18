@@ -1,7 +1,12 @@
 from flask import Flask, render_template, request, jsonify
 from server.firebase import db
 
-app = Flask(__name__)
+app = Flask(
+    __name__,
+    static_url_path="",
+    static_folder="frontend/dist",
+    template_folder="frontend/dist",
+)
 
 
 @app.route("/")
