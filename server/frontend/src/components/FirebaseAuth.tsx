@@ -1,34 +1,37 @@
 import { firebase } from '../common/firebase'
 import * as firebaseui from 'firebaseui'
-import { createRef } from 'preact'
-import { useEffect } from 'preact/hooks'
 import 'firebaseui/dist/firebaseui.css'
 
-export function SigninDialog() {
-  const element = 'firebaseui-auth-container'
-
-  const showDialog = (id: string) => {
-    let dialog = document.getElementById(id) as HTMLDialogElement
-    dialog.showModal()
+export class FirebaseAuth extends HTMLElement {
+  constructor() {
+    super()
+    this.innerHTML = `<dialog id='firebase-auth'>
+    <form method='dialog'>
+      <button value='cancel'>Close</button>
+    </form>
+  </dialog>`
   }
 
-  useEffect(() => {
+  connectedCallback() {
     // Initialize the FirebaseUI Widget using Firebase.
-    var ui = new firebaseui.auth.AuthUI(firebase.auth())
+    let ui = new firebaseui.auth.AuthUI(firebase.auth())
 
-    var data = null
+    let data = null
     // Hold a reference to the anonymous current user.
-    var anonymousUser = firebase.auth().currentUser
+    let anonymousUser = firebase.auth().currentUser
 
     // The start method will wait until the DOM is loaded.
-    ui.start(`#${element}`, {
+    ui.start(`#firebase-auth`, {
       // Will use popup for IDP Providers sign-in flow instead of the default, redirect.
       signInFlow: 'popup',
       // signInSuccessUrl: '',
       signInOptions: [
         // Leave the lines as is for the providers you want to offer your users.
         firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-        firebase.auth.EmailAuthProvider.PROVIDER_ID
+        {
+          provider: firebase.auth.EmailAuthProvider.PROVIDER_ID,
+          requireDisplayName: true
+        }
         // firebase.auth.PhoneAuthProvider.PROVIDER_ID,
         // firebase.auth.FacebookAuthProvider.PROVIDER_ID,
         // firebase.auth.TwitterAuthProvider.PROVIDER_ID,
@@ -63,7 +66,7 @@ export function SigninDialog() {
           // 'firebaseui/anonymous-upgrade-merge-conflict'.
           if (error.code == 'firebaseui/anonymous-upgrade-merge-conflict') {
             // The credential the user tried to sign in with.
-            var cred = error.credential
+            let cred = error.credential
             // Copy data from anonymous user to permanent user and delete anonymous
             // user.
             // ...
@@ -72,20 +75,18 @@ export function SigninDialog() {
           }
           console.error(error)
         },
-        uiShown: function () {
+        uiShown: () => {
           // The widget is rendered.
           // Hide the loader.
-          showDialog(element)
+          let user = localStorage.getItem('user')
+          if (!user) {
+            let dialog = document.getElementById('firebase-auth') as HTMLDialogElement
+            dialog.showModal()
+          }
         }
       }
     })
-  }, [])
-
-  return (
-    <dialog id={element}>
-      <form method='dialog'>
-        <button value='cancel'>Close</button>
-      </form>
-    </dialog>
-  )
+  }
 }
+
+customElements.define('firebase-auth', FirebaseAuth)
