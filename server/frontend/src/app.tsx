@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import highlight from 'highlight.js/es/common'
 import './components/FirebaseAuth'
+import { useStore } from './hooks/useStore'
 
 function Navbar() {
   return (
@@ -12,7 +13,7 @@ function Navbar() {
       </div>
       <div class='nav-end'>
         <a href=''>Sign in</a>
-        <button className='primary'>Save</button>
+        <button className='primary'>Sign up</button>
       </div>
     </nav>
   )
@@ -29,49 +30,45 @@ export function App() {
   )
 }
 
+function escape(s: string) {
+  return s.replace(/[^0-9A-Za-z ]/g, (c) => '&#' + c.charCodeAt(0) + ';')
+}
+
+function updateStyles(theme: string, nextTheme: string) {
+  // Load the theme styles
+  document.querySelector(`link[title="${nextTheme}"]`)!.removeAttribute('disabled')
+  requestAnimationFrame(() => {
+    document.querySelector(`link[title="${theme}"]`)!.setAttribute('disabled', 'disabled')
+  })
+}
+
 export function PostCreate() {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [code, setCode] = useState('')
-  const [theme, setTheme] = useState('Default')
-  const [isEditing, setEditing] = useState(true)
+
   const [user, setUser] = useState<firebase.default.User | null>(null)
+
+  const [editorState, updateEditorState] = useStore('editorState', {
+    theme: 'Default',
+    showWatermark: true,
+    showAvatar: true
+  })
+
+  const setEditor = (obj: Object) => updateEditorState({ ...editorState, ...obj })
 
   const textBox = useRef<HTMLTextAreaElement>(null)
 
-  const onSubmit = () => {
-    console.log('update', title, description, code)
-  }
-
-  function updateTheme(nextTheme: string) {
-    setTheme(nextTheme)
-    // Load the theme styles
-    document.querySelector(`link[title="${nextTheme}"]`)!.removeAttribute('disabled')
-    requestAnimationFrame(() => {
-      document.querySelector(`link[title="${theme}"]`)!.setAttribute('disabled', 'disabled')
-    })
-  }
-
-  function escape(s: string) {
-    return s.replace(/[^0-9A-Za-z ]/g, (c) => '&#' + c.charCodeAt(0) + ';')
-  }
-
-  const onTheme = (e: any) => {
-    let nextTheme = e.currentTarget.value
-    updateTheme(nextTheme)
-    localStorage.setItem('editorTheme', nextTheme)
-  }
-
   useEffect(() => {
-    updateTheme(localStorage.getItem('editorTheme') || 'Default')
     setUser(JSON.parse(localStorage.getItem('user') ?? ''))
+    if (editorState.theme !== 'Default') {
+      updateStyles('Default', editorState.theme)
+    }
   }, [])
 
   useEffect(() => {
-    console.log('isEditing')
-    if (isEditing) textBox.current?.focus()
     highlight.highlightAll()
-  }, [isEditing, code])
+  }, [code])
 
   return (
     <div class='post-form'>
@@ -96,7 +93,16 @@ export function PostCreate() {
         <div className='code-background'>
           <div class='toolbar'>
             <div>
-              <select class='styles' title='Theme' value={theme} onInput={onTheme}>
+              <select
+                class='styles'
+                title='Theme'
+                value={editorState.theme}
+                onChange={(e: any) => {
+                  let theme = editorState.theme
+                  let nextTheme = e.currentTarget.value
+                  setEditor({ theme: nextTheme })
+                  updateStyles(theme, nextTheme)
+                }}>
                 <option value='Default'>
                   <a href='#default'>Default</a>
                 </option>
@@ -809,9 +815,9 @@ export function PostCreate() {
               <a href='#Base16 / Tender'>Base16 / Tender</a>
             </option>*/}
 
-                <option>
+                {/* <option>
                   <a href='#Base16 / Tomorrow'>Base16 / Tomorrow</a>
-                </option>
+                </option> */}
 
                 <option>
                   <a href='#Base16 / Tomorrow Night'>Base16 / Tomorrow Night</a>
@@ -1166,8 +1172,15 @@ export function PostCreate() {
             </div>
 
             <div>
-              <label htmlFor=''>
-                <input type='checkbox' /> Show avatar
+              <label>
+                <input
+                  type='checkbox'
+                  checked={editorState.showWatermark}
+                  onChange={() => {
+                    setEditor({ showWatermark: !editorState.showWatermark })
+                  }}
+                />{' '}
+                Watermark
               </label>
             </div>
           </div>
@@ -1186,19 +1199,18 @@ export function PostCreate() {
                   id='code'
                   dangerouslySetInnerHTML={{ __html: code }}
                   onClick={(e) => {
-                    setEditing(true)
+                    textBox.current!.focus()
                   }}></code>
 
                 <textarea
                   class='clear'
                   ref={textBox}
-                  placeholder='Add your code here...'
+                  placeholder='// Add your code here...'
                   onInput={(e) => {
                     let self = e.currentTarget
                     setCode(escape(self.value))
                     self.style.height = '0'
                     self.style.height = self.scrollHeight + 'px'
-                    setEditing(false)
                   }}
                   onKeyDown={(e) => {
                     let that = e.currentTarget!
@@ -1226,8 +1238,9 @@ export function PostCreate() {
 
           <div className='credits flex justify-between'>
             {user && (
-              <div className='avatar flex items-center'>
+              <div className='avatar flex items-center' hidden={!editorState.showWatermark}>
                 <img
+                  hidden={!editorState.showAvatar}
                   class='drop-shadow-3'
                   src={user?.photoURL ?? `https://www.gravatar.com/avatar/?d=mp&s=190`}
                   alt={user?.displayName ?? ''}
@@ -1237,8 +1250,8 @@ export function PostCreate() {
                   <div className='author text-shadow' contentEditable>
                     {user?.displayName}
                   </div>
-                  <small className='secondary text-shadow' contentEditable>
-                    {user?.displayName}
+                  <small className='secondary' contentEditable>
+                    your@email.com
                   </small>
                 </div>
               </div>
@@ -1247,7 +1260,9 @@ export function PostCreate() {
         </div>
       </div>
 
-      <div class='flex flex-row-reverse'></div>
+      <div class='flex flex-row-reverse'>
+        <button className='primary'>Save it</button>
+      </div>
     </div>
   )
 }
