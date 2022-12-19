@@ -2,18 +2,6 @@ import { useState, useRef, useEffect } from 'react'
 import highlight from 'highlight.js/es/common'
 import { useStore } from '../hooks/useStore'
 
-function escape(s: string) {
-  return s.replace(/[^0-9A-Za-z ]/g, (c) => '&#' + c.charCodeAt(0) + ';')
-}
-
-function updateStyles(theme: string, nextTheme: string) {
-  // Load the theme styles
-  document.querySelector(`link[title="${nextTheme}"]`)!.removeAttribute('disabled')
-  requestAnimationFrame(() => {
-    document.querySelector(`link[title="${theme}"]`)!.setAttribute('disabled', 'disabled')
-  })
-}
-
 export function CodeEditor() {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
@@ -28,6 +16,8 @@ export function CodeEditor() {
   })
 
   const setEditor = (obj: Object) => updateEditorState({ ...editorState, ...obj })
+
+  const [background] = useState(generateGradient())
 
   const textBox = useRef<HTMLTextAreaElement>(null)
 
@@ -62,7 +52,7 @@ export function CodeEditor() {
             onInput={(e) => setDescription(e.currentTarget.value)}></textarea>
         </div>
 
-        <div className='code-background'>
+        <div className='code-background' style={{ background }}>
           <div class='toolbar'>
             <div>
               <select
@@ -213,7 +203,6 @@ export function CodeEditor() {
             <div className='avatar flex items-center' hidden={!editorState.showWatermark}>
               {user && (
                 <img
-                  hidden={!editorState.showAvatar}
                   class='drop-shadow-3'
                   src={user?.photoURL ?? `https://www.gravatar.com/avatar/?d=mp&s=190`}
                   alt={user?.displayName ?? ''}
@@ -240,4 +229,31 @@ export function CodeEditor() {
       </div>
     </div>
   )
+}
+
+function escape(s: string) {
+  return s.replace(/[^0-9A-Za-z ]/g, (c) => '&#' + c.charCodeAt(0) + ';')
+}
+
+function updateStyles(theme: string, nextTheme: string) {
+  // Load the theme styles
+  document.querySelector(`link[title="${nextTheme}"]`)!.removeAttribute('disabled')
+  requestAnimationFrame(() => {
+    document.querySelector(`link[title="${theme}"]`)!.setAttribute('disabled', 'disabled')
+  })
+}
+
+function generateGradient() {
+  let deg = Math.floor(Math.random() * 360)
+  return `linear-gradient(${deg}deg, ${createHex()}, ${createHex()})`
+}
+
+function createHex() {
+  var hexCode1 = ''
+  var hexValues1 = '0123456789abcdef'
+
+  for (var i = 0; i < 6; i++) {
+    hexCode1 += hexValues1.charAt(Math.floor(Math.random() * hexValues1.length))
+  }
+  return '#' + hexCode1
 }
