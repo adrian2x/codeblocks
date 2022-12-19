@@ -1,4 +1,4 @@
-export function request(endpoint: string, body = undefined, customConfig: any = {}) {
+export function request(endpoint: string, body: any = undefined, customConfig: any = {}) {
   const config: any = {
     method: body ? 'POST' : 'GET',
     ...customConfig,
@@ -10,7 +10,5 @@ export function request(endpoint: string, body = undefined, customConfig: any = 
   if (body) {
     config.body = JSON.stringify(body)
   }
-  return window
-    .fetch(`${process.env.REACT_APP_API_URL}/${endpoint}`, config)
-    .then((response) => response.json())
+  return window.fetch(endpoint, config).then((response) => response.json())
 }

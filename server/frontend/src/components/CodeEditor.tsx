@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import highlight from 'highlight.js/es/common'
 import { useStore } from '../hooks/useStore'
+import { request } from '../common/requests'
 
 export function CodeEditor() {
   const [title, setTitle] = useState('')
@@ -36,11 +37,12 @@ export function CodeEditor() {
     <div class='post-form'>
       <div>
         <div>
-          <h4 class='mt2'>
+          <h4 class='m0'>
             <input
               class='clear'
               type='text'
               placeholder='Title'
+              style={{ margin: 0, fontWeight: 700 }}
               onInput={(e) => setTitle(e.currentTarget.value)}
             />
           </h4>
@@ -225,7 +227,20 @@ export function CodeEditor() {
       </div>
 
       <div class='flex flex-row-reverse'>
-        <button className='primary'>Save it</button>
+        <button
+          className='primary'
+          onClick={async () => {
+            if (user) {
+              request(`${user.uid}/posts/`, {
+                title,
+                description,
+                code,
+                showWatermark: editorState.showWatermark ? true : undefined
+              })
+            }
+          }}>
+          Save it
+        </button>
       </div>
     </div>
   )
