@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'preact/hooks'
+import { StateUpdater, useEffect, useState } from 'preact/hooks'
 
-export function useStore(key: string, defaultValue: any) {
-  const [value, setValue] = useState(() => {
+export function useStore<T = any>(key: string, defaultValue: any): [T, StateUpdater<T>] {
+  const [value, setValue] = useState<T>(() => {
     // Load saved value
     let prevValue = localStorage.getItem(key)
     console.log(key, prevValue, defaultValue)
-    return prevValue !== null ? JSON.parse(prevValue) : defaultValue
+    return prevValue !== null ? (JSON.parse(prevValue) as T) : defaultValue
   })
 
   useEffect(() => {
