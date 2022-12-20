@@ -1,11 +1,27 @@
-import { useState, useRef, useEffect } from 'react'
+// @ts-expect-error
+import domtoimage from 'dom-to-image-more'
 import highlight from 'highlight.js/es/common'
+import { nanoid } from 'nanoid/non-secure'
+import { useState, useRef, useEffect } from 'react'
 import { useStore } from '../hooks/useStore'
 import { request } from '../common/requests'
 import { Dropdown } from './Dropdown'
 
 export function CodeEditor() {
+  // Get signed in user
+  const [user] = useStore<firebase.default.User>('user', null)
+
+  // Get editor preferences
+  const [editorState, updateEditorState] = useStore('editorState', {
+    theme: 'Default',
+    watermark: 'avatar'
+  })
+
+  const setEditor = (obj: Object) => updateEditorState({ ...editorState, ...obj })
+
+  // This is the initial post state
   const [postState, setPostState] = useState({
+    id: nanoid(16),
     title: '',
     description: '',
     code: '',
@@ -14,45 +30,43 @@ export function CodeEditor() {
 
   const setPost = (obj: Object) => setPostState({ ...postState, ...obj })
 
-  const [user, setUser] = useState<firebase.default.User | null>(null)
-
-  const [editorState, updateEditorState] = useStore('editorState', {
-    theme: 'Default',
-    watermark: 'avatar'
-  })
-
-  const setEditor = (obj: Object) => updateEditorState({ ...editorState, ...obj })
-
+  // The code background gradient colors
   const [background, setBackground] = useState(generateGradient())
 
   const textBox = useRef<HTMLTextAreaElement>(null)
 
   useEffect(() => {
-    setUser(JSON.parse(localStorage.getItem('user') ?? ''))
+    // Load theme preferences
     if (editorState.theme !== 'Default') {
       updateStyles('Default', editorState.theme)
     }
   }, [])
 
   useEffect(() => {
+    // Update highlighted when code changes
     highlight.highlightAll()
-    let matchLanguage = document.getElementById('code')!.className.match(/language-(.*)\s?/)
-    let language = matchLanguage?.[1].toLowerCase()
-    if (language && language !== 'undefined') {
-      setPost({ language })
-    } else {
-      setPost({ language: '' })
+    // Get the code language detected by Highlightjs
+    if (postState.code) {
+      let matchLanguage = document.getElementById('code')!.className.match(/language-(.+)$/)
+      let language = matchLanguage?.[1].toLowerCase()
+      if (language !== 'undefined') setPost({ language })
     }
   }, [postState.code])
 
+  useEffect(() => {
+    // Update highlighted when language changes
+    highlight.highlightAll()
+  }, [postState.language])
+
   async function onSubmit() {
-    if (user) {
-      request(`${user.uid}/posts/`, {
+    // Make a request with the post content
+    try {
+      let data = await request('/posts/', {
         ...postState,
-        watermark: editorState.watermark,
-        displayName: editorState.displayName,
-        handleName: editorState.handleName
+        user_id: user.uid
       })
+    } catch (error) {
+      console.error(error)
     }
   }
 
@@ -60,12 +74,11 @@ export function CodeEditor() {
     <div class='post-form'>
       <div class='post-header'>
         <div>
-          <h4 class='m0'>
+          <h4 class='title m0'>
             <input
-              class='clear'
+              class='clear font-bold'
               type='text'
               placeholder='Title'
-              style={{ margin: 0, fontWeight: 700 }}
               onBlur={(e) => setPost({ title: e.currentTarget.value })}
             />
           </h4>
@@ -80,7 +93,7 @@ export function CodeEditor() {
             }}></textarea>
         </div>
 
-        <div class='toolbar mb1'>
+        <div class='toolbar'>
           <div>
             <select
               class='field'
@@ -280,12 +293,8 @@ export function CodeEditor() {
             </div>
           </div>
 
-          <div class='flex ml-auto items-baseline'>
-            <button
-              class='outline'
-              onClick={async () => {
-                // Download
-              }}>
+          <div class='flex items-baseline ml-auto'>
+            <button class='outline' onClick={getScreenshot}>
               Export
             </button>
             <button class='primary outline mr0' onClick={onSubmit}>
@@ -294,8 +303,14 @@ export function CodeEditor() {
           </div>
         </div>
 
-        <div className='code-background' style={{ background: background[0] }}>
-          <div class='code-window hljs drop-shadow-4'>
+        <div id='code-background' style={{ background: background[0] }}>
+          <div class='flex flex-justify-center'>
+            <h5 className='title' contentEditable>
+              {postState.title}
+            </h5>
+          </div>
+
+          <div id='code-window' class='code-window hljs'>
             <div className='flex buttons'>
               <div className='btn-1'></div>
               <div className='btn-2'></div>
@@ -303,10 +318,14 @@ export function CodeEditor() {
             </div>
 
             <div className='code-wrapper'>
-              <pre>
+              <pre class={`${postState.language ?? ''}`}>
                 <code
                   id='code'
-                  class={postState.code ? 'hljs' : ''}
+                  class={
+                    postState.code
+                      ? `hljs ${postState.language ? 'language-' + postState.language : ''}`
+                      : ''
+                  }
                   dangerouslySetInnerHTML={{ __html: postState.code }}
                   onClick={(e) => {
                     textBox.current!.focus()
@@ -320,8 +339,16 @@ export function CodeEditor() {
                   onInput={(e) => {
                     let self = e.currentTarget
                     setPost({ code: escape(self.value) })
-                    self.style.height = '0'
+                    self.style.height = '15px'
                     self.style.height = self.scrollHeight + 'px'
+                    self.style.width = self.scrollWidth + 'px'
+
+                    let code = document.getElementById('code')!
+                    code.style.width = '0'
+                    code.style.width = self.scrollWidth + 'px'
+                    let codeWindow = document.getElementById('code-window')!
+                    codeWindow.style.width = '0'
+                    codeWindow.style.width = self.scrollWidth + 36 + 'px'
                   }}
                   onKeyDown={(e) => {
                     // Handle TAB key as indent instead of focus
@@ -350,11 +377,10 @@ export function CodeEditor() {
 
           <div className='credits flex justify-between'>
             <div className='avatar flex items-center' hidden={!editorState.watermark}>
-              {user && (
+              {user && editorState.watermark === 'avatar' && (
                 <img
-                  hidden={editorState.watermark !== 'avatar'}
                   class='drop-shadow-4'
-                  src={user?.photoURL ?? `https://www.gravatar.com/avatar/?d=mp&s=190`}
+                  src={user?.photoURL ?? `https://www.gravatar.com/avatar/?d=mp&s=44`}
                   alt={user?.displayName ?? ''}
                   referrerpolicy='no-referrer'
                 />
@@ -387,18 +413,20 @@ export function CodeEditor() {
   )
 }
 
+/** Escape reserved html symbols from a code string. */
 function escape(s: string) {
   return s.replace(/[^0-9A-Za-z ]/g, (c) => '&#' + c.charCodeAt(0) + ';')
 }
 
+/** Load the theme styles dynamically */
 function updateStyles(theme: string, nextTheme: string) {
-  // Load the theme styles
   document.querySelector(`link[title="${nextTheme}"]`)!.removeAttribute('disabled')
   requestAnimationFrame(() => {
     document.querySelector(`link[title="${theme}"]`)!.setAttribute('disabled', 'disabled')
   })
 }
 
+/** Returns a tuple with the background gradient and color stops */
 function generateGradient() {
   let deg = Math.floor(Math.random() * 360)
   let from = createHex(),
@@ -406,6 +434,9 @@ function generateGradient() {
   return [`linear-gradient(${deg}deg, ${from}, ${to})`, from, to]
 }
 
+/**
+ * Random hexadecimal code value.
+ */
 function createHex() {
   var hexCode1 = ''
   var hexValues1 = '0123456789abcdef'
@@ -414,4 +445,17 @@ function createHex() {
     hexCode1 += hexValues1.charAt(Math.floor(Math.random() * hexValues1.length))
   }
   return '#' + hexCode1
+}
+
+/**
+ * Generates the code preview screenshot from the editor.
+ */
+function getScreenshot(fileName = 'codeblocks.jpeg') {
+  let node = document.getElementById('code-background')!
+  domtoimage.toJpeg(node, { quality: 0.95 }).then((dataUrl: string) => {
+    var link = document.createElement('a')
+    link.download = fileName
+    link.href = dataUrl
+    link.click()
+  })
 }

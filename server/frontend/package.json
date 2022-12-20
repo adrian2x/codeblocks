@@ -9,10 +9,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "atomic-theme": "^1.0.0",
+    "atomic-theme": "^1.0.1",
+    "dom-to-image-more": "^2.13.1",
     "firebase": "^9.15.0",
     "firebaseui": "^6.0.2",
     "highlight.js": "^11.7.0",
+    "nanoid": "^4.0.0",
     "preact": "^10.11.3",
     "preact-hooks": "^0.0.0"
   },
