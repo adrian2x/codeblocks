@@ -5,16 +5,20 @@ import { request } from '../common/requests'
 import { Dropdown } from './Dropdown'
 
 export function CodeEditor() {
-  const [title, setTitle] = useState('')
-  const [description, setDescription] = useState('')
-  const [code, setCode] = useState('')
+  const [postState, setPostState] = useState({
+    title: '',
+    description: '',
+    code: '',
+    language: ''
+  })
+
+  const setPost = (obj: Object) => setPostState({ ...postState, ...obj })
 
   const [user, setUser] = useState<firebase.default.User | null>(null)
 
   const [editorState, updateEditorState] = useStore('editorState', {
     theme: 'Default',
-    watermark: 'avatar',
-    showAvatar: true
+    watermark: 'avatar'
   })
 
   const setEditor = (obj: Object) => updateEditorState({ ...editorState, ...obj })
@@ -33,12 +37,28 @@ export function CodeEditor() {
   useEffect(() => {
     highlight.highlightAll()
     let matchLanguage = document.getElementById('code')!.className.match(/language-(.*)\s?/)
-    console.log('language', matchLanguage?.[1])
-  }, [code])
+    let language = matchLanguage?.[1].toLowerCase()
+    if (language && language !== 'undefined') {
+      setPost({ language })
+    } else {
+      setPost({ language: '' })
+    }
+  }, [postState.code])
+
+  async function onSubmit() {
+    if (user) {
+      request(`${user.uid}/posts/`, {
+        ...postState,
+        watermark: editorState.watermark,
+        displayName: editorState.displayName,
+        handleName: editorState.handleName
+      })
+    }
+  }
 
   return (
     <div class='post-form'>
-      <div>
+      <div class='post-header'>
         <div>
           <h4 class='m0'>
             <input
@@ -46,7 +66,7 @@ export function CodeEditor() {
               type='text'
               placeholder='Title'
               style={{ margin: 0, fontWeight: 700 }}
-              onInput={(e) => setTitle(e.currentTarget.value)}
+              onBlur={(e) => setPost({ title: e.currentTarget.value })}
             />
           </h4>
         </div>
@@ -55,7 +75,9 @@ export function CodeEditor() {
             class='clear mb1'
             placeholder='Add a nice description'
             style={{ lineHeight: 1.6 }}
-            onInput={(e) => setDescription(e.currentTarget.value)}></textarea>
+            onBlur={(e) => {
+              setPost({ description: e.currentTarget.value })
+            }}></textarea>
         </div>
 
         <div class='toolbar mb1'>
@@ -139,37 +161,45 @@ export function CodeEditor() {
           </div>
 
           <div>
-            <select class='field' title='Language'>
-              <option value=''>Auto</option>
-              <option value='Bash'>Bash</option>
-              <option value='CSS'>CSS</option>
-              <option value='SCSS'>SCSS</option>
-              <option value='HTML'>HTML</option>
-              <option value='XML'>XML</option>
-              <option value='Kotlin'>Kotlin</option>
-              <option value='Markdown'>Markdown</option>
-              <option value='R'>R</option>
-              <option value='SQL'>SQL</option>
-              <option value='C'>C</option>
-              <option value='C++'>C++</option>
-              <option value='C#'>C#</option>
-              <option value='Objective-C'>Objective-C</option>
-              <option value='Plain text'>Plain text</option>
-              <option value='Ruby'>Ruby</option>
-              <option value='Shell session'>Shell session</option>
-              <option value='Go'>Go</option>
-              <option value='Java'>Java</option>
-              <option value='PHP'>PHP</option>
-              <option value='Python'>Python</option>
-              <option value='Python REPL'>Python REPL</option>
-              <option value='Rust'>Rust</option>
-              <option value='Swift'>Swift</option>
-              <option value='JSON'>JSON</option>
-              <option value='JavaScript'>JavaScript</option>
-              <option value='TypeScript'>TypeScript</option>
-              <option value='Makefile'>Makefile</option>
-              <option value='TOML'>TOML</option>
-              <option value='YAML'>YAML</option>
+            <select
+              class='field'
+              title='Language'
+              value={postState.language}
+              onChange={(e) => {
+                setPost({ language: e.currentTarget.value })
+              }}>
+              <option default value=''>
+                Auto
+              </option>
+              <option value='bash'>Bash</option>
+              <option value='css'>CSS</option>
+              <option value='scss'>SCSS</option>
+              <option value='html'>HTML</option>
+              <option value='xml'>XML</option>
+              <option value='kotlin'>Kotlin</option>
+              <option value='markdown'>Markdown</option>
+              <option value='r'>R</option>
+              <option value='sql'>SQL</option>
+              <option value='c'>C</option>
+              <option value='c++'>C++</option>
+              <option value='c#'>C#</option>
+              <option value='objective-c'>Objective-C</option>
+              <option value='plain text'>Plain text</option>
+              <option value='ruby'>Ruby</option>
+              <option value='shell session'>Shell session</option>
+              <option value='go'>Go</option>
+              <option value='java'>Java</option>
+              <option value='php'>PHP</option>
+              <option value='python'>Python</option>
+              <option value='python repl'>Python REPL</option>
+              <option value='rust'>Rust</option>
+              <option value='swift'>Swift</option>
+              <option value='json'>JSON</option>
+              <option value='javascript'>JavaScript</option>
+              <option value='typescript'>TypeScript</option>
+              <option value='makefile'>Makefile</option>
+              <option value='toml'>TOML</option>
+              <option value='yaml'>YAML</option>
             </select>
           </div>
 
@@ -258,18 +288,7 @@ export function CodeEditor() {
               }}>
               Export
             </button>
-            <button
-              class='primary outline mr0'
-              onClick={async () => {
-                if (user) {
-                  request(`${user.uid}/posts/`, {
-                    title,
-                    description,
-                    code,
-                    showWatermark: editorState.showWatermark ? true : undefined
-                  })
-                }
-              }}>
+            <button class='primary outline mr0' onClick={onSubmit}>
               Save
             </button>
           </div>
@@ -287,19 +306,20 @@ export function CodeEditor() {
               <pre>
                 <code
                   id='code'
-                  class={code ? 'hljs' : ''}
-                  dangerouslySetInnerHTML={{ __html: code }}
+                  class={postState.code ? 'hljs' : ''}
+                  dangerouslySetInnerHTML={{ __html: postState.code }}
                   onClick={(e) => {
                     textBox.current!.focus()
-                  }}></code>
+                  }}
+                />
 
                 <textarea
-                  class='clear'
+                  class='code-area hljs hljs'
                   ref={textBox}
                   placeholder='// Add your code here...'
                   onInput={(e) => {
                     let self = e.currentTarget
-                    setCode(escape(self.value))
+                    setPost({ code: escape(self.value) })
                     self.style.height = '0'
                     self.style.height = self.scrollHeight + 'px'
                   }}
@@ -322,7 +342,7 @@ export function CodeEditor() {
                     // e.currentTarget.innerHTML = text
                     // setCode(text)
                   }}>
-                  {code}
+                  {postState.code}
                 </textarea>
               </pre>
             </div>
@@ -341,12 +361,22 @@ export function CodeEditor() {
               )}
               <div>
                 {user && (
-                  <div className='author text-shadow' contentEditable>
-                    {user?.displayName}
+                  <div
+                    className='author text-shadow'
+                    contentEditable
+                    onBlur={(e) => {
+                      setEditor({ displayName: e.currentTarget.textContent })
+                    }}>
+                    {editorState.displayName ?? user?.displayName}
                   </div>
                 )}
-                <small className='secondary text-shadow' contentEditable>
-                  {'your@email.com'}
+                <small
+                  className='secondary text-shadow'
+                  contentEditable
+                  onBlur={(e) => {
+                    setEditor({ handleName: e.currentTarget.textContent })
+                  }}>
+                  {editorState.handleName ?? 'your@email.com'}
                 </small>
               </div>
             </div>
