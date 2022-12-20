@@ -1,6 +1,10 @@
 @import 'atomic-theme';
 @import 'atomic-theme/src/_dialog';
 
+.ml-auto {
+  margin-left: auto;
+}
+
 @media (prefers-color-scheme: dark) {
   input[type='text'],
   textarea,
@@ -29,11 +33,6 @@ html {
       box-shadow: none !important;
     }
   }
-
-  select {
-    font-size: 14px;
-    width: auto;
-  }
 }
 
 @mixin round-btn($bg: 0, $border: 0) {
@@ -52,35 +51,61 @@ html {
   }
 }
 
-.code-background {
-  padding: 1rem 2rem;
-  border-radius: 0.5rem;
-  margin: 1rem auto;
+.toolbar {
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  margin-left: 1rem;
+  margin-right: 1rem;
 
-  .toolbar {
-    display: flex;
-    align-items: baseline;
+  & > div:not(:last-child) {
+    margin-right: 0.5rem;
+  }
 
-    label {
-      margin: 0;
-    }
+  label,
+  select {
+    margin: 0;
+    width: auto;
+  }
 
-    & > div {
-      margin-right: 1rem;
+  button {
+    margin: 0 0 0 0.5rem;
+    padding: 0.45rem 0.75rem;
+
+    &.primary {
+      min-width: 75px;
     }
   }
 
+  .watermark label {
+    margin-bottom: 0.5rem;
+
+    input {
+      margin-left: 0;
+    }
+  }
+}
+
+.code-background {
+  padding: 1rem 2rem;
+  border-radius: 0.5rem;
+  margin: auto;
+  width: 720px;
+  min-height: 377px;
+
   .code-window {
     border-radius: 0.5rem;
-    margin: 1rem 0 2rem;
-    min-height: 40ch;
+    margin: 1rem auto;
+    min-height: 21ch;
+    width: auto;
     padding: 0.5rem 0.5rem 0;
 
     pre {
       margin: 0;
       padding: 0;
       box-shadow: none;
-      padding: 1rem 0.5rem;
+      padding: 0.5rem;
 
       code {
         line-height: 1.5;
@@ -115,12 +140,12 @@ html {
     textarea {
       @extend .clear;
       margin: 0 !important;
-      min-height: 40ch;
       white-space: pre-wrap;
+      min-height: 21ch;
 
       position: absolute;
       inset: 0px;
-      padding: 1rem 0.5rem;
+      padding: 0.5rem;
       font-family: monospace, monospace;
       font-size: 90%;
       z-index: 1;
@@ -147,9 +172,9 @@ html {
     }
 
     .avatar img {
-      height: 48px;
+      height: 44px;
       border-radius: 50%;
-      border: 2px solid var(--color-lightGrey);
+      border: 1px solid var(--color-mediumGrey);
 
       & + * {
         margin-left: 0.5rem;
