@@ -57,6 +57,8 @@ export class FirebaseAuth extends HTMLElement {
               photoURL: user.photoURL
             })
           )
+          let dialog = document.getElementById('firebase-auth') as HTMLDialogElement
+          dialog.close()
           return false
         },
         // signInFailure callback must be provided to handle merge conflicts which
