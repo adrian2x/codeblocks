@@ -294,7 +294,7 @@ export function CodeEditor() {
           </div>
 
           <div class='flex items-baseline ml-auto'>
-            <button class='outline' onClick={getScreenshot}>
+            <button class='outline' onClick={() => getScreenshot()}>
               Export
             </button>
             <button class='primary outline mr0' onClick={onSubmit}>
