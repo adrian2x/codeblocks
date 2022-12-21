@@ -11,16 +11,16 @@
   "dependencies": {
     "atomic-theme": "^1.0.1",
     "dom-to-image-more": "^2.13.1",
+    "escape-html": "^1.0.3",
     "firebase": "^9.15.0",
     "firebaseui": "^6.0.2",
     "highlight.js": "^11.7.0",
-    "nanoid": "^4.0.0",
     "preact": "^10.11.3",
     "preact-hooks": "^0.0.0"
   },
   "devDependencies": {
     "@preact/preset-vite": "^2.4.0",
-    "@types/codemirror": "^5.60.5",
+    "@types/escape-html": "^1.0.2",
     "sass": "^1.57.0",
     "typescript": "^4.9.3",
     "vite": "^4.0.0"

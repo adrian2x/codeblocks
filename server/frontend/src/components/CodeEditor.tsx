@@ -1,11 +1,12 @@
 // @ts-expect-error
 import domtoimage from 'dom-to-image-more'
+import escape from 'escape-html'
 import highlight from 'highlight.js/es/common'
-import { nanoid } from 'nanoid/non-secure'
 import { useState, useRef, useEffect } from 'react'
 import { useStore } from '../hooks/useStore'
 import { request } from '../common/requests'
 import { Dropdown } from './Dropdown'
+import './code-editor.scss'
 
 export function CodeEditor() {
   // Get signed in user
@@ -21,7 +22,6 @@ export function CodeEditor() {
 
   // This is the initial post state
   const [postState, setPostState] = useState({
-    id: nanoid(16),
     title: '',
     description: '',
     code: '',
@@ -63,7 +63,8 @@ export function CodeEditor() {
     try {
       let data = await request('/posts/', {
         ...postState,
-        user_id: user.uid
+        user_id: user.uid,
+        created: Date.now()
       })
     } catch (error) {
       console.error(error)
@@ -326,7 +327,7 @@ export function CodeEditor() {
                       ? `hljs ${postState.language ? 'language-' + postState.language : ''}`
                       : ''
                   }
-                  dangerouslySetInnerHTML={{ __html: postState.code }}
+                  dangerouslySetInnerHTML={{ __html: escape(postState.code) }}
                   onClick={(e) => {
                     textBox.current!.focus()
                   }}
@@ -338,7 +339,7 @@ export function CodeEditor() {
                   placeholder='// Add your code here...'
                   onInput={(e) => {
                     let self = e.currentTarget
-                    setPost({ code: escape(self.value) })
+                    setPost({ code: self.value })
                     self.style.height = '15px'
                     self.style.height = self.scrollHeight + 'px'
                     self.style.width = self.scrollWidth + 'px'
@@ -411,11 +412,6 @@ export function CodeEditor() {
       </div>
     </div>
   )
-}
-
-/** Escape reserved html symbols from a code string. */
-function escape(s: string) {
-  return s.replace(/[^0-9A-Za-z ]/g, (c) => '&#' + c.charCodeAt(0) + ';')
 }
 
 /** Load the theme styles dynamically */
