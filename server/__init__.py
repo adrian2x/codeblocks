@@ -30,12 +30,21 @@ def read(uid):
     return jsonify(posts_list)
 
 
+@app.route("/read_post/<post_id>")
+def read_post(post_id):
+    posts = db.collection("posts").where("id", "==", post_id)
+    for post in posts.stream():
+        post_dict = post.to_dict()
+    return jsonify(post_dict)
+
+
 @app.route("/update_post/<post_id>", methods=["POST"])
 def update_post(post_id):
     data = request.get_json()
     doc = db.collection("posts").document(post_id)
     doc.set(data)
     return jsonify(data)
+
 
 @app.route("/update_user/<user_id>", methods=["POST"])
 def update_user(user_id):
