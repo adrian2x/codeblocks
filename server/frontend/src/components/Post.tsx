@@ -17,7 +17,7 @@ export async function postsLoader({ params }: any) {
 
 export function Post() {
   const post = useLoaderData() as TPost
-  const isOwner = user.value?.uid === post?.user.uid
+  const isOwner = !post || user.value?.uid === post?.user.uid
   return (
     <div className='container'>
       {isOwner ? <CodeEditor post={post} /> : <ReadOnlyPost post={post} />}
