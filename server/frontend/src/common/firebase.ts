@@ -12,22 +12,3 @@ const app = firebase.initializeApp({
 })
 
 export { firebase, app }
-
-// Handle auth events
-app.auth().onAuthStateChanged((user) => {
-  if (user) {
-    console.log('signed in', user)
-    // User is signed in, get auth token
-    firebase
-      .auth(app)
-      .currentUser?.getIdToken()
-      .then((token) => {
-        localStorage.setItem('token', token)
-        console.log('session saved')
-      })
-  } else {
-    // User is signed out, close session.
-    localStorage.removeItem('token')
-    console.log('logged out')
-  }
-})

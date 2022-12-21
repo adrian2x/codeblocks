@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@preact/signals": "^1.1.2",
     "atomic-theme": "^1.0.1",
     "dom-to-image-more": "^2.13.1",
     "escape-html": "^1.0.3",
