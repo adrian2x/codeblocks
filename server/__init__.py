@@ -9,8 +9,6 @@ app = Flask(
     template_folder="frontend/dist",
 )
 
-# test
-
 
 @app.route("/")
 def index():
