@@ -52,7 +52,8 @@ def update_post(post_id):
     data = request.get_json()
     doc = db.collection("posts").document(post_id)
     doc.update(data)
-    return jsonify(data)
+    updated_doc = db.collection("posts").document(post_id).get().to_dict()
+    return jsonify(updated_doc)
 
 
 @app.route("/posts/<post_id>", methods=["DELETE"])
