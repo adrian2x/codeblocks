@@ -3,13 +3,13 @@ import domtoimage from 'dom-to-image-more'
 import escape from 'escape-html'
 import highlight from 'highlight.js/es/common'
 import { useEffect, useRef, useState } from 'react'
-import { updatePost } from '../common/requests'
+import { createPost, TPost, updatePost } from '../common/requests'
 import { useStore } from '../hooks/useStore'
 import { user } from '../stores/uiState'
 import { Dropdown } from './Dropdown'
 import './code-editor.scss'
 
-export function CodeEditor() {
+export function CodeEditor({ post }: { post?: TPost }) {
   // Get editor preferences
   const [editorState, updateEditorState] = useStore('editorState', {
     theme: 'Default',
@@ -19,12 +19,18 @@ export function CodeEditor() {
   const setEditor = (obj: Object) => updateEditorState({ ...editorState, ...obj })
 
   // This is the initial post state
-  const [postState, setPostState] = useState({
-    title: '',
-    description: '',
-    code: '',
-    language: ''
-  })
+  const [postState, setPostState] = useState(
+    post ?? {
+      title: '',
+      description: '',
+      code: '',
+      language: ''
+    }
+  )
+
+  useEffect(() => {
+    if (post?.id) setPostState(post)
+  }, [post])
 
   const setPost = (obj: Object) => setPostState({ ...postState, ...obj })
 
@@ -69,6 +75,7 @@ export function CodeEditor() {
               class='clear font-bold'
               type='text'
               placeholder='Title'
+              value={postState.title}
               onBlur={(e) => setPost({ title: e.currentTarget.value })}
             />
           </h4>
@@ -77,6 +84,7 @@ export function CodeEditor() {
           <textarea
             class='clear mb1'
             placeholder='Add a nice description'
+            value={postState.description}
             style={{ lineHeight: 1.6 }}
             onBlur={(e) => {
               setPost({ description: e.currentTarget.value })
@@ -290,7 +298,9 @@ export function CodeEditor() {
             <button
               class='primary outline mr0'
               onClick={(e) => {
-                updatePost({
+                if (post) return updatePost(post.id!, postState)
+
+                createPost({
                   ...postState,
                   user_id: currentUser.uid,
                   created: Date.now()

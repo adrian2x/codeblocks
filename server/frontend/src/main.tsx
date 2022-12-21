@@ -2,7 +2,7 @@ import { render } from 'react'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { App } from './app'
 import ErrorPage from './routes/errorPage'
-import { Post } from './components/Post'
+import { Post, postLoader, PostsList, postsLoader } from './components/Post'
 import './index.scss'
 
 const router = createBrowserRouter([
@@ -12,14 +12,18 @@ const router = createBrowserRouter([
     errorElement: ErrorPage,
     children: [
       {
+        path: '',
+        element: <PostsList />,
+        loader: postsLoader
+      },
+      {
         path: 'post',
-        element: <Post />,
-        errorElement: ErrorPage
+        element: <Post />
       },
       {
         path: 'posts/:post_id',
         element: <Post />,
-        errorElement: ErrorPage
+        loader: postLoader
       }
     ]
   }
