@@ -2,11 +2,11 @@
 import domtoimage from 'dom-to-image-more'
 import escape from 'escape-html'
 import highlight from 'highlight.js/es/common'
-import { useState, useRef, useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { updatePost } from '../common/requests'
 import { useStore } from '../hooks/useStore'
-import { request } from '../common/requests'
-import { Dropdown } from './Dropdown'
 import { user } from '../stores/uiState'
+import { Dropdown } from './Dropdown'
 import './code-editor.scss'
 
 export function CodeEditor() {
@@ -59,20 +59,6 @@ export function CodeEditor() {
     // Update highlighted when language changes
     highlight.highlightAll()
   }, [postState.language])
-
-  async function onSubmit() {
-    // Make a request with the post content
-    if (!currentUser) return
-    try {
-      let data = await request('/posts/', {
-        ...postState,
-        user_id: currentUser.uid,
-        created: Date.now()
-      })
-    } catch (error) {
-      console.error(error)
-    }
-  }
 
   return (
     <div class='post-form'>
@@ -301,7 +287,15 @@ export function CodeEditor() {
             <button class='outline' onClick={() => getScreenshot()}>
               Export
             </button>
-            <button class='primary outline mr0' onClick={onSubmit}>
+            <button
+              class='primary outline mr0'
+              onClick={(e) => {
+                updatePost({
+                  ...postState,
+                  user_id: currentUser.uid,
+                  created: Date.now()
+                })
+              }}>
               Save
             </button>
           </div>
