@@ -27,7 +27,7 @@ def read_posts_uid():
 
     uid = request.args.get("uid")
     if uid:
-        posts = posts.where("user_id", "==", uid)
+        posts = posts.where("user.uid", "==", uid)
 
     posts = posts.order_by("created", direction=firestore.Query.DESCENDING).stream()
     list_of_posts = [post.to_dict() for post in posts]
@@ -95,9 +95,9 @@ def delete_user(uid):
     return jsonify(data)
 
 
-@app.route("/", defaults={"path": ""})
-@app.route("/<string:path>")
-@app.route("/<path:path>")
-def catch_all(path):
+@app.route("/")
+@app.route("/post")
+@app.route("/posts/<path>")
+def catch_all(path=None):
     print("request", path)
     return app.send_static_file("index.html")
