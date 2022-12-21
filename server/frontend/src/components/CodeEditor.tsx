@@ -6,12 +6,10 @@ import { useState, useRef, useEffect } from 'react'
 import { useStore } from '../hooks/useStore'
 import { request } from '../common/requests'
 import { Dropdown } from './Dropdown'
+import { user } from '../stores/uiState'
 import './code-editor.scss'
 
 export function CodeEditor() {
-  // Get signed in user
-  const [user] = useStore<firebase.default.User>('user', null)
-
   // Get editor preferences
   const [editorState, updateEditorState] = useStore('editorState', {
     theme: 'Default',
@@ -34,6 +32,10 @@ export function CodeEditor() {
   const [background, setBackground] = useState(generateGradient())
 
   const textBox = useRef<HTMLTextAreaElement>(null)
+
+  // Get signed in user
+  const currentUser = user.value
+  console.log('editor render', currentUser)
 
   useEffect(() => {
     // Load theme preferences
@@ -60,10 +62,11 @@ export function CodeEditor() {
 
   async function onSubmit() {
     // Make a request with the post content
+    if (!currentUser) return
     try {
       let data = await request('/posts/', {
         ...postState,
-        user_id: user.uid,
+        user_id: currentUser.uid,
         created: Date.now()
       })
     } catch (error) {
@@ -378,23 +381,23 @@ export function CodeEditor() {
 
           <div className='credits flex justify-between'>
             <div className='avatar flex items-center' hidden={!editorState.watermark}>
-              {user && editorState.watermark === 'avatar' && (
+              {currentUser && editorState.watermark === 'avatar' && (
                 <img
                   class='drop-shadow-4'
-                  src={user?.photoURL ?? `https://www.gravatar.com/avatar/?d=mp&s=44`}
-                  alt={user?.displayName ?? ''}
+                  src={currentUser?.photoURL ?? `https://www.gravatar.com/avatar/?d=mp&s=44`}
+                  alt={currentUser?.displayName ?? ''}
                   referrerpolicy='no-referrer'
                 />
               )}
               <div>
-                {user && (
+                {currentUser && (
                   <div
                     className='author text-shadow'
                     contentEditable
                     onBlur={(e) => {
                       setEditor({ displayName: e.currentTarget.textContent })
                     }}>
-                    {editorState.displayName ?? user?.displayName}
+                    {editorState.displayName ?? currentUser?.displayName}
                   </div>
                 )}
                 <small
