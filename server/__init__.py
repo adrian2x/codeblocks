@@ -30,6 +30,14 @@ def read(uid):
     return jsonify(posts_list)
 
 
+@app.route("/read_user/<uid>")
+def read_user(uid):
+    users = db.collection("users").where("uid", "==", uid)
+    for user in users.stream():
+        user_dict = user.to_dict()
+    return jsonify(user_dict)
+
+
 @app.route("/read_post/<post_id>")
 def read_post(post_id):
     posts = db.collection("posts").where("id", "==", post_id)
@@ -46,9 +54,9 @@ def update_post(post_id):
     return jsonify(data)
 
 
-@app.route("/update_user/<user_id>", methods=["POST"])
-def update_user(user_id):
+@app.route("/update_user/<uid>", methods=["POST"])
+def update_user(uid):
     data = request.get_json()
-    doc = db.collection("users").document(user_id)
+    doc = db.collection("users").document(uid)
     doc.set(data)
     return jsonify(data)
