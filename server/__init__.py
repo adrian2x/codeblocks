@@ -17,7 +17,7 @@ def index():
 @app.route("/posts/", methods=["POST"])
 def posts():
     data = request.get_json()
-    doc = db.collection("posts").document(data["id"])
+    doc = db.collection("posts").document()
     doc.set(data)
 
     return jsonify(data)
@@ -32,18 +32,14 @@ def read(uid):
 
 @app.route("/read_user/<uid>")
 def read_user(uid):
-    users = db.collection("users").where("uid", "==", uid)
-    for user in users.stream():
-        user_dict = user.to_dict()
-    return jsonify(user_dict)
+    user = db.collection("users").document(uid).get().to_dict()
+    return jsonify(user)
 
 
 @app.route("/read_post/<post_id>")
 def read_post(post_id):
-    posts = db.collection("posts").where("id", "==", post_id)
-    for post in posts.stream():
-        post_dict = post.to_dict()
-    return jsonify(post_dict)
+    post = db.collection("posts").document(post_id).get().to_dict()
+    return jsonify(post)
 
 
 @app.route("/update_post/<post_id>", methods=["POST"])
@@ -59,4 +55,20 @@ def update_user(uid):
     data = request.get_json()
     doc = db.collection("users").document(uid)
     doc.set(data)
+    return jsonify(data)
+
+
+@app.route("/delete_post/<post_id>", methods=["POST"])
+def delete_post(post_id):
+    data = request.get_json()
+    doc = db.collection("posts").document(post_id)
+    doc.delete()
+    return jsonify(data)
+
+
+@app.route("/delete_user/<uid>", methods=["POST"])
+def delete_user(uid):
+    data = request.get_json()
+    doc = db.collection("users").document(uid)
+    doc.delete()
     return jsonify(data)
