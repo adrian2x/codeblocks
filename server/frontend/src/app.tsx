@@ -10,7 +10,6 @@ function Navbar() {
           <Link class='brand' to={`/`}>
             Codeblocks
           </Link>
-          <Link to={`/posts`}>Posts</Link>
           <Link to={`/post`}>
             <button class='primary'>Create new</button>
           </Link>

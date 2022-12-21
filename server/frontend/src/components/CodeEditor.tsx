@@ -298,12 +298,18 @@ export function CodeEditor({ post }: { post?: TPost }) {
             <button
               class='primary outline mr0'
               onClick={(e) => {
-                if (post) return updatePost(post.id!, postState)
-
+                if (post) {
+                  return updatePost(post.id, postState)
+                }
                 createPost({
                   ...postState,
-                  user_id: currentUser.uid,
-                  created: Date.now()
+                  created: Date.now(),
+                  user: {
+                    uid: currentUser.uid,
+                    photoUrl: currentUser?.photoURL,
+                    displayName: editorState.displayName,
+                    handleName: editorState.handleName
+                  }
                 })
               }}>
               Save
@@ -388,7 +394,7 @@ export function CodeEditor({ post }: { post?: TPost }) {
               {currentUser && editorState.watermark === 'avatar' && (
                 <img
                   class='drop-shadow-4'
-                  src={currentUser?.photoURL ?? `https://www.gravatar.com/avatar/?d=mp&s=44`}
+                  src={post?.user.photoUrl ?? currentUser?.photoURL}
                   alt={currentUser?.displayName ?? ''}
                   referrerpolicy='no-referrer'
                 />
@@ -401,7 +407,7 @@ export function CodeEditor({ post }: { post?: TPost }) {
                     onBlur={(e) => {
                       setEditor({ displayName: e.currentTarget.textContent })
                     }}>
-                    {editorState.displayName ?? currentUser?.displayName}
+                    {editorState.displayName ?? post?.user.displayName ?? currentUser?.displayName}
                   </div>
                 )}
                 <small
@@ -410,7 +416,7 @@ export function CodeEditor({ post }: { post?: TPost }) {
                   onBlur={(e) => {
                     setEditor({ handleName: e.currentTarget.textContent })
                   }}>
-                  {editorState.handleName ?? 'your@email.com'}
+                  {editorState.handleName ?? post?.user.handleName ?? 'your@email.com'}
                 </small>
               </div>
             </div>
@@ -430,7 +436,7 @@ function updateStyles(theme: string, nextTheme: string) {
 }
 
 /** Returns a tuple with the background gradient and color stops */
-function generateGradient() {
+export function generateGradient() {
   let deg = Math.floor(Math.random() * 360)
   let from = createHex(),
     to = createHex()

@@ -18,13 +18,18 @@ export function request<TResponse = {}>(
 }
 
 export interface TPost {
-  id?: string
+  id: string
   title: string
   description: string
   created: number
   code: string
   language: string
-  user_id: string
+  user: {
+    uid: string
+    displayName: string
+    handleName: string
+    photoUrl: string
+  }
 }
 
 export function getPost(id: string) {
