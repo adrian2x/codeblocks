@@ -1,5 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
-import { CodeEditor } from './components/CodeEditor'
+import { Link, Outlet } from 'react-router-dom'
 import { firebase, FirebaseAuth, showDialog } from './components/FirebaseAuth'
 import { user } from './stores/uiState'
 
@@ -8,9 +7,13 @@ function Navbar() {
     <>
       <nav class='nav'>
         <div class='nav-start'>
-          <a class='brand'>Codeblocks</a>
-          <a class='active'>Link 1</a>
-          <a>Link 2</a>
+          <Link class='brand' to={`/`}>
+            Codeblocks
+          </Link>
+          <Link to={`/posts`}>Posts</Link>
+          <Link to={`/post`}>
+            <button class='primary'>Create new</button>
+          </Link>
         </div>
         <div class='nav-end'>
           <UserMenu user={user.value} />
@@ -25,6 +28,7 @@ function UserMenu({ user }: { user: firebase.User | null }) {
   if (user) {
     return (
       <>
+        <Link to={`/users/${user.uid}`}>My profile</Link>
         <button
           className='outline'
           onClick={() => {
@@ -52,9 +56,9 @@ export function App() {
   return (
     <div>
       <Navbar />
-      <main className='container'>
-        <CodeEditor />
-      </main>
+      <div>
+        <Outlet />
+      </div>
     </div>
   )
 }

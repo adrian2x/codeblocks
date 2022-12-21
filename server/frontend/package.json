@@ -17,7 +17,8 @@
     "firebaseui": "^6.0.2",
     "highlight.js": "^11.7.0",
     "preact": "^10.11.3",
-    "preact-hooks": "^0.0.0"
+    "preact-hooks": "^0.0.0",
+    "react-router-dom": "^6.6.0"
   },
   "devDependencies": {
     "@preact/preset-vite": "^2.4.0",
