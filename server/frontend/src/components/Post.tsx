@@ -6,8 +6,9 @@ import { user } from '../stores/uiState'
 import { useState } from 'preact/hooks'
 
 export async function postLoader({ params }: any) {
-  if (!params.post_id) return {}
-  return getPost(params.post_id)
+  if (params.post_id) {
+    return getPost(params.post_id)
+  }
 }
 
 export async function postsLoader({ params }: any) {

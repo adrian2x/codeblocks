@@ -13,16 +13,16 @@ const router = createBrowserRouter([
     children: [
       {
         path: '',
-        element: <PostsList />,
+        element: <PostsList key={Math.random()} />,
         loader: postsLoader
       },
       {
         path: 'post',
-        element: <Post />
+        element: <Post key={Math.random()} />
       },
       {
         path: 'posts/:post_id',
-        element: <Post />,
+        element: <Post key={Math.random()} />,
         loader: postLoader
       }
     ]
