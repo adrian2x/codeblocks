@@ -14,20 +14,32 @@ def index():
     return render_template("index.html")
 
 
-@app.route("/create", methods=["POST"])
-def create():
+@app.route("/posts/", methods=["POST"])
+def posts():
     data = request.get_json()
-    doc = db.collection("posts").document()
+    doc = db.collection("posts").document(data["id"])
     doc.set(data)
-
-    userdoc = db.collection("users").document(data["user"]["uid"])
-    userdoc.set(data["user"])
 
     return jsonify(data)
 
 
 @app.route("/read/<uid>")
 def read(uid):
-    posts = db.collection("posts").where("user.uid", "==", uid)
+    posts = db.collection("posts").where("user_id", "==", uid)
     posts_list = [post.to_dict() for post in posts.stream()]
     return jsonify(posts_list)
+
+
+@app.route("/update_post/<post_id>", methods=["POST"])
+def update_post(post_id):
+    data = request.get_json()
+    doc = db.collection("posts").document(post_id)
+    doc.set(data)
+    return jsonify(data)
+
+@app.route("/update_user/<user_id>", methods=["POST"])
+def update_user(user_id):
+    data = request.get_json()
+    doc = db.collection("users").document(user_id)
+    doc.set(data)
+    return jsonify(data)
