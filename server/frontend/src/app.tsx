@@ -59,7 +59,7 @@ export function App() {
     <div>
       <Toaster />
       <Navbar />
-      <div>
+      <div class='p4'>
         <Outlet />
       </div>
     </div>

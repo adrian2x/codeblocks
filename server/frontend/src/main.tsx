@@ -14,7 +14,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: '',
-        element: <PostsList key={Math.random()} />,
+        element: <PostsList />,
         loader: postsLoader
       },
       {

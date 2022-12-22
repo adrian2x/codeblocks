@@ -1,0 +1,40 @@
+.post-list {
+  .post {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0;
+  }
+
+  .cover {
+    display: flex;
+    background: var(--color-lightGrey);
+    background-size: cover;
+    min-height: 200px;
+    flex: 1;
+    position: relative;
+
+    .image {
+      position: absolute;
+      min-height: 200px;
+      width: 100%;
+    }
+  }
+
+  .footer {
+    padding: 0.75rem 0.5rem;
+  }
+
+  .title {
+    font-size: 1rem;
+    font-weight: bold;
+    letter-spacing: initial;
+    margin: 0;
+  }
+
+  .author {
+    display: block;
+    font-size: 80%;
+    line-height: 1.5;
+  }
+}
