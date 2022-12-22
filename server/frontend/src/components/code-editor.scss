@@ -120,10 +120,7 @@
       line-height: 1.5;
       padding: 0;
       white-space: pre;
-
-      &::-webkit-scrollbar {
-        display: none; /* Safari and Chrome */
-      }
+      overflow: hidden;
     }
   }
 

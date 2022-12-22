@@ -1,7 +1,10 @@
 // @ts-expect-error
 import domtoimage from 'dom-to-image-more'
 import escape from 'escape-html'
-import { useEffect, useRef, useState } from 'react'
+import { User } from 'firebase/auth'
+import { getStorage, ref, uploadBytes } from 'firebase/storage'
+import { useEffect, useState } from 'react'
+import toast from 'react-hot-toast'
 import { createPost, TPost, updatePost } from '../common/requests'
 import { useStore } from '../hooks/useStore'
 import { user } from '../stores/uiState'
@@ -39,7 +42,7 @@ export function CodeEditor({ post }: { post?: TPost }) {
   // The code background gradient colors
   const [background, setBackground] = useState(generateGradient())
 
-  const textBox = useRef<HTMLTextAreaElement>(null)
+  const [isSaving, setSaving] = useState(false)
 
   // Get signed in user
   const currentUser = user.value
@@ -50,18 +53,22 @@ export function CodeEditor({ post }: { post?: TPost }) {
     if (editorState.theme !== 'Default') {
       updateStyles('Default', editorState.theme)
     }
-    hljs.then((hljs) => hljs.highlightAll())
+    hljs.then((hljs) => {
+      hljs.highlightAll()
+    })
   }, [])
 
   useEffect(() => {
     // Update highlighted when code changes
     hljs.then((hljs) => {
       hljs.highlightAll()
-      // Get the code language detected by Highlightjs
       if (postState.code) {
+        // Get the code language detected by Highlightjs
         let matchLanguage = document.getElementById('code')!.className.match(/language-(.+)$/)
         let language = matchLanguage?.[1].toLowerCase()
         if (language !== 'undefined') setPost({ language })
+        // Auto size the code window
+        autoSize()
       } else {
         setPost({ language: '' })
       }
@@ -72,6 +79,22 @@ export function CodeEditor({ post }: { post?: TPost }) {
     // Update highlighted when language changes
     hljs.then((hljs) => hljs.highlightAll())
   }, [postState.language])
+
+  function handleSubmit(e: any) {
+    setSaving(true)
+    // Let's save some state for later...
+    setEditor({ content: postState.code })
+    // Update the ui to show pending message
+    toast
+      .promise(onSubmit(post?.id, currentUser, postState, editorState), {
+        loading: 'Saving...',
+        success: 'Your post was saved!',
+        error: 'There was an error'
+      })
+      .finally(() => {
+        setSaving(false)
+      })
+  }
 
   return (
     <div class='post-form'>
@@ -199,17 +222,18 @@ export function CodeEditor({ post }: { post?: TPost }) {
               <option value='r'>R</option>
               <option value='sql'>SQL</option>
               <option value='c'>C</option>
-              <option value='c++'>C++</option>
-              <option value='c#'>C#</option>
-              <option value='objective-c'>Objective-C</option>
-              <option value='plain text'>Plain text</option>
+              <option value='cpp'>C++</option>
+              <option value='cs'>C#</option>
+              <option value='objectivec'>Objective-C</option>
+              <option value='plaintext'>Plain text</option>
               <option value='ruby'>Ruby</option>
-              <option value='shell session'>Shell session</option>
+              <option value='shell'>Shell</option>
+              <option value='powershell'>PowerShell</option>
               <option value='go'>Go</option>
               <option value='java'>Java</option>
               <option value='php'>PHP</option>
               <option value='python'>Python</option>
-              <option value='python repl'>Python REPL</option>
+              <option value='python-repl'>Python REPL</option>
               <option value='rust'>Rust</option>
               <option value='swift'>Swift</option>
               <option value='json'>JSON</option>
@@ -299,30 +323,10 @@ export function CodeEditor({ post }: { post?: TPost }) {
           </div>
 
           <div class='flex items-baseline ml-auto'>
-            <button class='outline' onClick={() => getScreenshot()}>
+            <button class='outline' onClick={() => getScreenshot(true)}>
               Export
             </button>
-            <button
-              class='primary outline mr0'
-              onClick={(e) => {
-                if (post) {
-                  return updatePost(post.id, {
-                    ...postState,
-                    theme: editorState.theme
-                  })
-                }
-                createPost({
-                  ...postState,
-                  theme: editorState.theme,
-                  created: Date.now(),
-                  user: {
-                    uid: currentUser.uid,
-                    photoUrl: currentUser?.photoURL,
-                    displayName: editorState.displayName,
-                    handleName: editorState.handleName
-                  }
-                })
-              }}>
+            <button class='primary outline mr0' disabled={isSaving} onClick={handleSubmit}>
               Save
             </button>
           </div>
@@ -330,7 +334,12 @@ export function CodeEditor({ post }: { post?: TPost }) {
 
         <div id='code-background' style={{ background: background[0] }}>
           <div class='flex flex-justify-center'>
-            <h5 className='title' contentEditable>
+            <h5
+              className='title'
+              contentEditable
+              onBlur={(e) => {
+                setEditor({ title: e.currentTarget.innerText })
+              }}>
               {postState.title}
             </h5>
           </div>
@@ -355,17 +364,9 @@ export function CodeEditor({ post }: { post?: TPost }) {
                   contentEditable
                   onBlur={(e) => {
                     const self = e.currentTarget
-                    const code = self.innerText
-                    if (code.trim()) {
-                      // Adjust window size
-                      console.log('hasCode')
-                      self.style.width = '0'
-                      self.style.width = self.scrollWidth + 'px'
-                      const codeWindow = document.getElementById('code-window')!
-                      codeWindow.style.width = '0'
-                      codeWindow.style.width = self.scrollWidth + 36 + 'px'
-                    }
-                    setPost({ code: code.replace(/\n\n\n/gm, '\n\n') })
+                    const code = self.innerText.replace(/\n\n\n/gm, '\n\n')
+                    setPost({ code: code })
+                    if (code.trim()) autoSize()
                   }}
                 />
               </pre>
@@ -377,7 +378,7 @@ export function CodeEditor({ post }: { post?: TPost }) {
               {currentUser && editorState.watermark === 'avatar' && (
                 <img
                   class='drop-shadow-4'
-                  src={post?.user.photoUrl ?? currentUser?.photoURL}
+                  src={post?.user.photoUrl ?? currentUser?.photoURL ?? ''}
                   alt={currentUser?.displayName ?? ''}
                   referrerpolicy='no-referrer'
                 />
@@ -439,15 +440,62 @@ function createHex() {
   return '#' + hexCode1
 }
 
+function autoSize() {
+  let code = document.getElementById('code')!
+  code.style.width = '0'
+  code.style.width = code.scrollWidth + 'px'
+  const codeWindow = document.getElementById('code-window')!
+  if (code.style.width == '0px') code.style.width = 'auto'
+  codeWindow.style.width = '0'
+  codeWindow.style.width = code.scrollWidth + 36 + 'px'
+  if (codeWindow.style.width == '36px') codeWindow.style.width = 'auto'
+}
+
 /**
  * Generates the code preview screenshot from the editor.
  */
-function getScreenshot(fileName = 'codeblocks.jpeg') {
+async function getScreenshot(download = false, fileName = 'codeblocks.png') {
   let node = document.getElementById('code-background')!
-  domtoimage.toJpeg(node, { quality: 0.95 }).then((dataUrl: string) => {
+  let dataUrl: string = await domtoimage.toPng(node)
+  if (download) {
     var link = document.createElement('a')
     link.download = fileName
     link.href = dataUrl
     link.click()
+  }
+  return dataUrl
+}
+
+async function onSubmit(
+  postId: string | undefined,
+  currentUser: User | null,
+  postState: Partial<TPost>,
+  editorState: any
+) {
+  if (!currentUser) return false
+  let response = await (postId
+    ? updatePost(postId, postState)
+    : createPost({
+        ...postState,
+        created: Date.now(),
+        theme: editorState.theme,
+        user: {
+          uid: currentUser.uid,
+          photoUrl: currentUser.photoURL,
+          displayName: editorState.displayName,
+          handleName: editorState.handleName
+        }
+      }))
+
+  // Upload the code screenshot
+  setTimeout(async () => {
+    let node = document.getElementById('code-background')!
+    let blob = await domtoimage.toBlob(node)
+    const storage = getStorage()
+    const fileRef = ref(storage, `${response.id}.png`)
+    let image = await uploadBytes(fileRef, blob)
+    console.log('uploaded image', image.ref)
   })
+
+  return response
 }
