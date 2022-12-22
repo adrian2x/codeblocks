@@ -1,5 +1,7 @@
+import { User } from 'firebase/auth'
 import { Link, Outlet } from 'react-router-dom'
-import { firebase, FirebaseAuth, showDialog } from './components/FirebaseAuth'
+import { auth } from './common/firebase'
+import { FirebaseAuth, showDialog } from './components/FirebaseAuth'
 import { user } from './stores/uiState'
 
 function Navbar() {
@@ -23,7 +25,7 @@ function Navbar() {
   )
 }
 
-function UserMenu({ user }: { user: firebase.User | null }) {
+function UserMenu({ user }: { user: User | null }) {
   if (user) {
     return (
       <>
@@ -31,7 +33,7 @@ function UserMenu({ user }: { user: firebase.User | null }) {
         <button
           className='outline'
           onClick={() => {
-            firebase.auth().signOut()
+            auth.signOut()
           }}>
           Sign out
         </button>

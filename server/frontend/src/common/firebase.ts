@@ -1,7 +1,7 @@
-import firebase from 'firebase/compat/app'
-import 'firebase/compat/auth'
+import { initializeApp } from 'firebase/app'
+import { getAuth } from 'firebase/auth'
 
-const app = firebase.initializeApp({
+let app = initializeApp({
   apiKey: 'AIzaSyCiG1NWj4_fIo8B22HW2IGc-9BjJFgb6bU',
   authDomain: 'codeblocks-991a2.firebaseapp.com',
   projectId: 'codeblocks-991a2',
@@ -11,4 +11,4 @@ const app = firebase.initializeApp({
   measurementId: 'G-S9928XTV4P'
 })
 
-export { firebase, app }
+export const auth = getAuth()
