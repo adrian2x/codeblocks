@@ -1,9 +1,10 @@
-import { Link, useLoaderData } from 'react-router-dom'
 import escape from 'escape-html'
-import { getPost, getPosts, TPost } from '../common/requests'
-import { CodeEditor, generateGradient } from './CodeEditor'
-import { user } from '../stores/uiState'
-import { useState } from 'preact/hooks'
+import highlight from 'highlight.js/es/common'
+import { useEffect, useState } from 'preact/hooks'
+import { useLoaderData } from 'react-router-dom'
+import { getPost, TPost } from '../../common/requests'
+import { user } from '../../stores/uiState'
+import { CodeEditor, generateGradient } from '../CodeEditor'
 
 export async function postLoader({ params }: any) {
   if (params.post_id) {
@@ -11,38 +12,20 @@ export async function postLoader({ params }: any) {
   }
 }
 
-export async function postsLoader({ params }: any) {
-  const posts = await getPosts()
-  return posts
-}
-
 export function Post() {
   const post = useLoaderData() as TPost
-  const isOwner = !post || user.value?.uid === post?.user.uid
+  const isEditor = !post || post?.user.uid === user.value?.uid
   return (
     <div className='container'>
-      {isOwner ? <CodeEditor post={post} /> : <ReadOnlyPost post={post} />}
+      {isEditor ? <CodeEditor post={post} /> : <ReadOnlyPost post={post} />}
     </div>
-  )
-}
-
-export function PostsList() {
-  const posts = useLoaderData() as TPost[]
-  return (
-    <ul>
-      {posts.map((p) => {
-        return (
-          <li>
-            <Link to={`/posts/${p.id}`}>{p.title}</Link>
-          </li>
-        )
-      })}
-    </ul>
   )
 }
 
 export function ReadOnlyPost({ post }: { post: TPost }) {
   const [background, setBackground] = useState(generateGradient())
+
+  useEffect(() => highlight.highlightAll(), [])
 
   return (
     <div class='post-form'>
