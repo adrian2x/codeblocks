@@ -1,5 +1,4 @@
 import escape from 'escape-html'
-import highlight from 'highlight.js/es/common'
 import { useEffect, useState } from 'preact/hooks'
 import { useLoaderData } from 'react-router-dom'
 import { getPost, TPost } from '../../common/requests'
@@ -24,10 +23,11 @@ export function Post() {
 
 export function ReadOnlyPost({ post }: { post: TPost }) {
   const [background, setBackground] = useState(generateGradient())
+  let hljs = import('highlight.js/es/common').then((module) => module.default)
 
   useEffect(() => {
     if (post.theme) updateStyles('Default', post.theme)
-    highlight.highlightAll()
+    hljs.then((hljs) => hljs.highlightAll())
   }, [])
 
   return (

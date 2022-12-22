@@ -1,13 +1,12 @@
 // @ts-expect-error
 import domtoimage from 'dom-to-image-more'
 import escape from 'escape-html'
-import highlight from 'highlight.js/es/common'
 import { useEffect, useRef, useState } from 'react'
 import { createPost, TPost, updatePost } from '../common/requests'
 import { useStore } from '../hooks/useStore'
 import { user } from '../stores/uiState'
-import { Dropdown } from './Dropdown'
 import './code-editor.scss'
+import { Dropdown } from './Dropdown'
 
 export function CodeEditor({ post }: { post?: TPost }) {
   // Get editor preferences
@@ -43,16 +42,19 @@ export function CodeEditor({ post }: { post?: TPost }) {
   const currentUser = user.value
   console.log('editor render', currentUser)
 
+  let hljs = import('highlight.js/es/common').then((module) => module.default)
+
   useEffect(() => {
     // Load theme preferences
     if (editorState.theme !== 'Default') {
       updateStyles('Default', editorState.theme)
     }
+    hljs.then((hljs) => hljs.highlightAll())
   }, [])
 
   useEffect(() => {
     // Update highlighted when code changes
-    highlight.highlightAll()
+    hljs.then((hljs) => hljs.highlightAll())
     // Get the code language detected by Highlightjs
     if (postState.code) {
       let matchLanguage = document.getElementById('code')!.className.match(/language-(.+)$/)
@@ -63,7 +65,7 @@ export function CodeEditor({ post }: { post?: TPost }) {
 
   useEffect(() => {
     // Update highlighted when language changes
-    highlight.highlightAll()
+    hljs.then((hljs) => hljs.highlightAll())
   }, [postState.language])
 
   return (
