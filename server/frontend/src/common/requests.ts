@@ -29,7 +29,7 @@ export interface TPost {
     uid: string
     displayName: string
     handleName: string
-    photoUrl: string
+    photoUrl: string | null
   }
 }
 

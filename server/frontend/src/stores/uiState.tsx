@@ -1,10 +1,10 @@
 import { signal } from '@preact/signals'
-import { onAuthStateChanged } from 'firebase/auth'
+import { onAuthStateChanged, User } from 'firebase/auth'
 import { auth } from '../common/firebase'
 
 const getUser = () => {
   let saved = localStorage.getItem('user')
-  if (saved != null && saved != 'null') return JSON.parse(saved)
+  if (saved != null && saved != 'null') return JSON.parse(saved) as User
   return auth.currentUser
 }
 
