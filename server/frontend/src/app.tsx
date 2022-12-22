@@ -1,5 +1,6 @@
 import { User } from 'firebase/auth'
 import { Link, Outlet } from 'react-router-dom'
+import { Toaster } from 'react-hot-toast'
 import { auth } from './common/firebase'
 import { FirebaseAuth, showDialog } from './components/FirebaseAuth'
 import { user } from './stores/uiState'
@@ -56,6 +57,7 @@ function UserMenu({ user }: { user: User | null }) {
 export function App() {
   return (
     <div>
+      <Toaster />
       <Navbar />
       <div>
         <Outlet />
