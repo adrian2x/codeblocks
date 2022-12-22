@@ -4,7 +4,7 @@ import { useEffect, useState } from 'preact/hooks'
 import { useLoaderData } from 'react-router-dom'
 import { getPost, TPost } from '../../common/requests'
 import { user } from '../../stores/uiState'
-import { CodeEditor, generateGradient } from '../CodeEditor'
+import { CodeEditor, generateGradient, updateStyles } from '../CodeEditor'
 
 export async function postLoader({ params }: any) {
   if (params.post_id) {
@@ -25,7 +25,10 @@ export function Post() {
 export function ReadOnlyPost({ post }: { post: TPost }) {
   const [background, setBackground] = useState(generateGradient())
 
-  useEffect(() => highlight.highlightAll(), [])
+  useEffect(() => {
+    if (post.theme) updateStyles('Default', post.theme)
+    highlight.highlightAll()
+  }, [])
 
   return (
     <div class='post-form'>

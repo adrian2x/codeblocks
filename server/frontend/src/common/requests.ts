@@ -24,6 +24,7 @@ export interface TPost {
   created: number
   code: string
   language: string
+  theme: string
   user: {
     uid: string
     displayName: string

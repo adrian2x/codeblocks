@@ -299,10 +299,14 @@ export function CodeEditor({ post }: { post?: TPost }) {
               class='primary outline mr0'
               onClick={(e) => {
                 if (post) {
-                  return updatePost(post.id, postState)
+                  return updatePost(post.id, {
+                    ...postState,
+                    theme: editorState.theme
+                  })
                 }
                 createPost({
                   ...postState,
+                  theme: editorState.theme,
                   created: Date.now(),
                   user: {
                     uid: currentUser.uid,
@@ -428,7 +432,7 @@ export function CodeEditor({ post }: { post?: TPost }) {
 }
 
 /** Load the theme styles dynamically */
-function updateStyles(theme: string, nextTheme: string) {
+export function updateStyles(theme: string, nextTheme: string) {
   document.querySelector(`link[title="${nextTheme}"]`)!.removeAttribute('disabled')
   requestAnimationFrame(() => {
     document.querySelector(`link[title="${theme}"]`)!.setAttribute('disabled', 'disabled')
