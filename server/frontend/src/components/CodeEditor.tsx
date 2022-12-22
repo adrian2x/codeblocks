@@ -9,6 +9,9 @@ import './code-editor.scss'
 import { Dropdown } from './Dropdown'
 
 export function CodeEditor({ post }: { post?: TPost }) {
+  // import highlightjs module
+  let hljs = import('highlight.js/es/common').then((module) => module.default)
+
   // Get editor preferences
   const [editorState, updateEditorState] = useStore('editorState', {
     theme: 'Default',
@@ -42,8 +45,6 @@ export function CodeEditor({ post }: { post?: TPost }) {
   const currentUser = user.value
   console.log('editor render', currentUser)
 
-  let hljs = import('highlight.js/es/common').then((module) => module.default)
-
   useEffect(() => {
     // Load theme preferences
     if (editorState.theme !== 'Default') {
@@ -54,13 +55,17 @@ export function CodeEditor({ post }: { post?: TPost }) {
 
   useEffect(() => {
     // Update highlighted when code changes
-    hljs.then((hljs) => hljs.highlightAll())
-    // Get the code language detected by Highlightjs
-    if (postState.code) {
-      let matchLanguage = document.getElementById('code')!.className.match(/language-(.+)$/)
-      let language = matchLanguage?.[1].toLowerCase()
-      if (language !== 'undefined') setPost({ language })
-    }
+    hljs.then((hljs) => {
+      hljs.highlightAll()
+      // Get the code language detected by Highlightjs
+      if (postState.code) {
+        let matchLanguage = document.getElementById('code')!.className.match(/language-(.+)$/)
+        let language = matchLanguage?.[1].toLowerCase()
+        if (language !== 'undefined') setPost({ language })
+      } else {
+        setPost({ language: '' })
+      }
+    })
   }, [postState.code])
 
   useEffect(() => {
@@ -347,50 +352,22 @@ export function CodeEditor({ post }: { post?: TPost }) {
                       : ''
                   }
                   dangerouslySetInnerHTML={{ __html: escape(postState.code) }}
-                  onClick={(e) => {
-                    textBox.current!.focus()
+                  contentEditable
+                  onBlur={(e) => {
+                    const self = e.currentTarget
+                    const code = self.innerText
+                    if (code.trim()) {
+                      // Adjust window size
+                      console.log('hasCode')
+                      self.style.width = '0'
+                      self.style.width = self.scrollWidth + 'px'
+                      const codeWindow = document.getElementById('code-window')!
+                      codeWindow.style.width = '0'
+                      codeWindow.style.width = self.scrollWidth + 36 + 'px'
+                    }
+                    setPost({ code: code.replace(/\n\n\n/gm, '\n\n') })
                   }}
                 />
-
-                <textarea
-                  class='code-area hljs hljs'
-                  ref={textBox}
-                  placeholder='// Add your code here...'
-                  onInput={(e) => {
-                    let self = e.currentTarget
-                    setPost({ code: self.value })
-                    self.style.height = '15px'
-                    self.style.height = self.scrollHeight + 'px'
-                    self.style.width = self.scrollWidth + 'px'
-
-                    let code = document.getElementById('code')!
-                    code.style.width = '0'
-                    code.style.width = self.scrollWidth + 'px'
-                    let codeWindow = document.getElementById('code-window')!
-                    codeWindow.style.width = '0'
-                    codeWindow.style.width = self.scrollWidth + 36 + 'px'
-                  }}
-                  onKeyDown={(e) => {
-                    // Handle TAB key as indent instead of focus
-                    let that = e.currentTarget!
-                    if (e.keyCode == 9 || e.which == 9) {
-                      e.preventDefault()
-                      var s = that.selectionStart
-                      that.value =
-                        that.value.substring(0, that.selectionStart) +
-                        '\t' +
-                        that.value.substring(that.selectionEnd)
-                      that.selectionEnd = s + 1
-                    }
-                  }}
-                  onPaste={(e) => {
-                    // e.preventDefault()
-                    // let text = e.clipboardData!.getData('text/plain')
-                    // e.currentTarget.innerHTML = text
-                    // setCode(text)
-                  }}>
-                  {postState.code}
-                </textarea>
               </pre>
             </div>
           </div>
