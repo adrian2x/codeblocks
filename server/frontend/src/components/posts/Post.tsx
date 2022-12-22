@@ -63,16 +63,16 @@ export function ReadOnlyPost({ post }: { post: TPost }) {
           </div>
 
           <div className='credits flex justify-between'>
-            <div className='avatar flex items-center'>
+            <div className='flex items-center'>
               {post.user.photoUrl && (
                 <img
-                  class='drop-shadow-4'
+                  class='avatar drop-shadow-4'
                   src={post.user.photoUrl}
                   alt={post.user.displayName ?? ''}
                   referrerpolicy='no-referrer'
                 />
               )}
-              <div>
+              <div class='text-white'>
                 <div className='author text-shadow'>{post.user.displayName}</div>
                 <small className='secondary text-shadow'>{post.user.handleName}</small>
               </div>

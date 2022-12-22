@@ -374,16 +374,16 @@ export function CodeEditor({ post }: { post?: TPost }) {
           </div>
 
           <div className='credits flex justify-between'>
-            <div className='avatar flex items-center' hidden={!editorState.watermark}>
+            <div className='flex items-center' hidden={!editorState.watermark}>
               {currentUser && editorState.watermark === 'avatar' && (
                 <img
-                  class='drop-shadow-4'
+                  class='avatar drop-shadow-4'
                   src={post?.user.photoUrl ?? currentUser?.photoURL ?? ''}
                   alt={currentUser?.displayName ?? ''}
                   referrerpolicy='no-referrer'
                 />
               )}
-              <div>
+              <div class='text-white'>
                 {currentUser && (
                   <div
                     className='author text-shadow'
