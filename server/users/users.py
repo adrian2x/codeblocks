@@ -9,12 +9,11 @@ users_blueprint = Blueprint("users", __name__)
 
 def generate_username(email: str = None):
     "Create a username from the email"
-    denumerator = str(random.randrange(1000))
     try:
-        username = email.split("@")[0] + denumerator
+        username = email.split("@")[0]
     except:
-        username = get_random_username() + denumerator
-    return username
+        username = get_random_username()
+    return username + str(random.randrange(1000))
 
 
 @users_blueprint.route("/", methods=["POST"])
