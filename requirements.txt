@@ -45,6 +45,7 @@ PyJWT==2.6.0
 pylint==2.15.8
 pyparsing==3.0.9
 python-dotenv==0.21.0
+pyug==0.44
 requests==2.28.1
 rsa==4.9
 six==1.16.0
