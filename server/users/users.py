@@ -1,6 +1,8 @@
 from flask import Blueprint, request, jsonify
 from server.firebase import db
 from server.posts.posts import get_by_user_id
+import random
+from pyug import get_random_username
 
 users_blueprint = Blueprint("users", __name__)
 
@@ -12,8 +14,15 @@ def create_user():
     doc_ref = db.collection("users").document(data.get("id"))
 
     if not doc_ref.get().exists:
-        # TODO: generate new username
-        data.update("displayHandle", "")  # set this to the username
+        # DONE: generate new username
+        try:
+            email = data.get("email")
+            print(email)
+            username = email.split("@")[0]
+        except:
+            username = get_random_username() + str(random.randrange(1000))
+            print(username)
+        data.update("displayHandle", username)  # set this to the username
 
     doc_ref.update(data)
     doc = doc_ref.get().to_dict()
@@ -35,7 +44,9 @@ def update_user(uid):
     data = request.get_json()
     doc = db.collection("users").document(uid)
     doc.update(data)
-    return jsonify(data)
+    # return the updated document
+    updated_doc = doc.get().to_dict()
+    return jsonify(updated_doc)
 
 
 @users_blueprint.route("/<uid>", methods=["DELETE"])
