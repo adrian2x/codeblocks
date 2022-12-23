@@ -8,7 +8,8 @@ export default defineConfig({
     rollupOptions: {
       input: {
         index: new URL('./index.html', import.meta.url).pathname,
-        post: new URL('./post.html', import.meta.url).pathname
+        post: new URL('./post.html', import.meta.url).pathname,
+        profile: new URL('./profile.html', import.meta.url).pathname
       }
     }
   },
