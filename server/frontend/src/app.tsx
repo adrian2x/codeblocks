@@ -1,5 +1,5 @@
 import { User } from 'firebase/auth'
-import { Link, Outlet } from 'react-router-dom'
+import { Link, NavLink, Outlet } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
 import { auth } from './common/firebase'
 import { FirebaseAuth, showDialog } from './components/FirebaseAuth'
@@ -10,12 +10,10 @@ function Navbar() {
     <>
       <nav class='nav'>
         <div class='nav-start'>
-          <Link class='brand' to={`/`}>
+          <NavLink className='brand' to={`/`}>
             Codeblocks
-          </Link>
-          <Link to={`/post`}>
-            <button class='primary'>Create new</button>
-          </Link>
+          </NavLink>
+          <NavLink to={`/post`}>Create new</NavLink>
         </div>
         <div class='nav-end'>
           <UserMenu user={user.value} />
@@ -44,10 +42,7 @@ function UserMenu({ user }: { user: User | null }) {
 
   return (
     <>
-      <a href='' onClick={() => showDialog()}>
-        Sign in
-      </a>
-      <button className='primary' onClick={() => showDialog()}>
+      <button className='primary radius-4' onClick={() => showDialog()}>
         Sign up
       </button>
     </>

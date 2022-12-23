@@ -22,7 +22,7 @@ const router = createBrowserRouter([
         element: <Post key={Math.random()} />
       },
       {
-        path: 'posts/:post_id',
+        path: 'post/:post_id',
         element: <Post key={Math.random()} />,
         loader: postLoader
       }
@@ -30,4 +30,4 @@ const router = createBrowserRouter([
   }
 ])
 
-render(<RouterProvider router={router} />, document.getElementById('app') as HTMLElement)
+render(<RouterProvider router={router} />, document.body)

@@ -10,14 +10,14 @@ export async function postsLoader({ params }: any) {
 export function PostsList() {
   const posts = useLoaderData() as TPost[]
   return (
-    <section className='post-list grid grid-cols-3 gap-4'>
+    <section className='container post-list grid grid-cols-3 gap-4'>
       {posts.map((p) => {
         let previewUrl = `https://firebasestorage.googleapis.com/v0/b/codeblocks-991a2.appspot.com/o/${p.id}.png?alt=media`
         const { uid, displayName, photoUrl } = p.user
         return (
           <article key={p.id} className='post'>
             <div class='flex flex-column flex-1 justify-center'>
-              <Link to={`/posts/${p.id}`} className='cover'>
+              <Link to={`/post/${p.id}`} className='cover'>
                 <div
                   className='image'
                   style={{
@@ -31,7 +31,12 @@ export function PostsList() {
               </Link>
 
               <header class='flex footer items-center'>
-                <Link to={`/@${uid}`}>
+                <Link
+                  to={`/@${uid}`}
+                  style={{
+                    width: 40,
+                    marginRight: 8
+                  }}>
                   <img
                     class='avatar'
                     src={photoUrl!}
@@ -39,9 +44,9 @@ export function PostsList() {
                     referrerpolicy='no-referrer'
                   />
                 </Link>
-                <div>
+                <div class='title'>
                   <h4 class='title'>
-                    <Link to={`/posts/${p.id}`}>{p.title}</Link>
+                    <Link to={`/post/${p.id}`}>{p.title}</Link>
                   </h4>
                   <Link class='author' to={`/@${uid}`}>
                     {displayName}

@@ -24,6 +24,14 @@ html {
   color: white;
 }
 
+.container {
+  max-width: 768px;
+}
+
+.nav .brand {
+  font-weight: 700;
+}
+
 @media (prefers-color-scheme: dark) {
   input[type='text'],
   textarea,
