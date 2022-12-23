@@ -10,6 +10,15 @@ web_blueprint = Blueprint(
 )
 
 
+@web_blueprint.route("/post/<post_id>")
+def get_post(post_id=None):
+    "Renders the post html page"
+    post = db.collection("posts").document(post_id)
+    data = post.get().to_dict()
+    data.update({"id": post.id})
+    return render_template("post.html", post=data)
+
+
 @web_blueprint.route("/")
 @web_blueprint.route("/post")
 @web_blueprint.route("/posts/<path>")

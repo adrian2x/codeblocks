@@ -1,6 +1,4 @@
-from server.firebase import firestore
-from flask import Flask, request, jsonify
-from server.firebase import db
+from flask import Flask
 from server.posts.posts import posts_blueprint
 from server.users.users import users_blueprint
 from server.web.web import web_blueprint

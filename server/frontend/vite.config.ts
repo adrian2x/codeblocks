@@ -4,6 +4,14 @@ import preact from '@preact/preset-vite'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [preact(), splitVendorChunkPlugin()],
+  build: {
+    rollupOptions: {
+      input: {
+        index: new URL('./index.html', import.meta.url).pathname,
+        post: new URL('./post.html', import.meta.url).pathname
+      }
+    }
+  },
   server: {
     proxy: {
       '/api': {
