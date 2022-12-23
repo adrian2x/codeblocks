@@ -1,9 +1,7 @@
-import { EmailAuthProvider, GoogleAuthProvider, signInWithCredential } from 'firebase/auth'
-import 'firebaseui/dist/firebaseui.css'
 import { useEffect } from 'preact/hooks'
-import { auth } from '../common/firebase'
-import { createUser } from '../common/requests'
 import { currentUser } from '../stores/uiState'
+import { firebase } from '../common/firebase'
+import 'firebaseui/dist/firebaseui.css'
 
 export { showDialog, closeDialog }
 
@@ -36,11 +34,11 @@ function closeDialog(id = 'firebaseAuthDialog') {
 function onRender() {
   // Initialize the FirebaseUI Widget using Firebase.
   import('firebaseui').then((firebaseui) => {
-    let ui = new firebaseui.auth.AuthUI(auth)
+    let ui = new firebaseui.auth.AuthUI(firebase.auth())
 
     let data = null
     // Hold a reference to the anonymous current user.
-    let anonymousUser = auth.currentUser
+    let anonymousUser = firebase.auth().currentUser
 
     // The start method will wait until the DOM is loaded.
     ui.start(`#firebase-auth-ui`, {
@@ -49,9 +47,9 @@ function onRender() {
       // signInSuccessUrl: '',
       signInOptions: [
         // Leave the lines as is for the providers you want to offer your users.
-        GoogleAuthProvider.PROVIDER_ID,
+        firebase.auth.GoogleAuthProvider.PROVIDER_ID,
         {
-          provider: EmailAuthProvider.PROVIDER_ID,
+          provider: firebase.auth.EmailAuthProvider.PROVIDER_ID,
           requireDisplayName: true
         }
         // firebase.auth.PhoneAuthProvider.PROVIDER_ID,
@@ -70,14 +68,6 @@ function onRender() {
           // or whether we leave that to developer to handle.
           const user = authResult.user
           closeDialog()
-          createUser({
-            id: user.uid,
-            photoUrl: user.photoURL,
-            displayName: user.displayName,
-            email: user.email,
-            created: user.metadata.creationTime,
-            lastSeen: user.metadata.lastSignInTime
-          })
           localStorage.setItem(
             'user',
             JSON.stringify({
@@ -100,7 +90,7 @@ function onRender() {
             // user.
             // ...
             // Finish sign-in after data is copied.
-            signInWithCredential(auth, cred)
+            firebase.auth().signInWithCredential(cred)
           }
           console.error(error)
         },

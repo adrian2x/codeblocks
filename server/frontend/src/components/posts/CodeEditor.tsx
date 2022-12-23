@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { createPost, TPost, updatePost } from '../../common/requests'
 import { useStore } from '../../hooks/useStore'
+import { currentUser as userSignal } from '../../stores/uiState'
 import { Dropdown } from '../Dropdown'
 import './code-editor.scss'
 
@@ -45,8 +46,7 @@ export function CodeEditor({ post }: { post?: TPost }) {
   const [isSaving, setSaving] = useState(false)
 
   // Get signed in user
-  const currentUser = currentUser.value
-  console.log('editor render', currentUser)
+  const currentUser = userSignal.value
 
   useEffect(() => {
     autoSize()
@@ -452,11 +452,16 @@ async function onSubmit(
   setTimeout(async () => {
     let node = document.getElementById('code-background')!
     let blob = await domtoimage.toBlob(node)
-    const storage = getStorage()
-    const fileRef = ref(storage, `${response.id}.png`)
-    let image = await uploadBytes(fileRef, blob)
+    let image = await uploadImage(`${response.id}.png`, blob)
     console.log('uploaded image', image.ref)
   })
 
   return response
+}
+
+export async function uploadImage(name: string, blob: Blob | ArrayBuffer | Uint8Array) {
+  const storage = getStorage()
+  const fileRef = ref(storage, name)
+  let result = await uploadBytes(fileRef, blob)
+  return result
 }

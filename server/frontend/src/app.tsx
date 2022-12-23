@@ -1,9 +1,8 @@
-import { User } from 'firebase/auth'
 import { Link, NavLink, Outlet } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
-import { auth } from './common/firebase'
 import { FirebaseAuth, showDialog } from './components/FirebaseAuth'
 import { currentUser } from './stores/uiState'
+import { firebase } from './common/firebase'
 
 function Navbar() {
   return (
@@ -24,15 +23,15 @@ function Navbar() {
   )
 }
 
-function UserMenu({ user }: { user: User | null }) {
+function UserMenu({ user }: { user: any }) {
   if (user) {
     return (
       <>
-        <Link to={`/@${user.uid}`}>My profile</Link>
+        <Link to={`/@/${user.uid}`}>My profile</Link>
         <button
           className='outline'
           onClick={() => {
-            auth.signOut()
+            firebase.auth().signOut()
           }}>
           Sign out
         </button>
