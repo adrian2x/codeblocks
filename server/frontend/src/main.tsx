@@ -3,7 +3,8 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { App } from './app'
 import ErrorPage from './routes/errorPage'
 import { Post, postLoader } from './components/posts/Post'
-import { PostsList, postsLoader } from './components/posts/PostList'
+import { PostsContainer, postsLoader } from './components/posts/PostList'
+import { UserPage, userPostsLoader } from './components/users/UserPage'
 import './index.scss'
 
 const router = createBrowserRouter([
@@ -14,7 +15,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: '',
-        element: <PostsList />,
+        element: <PostsContainer />,
         loader: postsLoader
       },
       {
@@ -25,6 +26,11 @@ const router = createBrowserRouter([
         path: 'post/:post_id',
         element: <Post key={Math.random()} />,
         loader: postLoader
+      },
+      {
+        path: '@/:user_id',
+        element: <UserPage key={Math.random()} />,
+        loader: userPostsLoader
       }
     ]
   }

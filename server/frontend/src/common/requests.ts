@@ -60,6 +60,7 @@ export type CustomUser = {
   photoUrl: string
   displayName: string
   displayHandle: string
+  backgroundColor?: string
 }
 
 export type GetUserResponse = {
@@ -75,6 +76,6 @@ export function createUser(user: any) {
   return request(`/api/users/`, user)
 }
 
-export function updateUser(user: any) {
-  return request(`/api/users/${user.uid}`, user)
+export function updateUser(userId: string, user: any) {
+  return request(`/api/users/${userId}`, user)
 }
