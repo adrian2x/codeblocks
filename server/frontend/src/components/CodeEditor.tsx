@@ -17,7 +17,7 @@ export function CodeEditor({ post }: { post?: TPost }) {
 
   // Get editor preferences
   const [editorState, updateEditorState] = useStore('editorState', {
-    theme: 'Default',
+    theme: post?.theme ?? 'Default',
     watermark: 'avatar'
   })
 
@@ -130,74 +130,31 @@ export function CodeEditor({ post }: { post?: TPost }) {
               onChange={(e: any) => {
                 let theme = editorState.theme
                 let nextTheme = e.currentTarget.value
-                setEditor({ theme: nextTheme })
                 updateStyles(theme, nextTheme)
+                setEditor({ theme: nextTheme })
               }}>
               <option value='Default'>
                 <a href='#default'>Default</a>
               </option>
 
-              <option>
-                <a href='#Androidstudio' class=''>
-                  Androidstudio
-                </a>
-              </option>
+              <option value='Androidstudio'>Androidstudio</option>
 
-              <option>
-                <a href='#Atom One Dark' class=''>
-                  Atom One Dark
-                </a>
-              </option>
+              <option value='Atom One Dark'>Atom One</option>
 
-              <option>
-                <a href='#Material'>Material</a>
-              </option>
+              <option value='Material'>Material</option>
 
-              <option>
-                <a href='#Tomorrow Night'>Tomorrow Night</a>
-              </option>
+              <option value='Github'>Github</option>
+              <option value='Github Dark'>Github Dark</option>
 
-              <option>
-                <a href='#Github'>Github</a>
-              </option>
+              <option value='Hybrid'>Hybrid</option>
 
-              <option>
-                <a href='#Github Dark'>Github Dark</a>
-              </option>
+              <option value='Tokyo Night Dark'>Tokyo Night</option>
 
-              <option>
-                <a href='#Hybrid'>Hybrid</a>
-              </option>
+              <option value='Tomorrow Night Blue'>Tomorrow Night</option>
 
-              <option>
-                <a href='#Sublime' class=''>
-                  Sublime
-                </a>
-              </option>
+              <option value='Vs 2015'>Vs 2015</option>
 
-              <option>
-                <a href='#Tokyo Night Dark' class=''>
-                  Tokyo Night Dark
-                </a>
-              </option>
-
-              <option>
-                <a href='#Tomorrow Night Blue' class=''>
-                  Tomorrow Night Blue
-                </a>
-              </option>
-
-              <option>
-                <a href='#Vs 2015' class=''>
-                  Vs 2015
-                </a>
-              </option>
-
-              <option>
-                <a href='#Xcode' class=''>
-                  Xcode
-                </a>
-              </option>
+              <option value='Xcode'>Xcode</option>
             </select>
           </div>
 
@@ -413,10 +370,13 @@ export function CodeEditor({ post }: { post?: TPost }) {
 
 /** Load the theme styles dynamically */
 export function updateStyles(theme: string, nextTheme: string) {
-  document.querySelector(`link[title="${nextTheme}"]`)!.removeAttribute('disabled')
-  requestAnimationFrame(() => {
-    document.querySelector(`link[title="${theme}"]`)!.setAttribute('disabled', 'disabled')
-  })
+  document
+    .querySelectorAll(`link[href*="highlight.js/"]`)
+    .forEach((link) => link.setAttribute('disabled', 'disabled'))
+  let link = document.querySelector(`link[title="${nextTheme}"]`) as HTMLLinkElement
+  let content = import(link.href)
+  link.removeAttribute('disabled')
+  return content
 }
 
 /** Returns a tuple with the background gradient and color stops */
@@ -440,7 +400,7 @@ function createHex() {
   return '#' + hexCode1
 }
 
-function autoSize() {
+export function autoSize() {
   let code = document.getElementById('code')!
   code.style.width = '0'
   code.style.width = code.scrollWidth + 'px'

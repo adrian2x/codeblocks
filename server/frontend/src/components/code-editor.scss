@@ -84,8 +84,7 @@
 #code-background {
   padding: 1rem;
   margin: auto;
-  min-width: 70ch;
-  min-width: calc(70ch - 2rem);
+  min-width: calc(768px - 2rem);
   position: absolute;
   // left: 50%;
   // transform: translateX(-50%);
@@ -106,7 +105,7 @@
   margin: 0 auto 1rem;
   min-height: 5rem;
   width: 50ch;
-  padding: 0.5rem 0.5rem 0;
+  padding: 0.5rem;
   filter: drop-shadow(0 25px 25px rgb(0 0 0 / 0.15));
 
   pre {
@@ -124,11 +123,22 @@
     }
   }
 
-  .buttons {
-    padding: 0.5rem;
+  .window-title {
+    display: flex;
+    justify-content: space-between;
 
-    & > div {
-      @include round-btn;
+    .buttons {
+      padding: 0.5rem;
+
+      & > div {
+        @include round-btn;
+      }
+    }
+
+    button {
+      font-size: 11px;
+      padding: 0.5em;
+      margin: 0 0.25rem;
     }
   }
 
@@ -150,7 +160,7 @@
 }
 
 .credits {
-  margin-top: 1.5rem;
+  margin-top: 1.61rem;
   letter-spacing: 0.05em;
   font-size: 16px;
   line-height: 1.2;
