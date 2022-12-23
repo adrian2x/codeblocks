@@ -1,11 +1,11 @@
-import { getUser, GetUserResponse, updateUser } from '../../common/requests'
-import { useLoaderData, Params } from 'react-router-dom'
-import { useCallback, useId, useRef, useState } from 'preact/hooks'
-import { PostsList } from '../posts/PostList'
-import { generateGradient, uploadImage } from '../posts/CodeEditor'
+import { useRef, useState } from 'preact/hooks'
 import toast from 'react-hot-toast'
-import { currentUser } from '../../stores/uiState'
+import { Params, useLoaderData } from 'react-router-dom'
 import { updateCurrentUser } from '../../common/firebase'
+import { getUser, GetUserResponse, updateUser } from '../../common/requests'
+import { currentUser } from '../../stores/uiState'
+import { generateGradient, uploadImage } from '../posts/CodeEditor'
+import { PostsList } from '../posts/PostList'
 
 import './user-page.scss'
 
@@ -19,20 +19,18 @@ export function UserPage() {
   const { user, posts } = useLoaderData() as GetUserResponse
   const allowEditing = user.id === currentUser.value?.uid
 
-  const [userState, setUserState] = useState(user)
+  const [userProfile, setUserProfile] = useState(user)
   const [background, setBackground] = useState([user.backgroundColor] ?? generateGradient())
 
-  const setUser = useCallback(
-    (data: Object) => {
-      setUserState({ ...userState, ...data })
-      return toast.promise(updateUser(userState.id, data), {
-        loading: 'Saving...',
-        success: 'Success!',
-        error: 'There was an error.'
-      })
-    },
-    [userState]
-  )
+  const setUser = (data: Object) => {
+    setUserProfile({ ...userProfile, ...data })
+    toast.dismiss()
+    return toast.promise(updateUser(currentUser.value!.uid, data), {
+      loading: 'Saving...',
+      success: 'Success!',
+      error: 'There was an error.'
+    })
+  }
 
   return (
     <div className='user-page' data-active={allowEditing}>
@@ -52,8 +50,8 @@ export function UserPage() {
           }}></div>
         <div className='user-avatar'>
           <PhotoUploader
-            value={userState.photoUrl}
-            altText={userState.displayName ?? ''}
+            value={userProfile.photoUrl}
+            altText={userProfile.displayName ?? ''}
             allowEditing={allowEditing}
             onUpdate={(url) => {
               setUser({ photoUrl: url })
@@ -61,35 +59,35 @@ export function UserPage() {
             }}
           />
           <h1
-            key={userState.displayName}
+            key={userProfile.displayName}
             className='title'
             contentEditable={allowEditing}
             onBlur={(e) => {
-              let update = {
-                displayName: e.currentTarget.innerHTML
+              let value = e.currentTarget.innerHTML
+              if (value !== userProfile.displayName) {
+                setUser({ displayName: value })
+                updateCurrentUser({ displayName: value })
               }
-              setUser(update)
-              updateCurrentUser(update)
             }}>
-            {userState.displayName}
+            {userProfile.displayName}
           </h1>
           <div className='details'>
             <span>
               <a
-                key={userState.displayHandle}
-                contentEditable={allowEditing}
                 href={`/@/${user.id}`}
+                key={userProfile.displayHandle}
+                contentEditable={allowEditing}
                 onClick={(e) => {
                   if (allowEditing) e.preventDefault()
                 }}
                 onBlur={(e) => {
-                  let update = {
-                    displayHandle: e.currentTarget.innerHTML
+                  let value = e.currentTarget.innerHTML
+                  if (value !== userProfile.displayHandle) {
+                    setUser({ displayHandle: value })
+                    updateCurrentUser({ displayHandle: value })
                   }
-                  setUser(update)
-                  updateCurrentUser(update)
                 }}>
-                {userState.displayHandle ?? 'Anonymous'}
+                {userProfile.displayHandle ?? 'Anonymous'}
               </a>
             </span>
             <span class='sep'>{`  •  `}</span>
@@ -131,10 +129,12 @@ export function PhotoUploader({
   allowEditing?: boolean
   onUpdate?: (data: string) => any
 }) {
-  let ref = useRef<HTMLInputElement>(null)
+  let inputRef = useRef<HTMLInputElement>(null)
+  let imageRef = useRef<HTMLImageElement>(null)
   return (
     <div class='avatar-container'>
       <img
+        ref={imageRef}
         class='avatar drop-shadow-4'
         src={value ?? `https://www.gravatar.com/avatar/?d=mp&s=48`}
         alt={altText ?? ''}
@@ -143,18 +143,19 @@ export function PhotoUploader({
       {allowEditing && (
         <>
           <input
-            ref={ref}
-            type='file'
             hidden
+            ref={inputRef}
+            type='file'
             onChange={async (e) => {
               let fileName = currentUser.value!.uid
               if (e.currentTarget.files) {
                 let url = await handleFileUpload(fileName, e.currentTarget.files[0])
+                imageRef.current!.src = url
                 onUpdate?.(url)
               }
             }}
           />
-          <div className='btn-upload' onClick={(e) => ref.current?.click()}>
+          <div className='btn-upload' onClick={(e) => inputRef.current?.click()}>
             ⬆️
           </div>
         </>
