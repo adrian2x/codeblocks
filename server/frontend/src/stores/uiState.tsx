@@ -8,7 +8,7 @@ const getUser = () => {
   return auth.currentUser
 }
 
-export const user = signal(getUser())
+export const currentUser = signal(getUser())
 
 // Handle firebase auth events
 onAuthStateChanged(auth, (signedInUser) => {
@@ -27,7 +27,7 @@ onAuthStateChanged(auth, (signedInUser) => {
         })
       )
       // Update the ui state with the user
-      user.value = signedInUser
+      currentUser.value = signedInUser
       console.log('session saved')
     })
   } else {
@@ -35,6 +35,6 @@ onAuthStateChanged(auth, (signedInUser) => {
     console.log('signed out')
     localStorage.removeItem('user')
     // Update the ui state with the user
-    user.value = null
+    currentUser.value = null
   }
 })

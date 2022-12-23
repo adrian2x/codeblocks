@@ -2,7 +2,8 @@ import { EmailAuthProvider, GoogleAuthProvider, signInWithCredential } from 'fir
 import 'firebaseui/dist/firebaseui.css'
 import { useEffect } from 'preact/hooks'
 import { auth } from '../common/firebase'
-import { user } from '../stores/uiState'
+import { createUser } from '../common/requests'
+import { currentUser } from '../stores/uiState'
 
 export { showDialog, closeDialog }
 
@@ -67,10 +68,16 @@ function onRender() {
           // User successfully signed in.
           // Return type determines whether we continue the redirect automatically
           // or whether we leave that to developer to handle.
-          console.log('authResult', authResult)
           const user = authResult.user
-          console.log('user received', user)
           closeDialog()
+          createUser({
+            id: user.uid,
+            photoUrl: user.photoURL,
+            displayName: user.displayName,
+            email: user.email,
+            created: user.metadata.creationTime,
+            lastSeen: user.metadata.lastSignInTime
+          })
           localStorage.setItem(
             'user',
             JSON.stringify({
@@ -100,7 +107,7 @@ function onRender() {
         uiShown: () => {
           // The widget is rendered.
           // Hide the loader.
-          if (!user.value) showDialog()
+          if (!currentUser.value) showDialog()
         }
       }
     })

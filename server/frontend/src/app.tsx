@@ -3,7 +3,7 @@ import { Link, NavLink, Outlet } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
 import { auth } from './common/firebase'
 import { FirebaseAuth, showDialog } from './components/FirebaseAuth'
-import { user } from './stores/uiState'
+import { currentUser } from './stores/uiState'
 
 function Navbar() {
   return (
@@ -16,7 +16,7 @@ function Navbar() {
           <NavLink to={`/post`}>Create new</NavLink>
         </div>
         <div class='nav-end'>
-          <UserMenu user={user.value} />
+          <UserMenu user={currentUser.value} />
         </div>
       </nav>
       <FirebaseAuth />
@@ -28,7 +28,7 @@ function UserMenu({ user }: { user: User | null }) {
   if (user) {
     return (
       <>
-        <Link to={`/users/${user.uid}`}>My profile</Link>
+        <Link to={`/@${user.uid}`}>My profile</Link>
         <button
           className='outline'
           onClick={() => {
@@ -54,9 +54,7 @@ export function App() {
     <div>
       <Toaster />
       <Navbar />
-      <div class='p4'>
-        <Outlet />
-      </div>
+      <Outlet />
     </div>
   )
 }

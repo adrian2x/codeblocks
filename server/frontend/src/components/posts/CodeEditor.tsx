@@ -5,11 +5,10 @@ import { User } from 'firebase/auth'
 import { getStorage, ref, uploadBytes } from 'firebase/storage'
 import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
-import { createPost, TPost, updatePost } from '../common/requests'
-import { useStore } from '../hooks/useStore'
-import { user } from '../stores/uiState'
+import { createPost, TPost, updatePost } from '../../common/requests'
+import { useStore } from '../../hooks/useStore'
+import { Dropdown } from '../Dropdown'
 import './code-editor.scss'
-import { Dropdown } from './Dropdown'
 
 export function CodeEditor({ post }: { post?: TPost }) {
   // import highlightjs module
@@ -46,7 +45,7 @@ export function CodeEditor({ post }: { post?: TPost }) {
   const [isSaving, setSaving] = useState(false)
 
   // Get signed in user
-  const currentUser = user.value
+  const currentUser = currentUser.value
   console.log('editor render', currentUser)
 
   useEffect(() => {

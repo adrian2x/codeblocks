@@ -2,15 +2,23 @@ import { Link, useLoaderData } from 'react-router-dom'
 import { getPosts, TPost } from '../../common/requests'
 import './post-list.scss'
 
-export async function postsLoader({ params }: any) {
+export async function postsLoader() {
   const posts = await getPosts()
   return posts
 }
 
-export function PostsList() {
+export function PostsContainer() {
   const posts = useLoaderData() as TPost[]
   return (
     <section className='container post-list grid grid-cols-3 gap-4'>
+      <PostsList posts={posts} />
+    </section>
+  )
+}
+
+export function PostsList({ posts }: { posts: TPost[] }) {
+  return (
+    <>
       {posts.map((p) => {
         let previewUrl = `https://firebasestorage.googleapis.com/v0/b/codeblocks-991a2.appspot.com/o/${p.id}.png?alt=media`
         const { uid, displayName, photoUrl } = p.user
@@ -25,15 +33,11 @@ export function PostsList() {
                     backgroundSize: 'cover'
                   }}
                   title={`${p.description}`}></div>
-                {/* <picture>
-                  <source srcSet={previewUrl} type='image/png' />
-                  <img src={previewUrl} alt='' loading='lazy' />
-                </picture> */}
               </Link>
 
               <header class='flex footer items-center'>
                 <Link
-                  to={`/@${uid}`}
+                  to={`/@/${uid}`}
                   style={{
                     width: 40,
                     marginRight: 8
@@ -58,6 +62,6 @@ export function PostsList() {
           </article>
         )
       })}
-    </section>
+    </>
   )
 }

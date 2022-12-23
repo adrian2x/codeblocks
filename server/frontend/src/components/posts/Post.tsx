@@ -2,13 +2,14 @@ import escape from 'escape-html'
 // @ts-expect-error
 import { ago } from 'time-ago'
 import { useEffect, useState } from 'preact/hooks'
-import { useLoaderData } from 'react-router-dom'
+import { useLoaderData, Link } from 'react-router-dom'
 import { getPost, TPost } from '../../common/requests'
-import { user } from '../../stores/uiState'
-import { autoSize, CodeEditor, generateGradient, updateStyles } from '../CodeEditor'
+import { currentUser } from '../../stores/uiState'
+import { autoSize, CodeEditor, generateGradient, updateStyles } from './CodeEditor'
+import { RouteProps } from '../../types'
 import './post.scss'
 
-export async function postLoader({ params }: any) {
+export async function postLoader({ params }: RouteProps) {
   if (params.post_id) {
     return getPost(params.post_id)
   }
@@ -16,7 +17,7 @@ export async function postLoader({ params }: any) {
 
 export function Post() {
   const post = useLoaderData() as TPost
-  const isEditor = !post || post?.user.uid === user.value?.uid
+  const isEditor = !post || post?.user.uid === currentUser.value?.uid
   return (
     <div className='container'>
       {isEditor ? <CodeEditor post={post} /> : <ReadOnlyPost post={post} />}
@@ -42,9 +43,9 @@ export function ReadOnlyPost({ post }: { post: TPost }) {
       <div class='post-header'>
         <div>
           <h4 class='title m0'>{post.title}</h4>
-          <div class='byline'>
+          <div class='details'>
             <span>
-              <a href={`/@${post.user.uid}`}>{post.user.displayName ?? 'Anonymous'}</a>
+              <Link to={`/@/${post.user.uid}`}>{post.user.displayName ?? 'Anonymous'}</Link>
             </span>
             <span class='sep'>{`  •  `}</span>
             <span>{ago(post.created)}</span>

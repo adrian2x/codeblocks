@@ -54,3 +54,27 @@ export async function updatePost(id: string, post: Partial<TPost>) {
   let data = await request<TPost>(`/api/posts/${id}`, post)
   return data
 }
+
+export type CustomUser = {
+  id: string
+  photoUrl: string
+  displayName: string
+  displayHandle: string
+}
+
+export type GetUserResponse = {
+  user: CustomUser
+  posts: TPost[]
+}
+
+export function getUser(user_id: string) {
+  return request<GetUserResponse>(`/api/users/${user_id}`)
+}
+
+export function createUser(user: any) {
+  return request(`/api/users/`, user)
+}
+
+export function updateUser(user: any) {
+  return request(`/api/users/${user.uid}`, user)
+}
