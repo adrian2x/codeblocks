@@ -30,11 +30,11 @@ export function ReadOnlyPost({ post }: { post: TPost }) {
   let highlightAll = () => hljs.then((hljs) => hljs.highlightAll())
 
   useEffect(() => {
+    autoSize()
     if (post.theme && post.theme != 'Default') {
       updateStyles('Default', post.theme).then(highlightAll)
     }
     highlightAll()
-    autoSize()
   }, [])
 
   return (

@@ -14,6 +14,7 @@ import { Dropdown } from './Dropdown'
 export function CodeEditor({ post }: { post?: TPost }) {
   // import highlightjs module
   let hljs = import('highlight.js/es/common').then((module) => module.default)
+  let highlightAll = () => hljs.then((hljs) => hljs.highlightAll())
 
   // Get editor preferences
   const [editorState, updateEditorState] = useStore('editorState', {
@@ -49,26 +50,22 @@ export function CodeEditor({ post }: { post?: TPost }) {
   console.log('editor render', currentUser)
 
   useEffect(() => {
+    autoSize()
     // Load theme preferences
     if (editorState.theme !== 'Default') {
       updateStyles('Default', editorState.theme)
     }
-    hljs.then((hljs) => {
-      hljs.highlightAll()
-    })
+    highlightAll()
   }, [])
 
   useEffect(() => {
     // Update highlighted when code changes
-    hljs.then((hljs) => {
-      hljs.highlightAll()
+    highlightAll().then(() => {
       if (postState.code) {
         // Get the code language detected by Highlightjs
         let matchLanguage = document.getElementById('code')!.className.match(/language-(.+)$/)
         let language = matchLanguage?.[1].toLowerCase()
         if (language !== 'undefined') setPost({ language })
-        // Auto size the code window
-        autoSize()
       } else {
         setPost({ language: '' })
       }
@@ -180,7 +177,7 @@ export function CodeEditor({ post }: { post?: TPost }) {
               <option value='sql'>SQL</option>
               <option value='c'>C</option>
               <option value='cpp'>C++</option>
-              <option value='cs'>C#</option>
+              <option value='csharp'>C#</option>
               <option value='objectivec'>Objective-C</option>
               <option value='plaintext'>Plain text</option>
               <option value='ruby'>Ruby</option>
@@ -373,10 +370,12 @@ export function updateStyles(theme: string, nextTheme: string) {
   document
     .querySelectorAll(`link[href*="highlight.js/"]`)
     .forEach((link) => link.setAttribute('disabled', 'disabled'))
-  let link = document.querySelector(`link[title="${nextTheme}"]`) as HTMLLinkElement
-  let content = import(link.href)
-  link.removeAttribute('disabled')
-  return content
+  return new Promise((resolve, reject) => {
+    let link = document.querySelector(`link[title="${nextTheme}"]`) as HTMLLinkElement
+    link.onload = resolve
+    link.onerror = reject
+    link.removeAttribute('disabled')
+  })
 }
 
 /** Returns a tuple with the background gradient and color stops */
@@ -401,6 +400,7 @@ function createHex() {
 }
 
 export function autoSize() {
+  console.log('autosizing')
   let code = document.getElementById('code')!
   code.style.width = '0'
   code.style.width = code.scrollWidth + 'px'
@@ -408,7 +408,9 @@ export function autoSize() {
   if (code.style.width == '0px') code.style.width = 'auto'
   codeWindow.style.width = '0'
   codeWindow.style.width = code.scrollWidth + 36 + 'px'
-  if (codeWindow.style.width == '36px') codeWindow.style.width = 'auto'
+  if (parseInt(codeWindow.style.width) < 170) {
+    codeWindow.style.minWidth = '16ch'
+  }
 }
 
 /**
