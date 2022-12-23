@@ -9,10 +9,11 @@ users_blueprint = Blueprint("users", __name__)
 
 def generate_username(email: str = None):
     "Create a username from the email"
+    denumerator = str(random.randrange(1000))
     try:
-        username = email.split("@")[0] + str(random.randrange(1000))
+        username = email.split("@")[0] + denumerator
     except:
-        username = get_random_username() + str(random.randrange(1000))
+        username = get_random_username() + denumerator
     return username
 
 
