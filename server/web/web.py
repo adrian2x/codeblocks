@@ -19,6 +19,24 @@ def get_post(post_id=None):
     return render_template("post.html", post=data)
 
 
+@web_blueprint.route("/@/<uid_or_username>")
+def get_profile(uid_or_username=""):
+    "Renders the profile html page"
+    user = db.collection("users").document(uid_or_username).get()
+
+    if not user.exists:
+        # Find by handle instead
+        query = (
+            db.collection("users")
+            .where("displayHandle", "==", uid_or_username.lower())
+            .limit(1)
+            .stream()
+        )
+        user = next(query)
+
+    return render_template("profile.html", user=user.to_dict())
+
+
 @web_blueprint.route("/")
 @web_blueprint.route("/post")
 @web_blueprint.route("/posts/<path>")

@@ -23,7 +23,7 @@ def create_user():
     doc_ref = db.collection("users").document(data.get("id"))
     snapshot = doc_ref.get()
 
-    if not snapshot.exists or data.get("displayHandle") is None:
+    if not snapshot.exists or snapshot.get("displayHandle") is None:
         # generate new username
         username = generate_username(data.get("email"))
         data.update({"displayHandle": username})

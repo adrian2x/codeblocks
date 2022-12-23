@@ -11,7 +11,7 @@
     <meta property="og:description" content="{{user.about}}" />
     <meta
       property="og:image"
-      content="https://firebasestorage.googleapis.com/v0/b/codeblocks-991a2.appspot.com/o/{{user.id}}?alt=media" />
+      content="{{user.photoUrl}}" />
     <meta property="og:image:alt" content="{{user.displayName}}" />
 
     <meta name="twitter:card" content="summary_large_image" />
@@ -20,7 +20,7 @@
     <meta name="twitter:description" content="{{user.about}}" />
     <meta
       name="twitter:image"
-      content="https://firebasestorage.googleapis.com/v0/b/codeblocks-991a2.appspot.com/o/{{user.id}}?alt=media" />
+      content="{{user.photoUrl}}" />
     <meta property="twitter:image:alt" content="{{user.displayName}}" />
 
     <link rel="stylesheet" href="src/index.scss" />
@@ -122,7 +122,7 @@
         <div class="user-avatar">
           <itemscope itemtype="http://schema.org/CreativeWork">
           <div class="avatar-container">
-              <img class="avatar" itemprop="image" src="https://firebasestorage.googleapis.com/v0/b/codeblocks-991a2.appspot.com/o/{{user.id}}?alt=media" alt="{{user.displayName}}" />
+              <img class="avatar" itemprop="image" src="{{user.photoUrl}}" alt="{{user.displayName}}" />
           </div>
           <h1 class="title" itemprop="name">{{user.displayName}}</h1>
           <h2 itemprop="headline">{{user.displayName}}</h2>
