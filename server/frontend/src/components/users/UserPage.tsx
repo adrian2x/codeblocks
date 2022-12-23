@@ -1,6 +1,6 @@
 import { getUser, GetUserResponse, updateUser } from '../../common/requests'
 import { useLoaderData, Params } from 'react-router-dom'
-import { useState } from 'preact/hooks'
+import { useCallback, useId, useRef, useState } from 'preact/hooks'
 import { PostsList } from '../posts/PostList'
 import { generateGradient, uploadImage } from '../posts/CodeEditor'
 import toast from 'react-hot-toast'
@@ -22,14 +22,17 @@ export function UserPage() {
   const [userState, setUserState] = useState(user)
   const [background, setBackground] = useState([user.backgroundColor] ?? generateGradient())
 
-  const setUser = (data: Object) => {
-    setUserState({ ...userState, ...data })
-    return toast.promise(updateUser(currentUser.value!.uid, data), {
-      loading: 'Saving...',
-      success: 'Success!',
-      error: 'There was an error.'
-    })
-  }
+  const setUser = useCallback(
+    (data: Object) => {
+      setUserState({ ...userState, ...data })
+      return toast.promise(updateUser(userState.id, data), {
+        loading: 'Saving...',
+        success: 'Success!',
+        error: 'There was an error.'
+      })
+    },
+    [userState]
+  )
 
   return (
     <div className='user-page' data-active={allowEditing}>
@@ -48,39 +51,15 @@ export function UserPage() {
             }
           }}></div>
         <div className='user-avatar'>
-          <div class='avatar-container'>
-            <img
-              key={userState.photoUrl}
-              class='avatar drop-shadow-4'
-              src={userState.photoUrl ?? `https://www.gravatar.com/avatar/?d=mp&s=48`}
-              alt={userState.displayName ?? ''}
-              referrerpolicy='no-referrer'
-            />
-            {allowEditing && (
-              <>
-                <input
-                  id='avatar-upload'
-                  type='file'
-                  hidden
-                  onChange={async (e) => {
-                    let fileName = currentUser.value!.uid
-                    if (e.currentTarget.files) {
-                      let url = await handleFileUpload(fileName, e.currentTarget.files[0])
-                      setUser({ photoUrl: url })
-                      updateCurrentUser({ photoURL: url })
-                    }
-                  }}
-                />
-                <div
-                  className='btn-upload'
-                  onClick={(e) => {
-                    document.getElementById('avatar-upload')?.click()
-                  }}>
-                  ⬆️
-                </div>
-              </>
-            )}
-          </div>
+          <PhotoUploader
+            value={userState.photoUrl}
+            altText={userState.displayName ?? ''}
+            allowEditing
+            onUpdate={(url) => {
+              setUser({ photoUrl: url })
+              updateCurrentUser({ photoURL: url })
+            }}
+          />
           <h1
             key={userState.displayName}
             className='title'
@@ -127,7 +106,7 @@ export function UserPage() {
 }
 
 async function handleFileUpload(fileName: string, file: File) {
-  return new Promise((resolve, reject) => {
+  return new Promise<string>((resolve, reject) => {
     let reader = new FileReader()
     reader.onload = async () => {
       let data = reader.result!
@@ -139,4 +118,47 @@ async function handleFileUpload(fileName: string, file: File) {
     reader.onerror = reject
     reader.readAsArrayBuffer(file)
   })
+}
+
+export function PhotoUploader({
+  value,
+  altText,
+  allowEditing,
+  onUpdate
+}: {
+  value: string
+  altText?: string
+  allowEditing?: boolean
+  onUpdate?: (data: string) => any
+}) {
+  let ref = useRef<HTMLInputElement>(null)
+  return (
+    <div class='avatar-container'>
+      <img
+        class='avatar drop-shadow-4'
+        src={value ?? `https://www.gravatar.com/avatar/?d=mp&s=48`}
+        alt={altText ?? ''}
+        referrerpolicy='no-referrer'
+      />
+      {allowEditing && (
+        <>
+          <input
+            ref={ref}
+            type='file'
+            hidden
+            onChange={async (e) => {
+              let fileName = currentUser.value!.uid
+              if (e.currentTarget.files) {
+                let url = await handleFileUpload(fileName, e.currentTarget.files[0])
+                onUpdate?.(url)
+              }
+            }}
+          />
+          <div className='btn-upload' onClick={(e) => ref.current?.click()}>
+            ⬆️
+          </div>
+        </>
+      )}
+    </div>
+  )
 }
