@@ -28,7 +28,7 @@ export interface TPost {
   user: {
     uid: string
     displayName: string
-    handleName: string
+    displayHandle: string
     photoUrl: string | null
   }
 }

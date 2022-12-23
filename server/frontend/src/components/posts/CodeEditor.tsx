@@ -1,13 +1,13 @@
 // @ts-expect-error
 import domtoimage from 'dom-to-image-more'
 import escape from 'escape-html'
-import { User } from 'firebase/auth'
 import { getStorage, ref, uploadBytes } from 'firebase/storage'
 import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { createPost, TPost, updatePost } from '../../common/requests'
 import { useStore } from '../../hooks/useStore'
 import { currentUser as userSignal } from '../../stores/uiState'
+import { FirebaseUser } from '../../types'
 import { Dropdown } from '../Dropdown'
 import './code-editor.scss'
 
@@ -351,9 +351,9 @@ export function CodeEditor({ post }: { post?: TPost }) {
                   className='secondary text-shadow'
                   contentEditable
                   onBlur={(e) => {
-                    setEditor({ handleName: e.currentTarget.textContent })
+                    setEditor({ displayHandle: e.currentTarget.textContent })
                   }}>
-                  {editorState.handleName ?? post?.user.handleName ?? 'your@email.com'}
+                  {editorState.displayHandle ?? post?.user.displayHandle ?? 'your@email.com'}
                 </small>
               </div>
             </div>
@@ -429,7 +429,7 @@ async function getScreenshot(download = false, fileName = 'codeblocks.png') {
 
 async function onSubmit(
   postId: string | undefined,
-  currentUser: User | null,
+  currentUser: FirebaseUser,
   postState: Partial<TPost>,
   editorState: any
 ) {
@@ -444,7 +444,7 @@ async function onSubmit(
           uid: currentUser.uid,
           photoUrl: currentUser.photoURL,
           displayName: editorState.displayName,
-          handleName: editorState.handleName
+          displayHandle: editorState.displayHandle
         }
       }))
 

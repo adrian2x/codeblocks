@@ -1,10 +1,9 @@
 import { signal } from '@preact/signals'
-import { User } from 'firebase/auth'
 import { firebase } from '../common/firebase'
 
 const getUser = () => {
   let saved = localStorage.getItem('user')
-  if (saved != null && saved != 'null') return JSON.parse(saved) as User
+  if (saved != null && saved != 'null') return JSON.parse(saved) as firebase.User
   return firebase.auth().currentUser
 }
 
