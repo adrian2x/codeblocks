@@ -22,11 +22,12 @@ def create_user():
     "Create a user"
     data = request.get_json()
     doc_ref = db.collection("users").document(data.get("id"))
+    snapshot = doc_ref.get()
 
-    if not doc_ref.get().exists:
-        # DONE: generate new username
+    if not snapshot.exists or data.get("displayHandle") is None:
+        # generate new username
         username = generate_username(data.get("email"))
-        data.update("displayHandle", username)  # set this to the username
+        data.update({"displayHandle": username})
 
     doc_ref.update(data)
     doc = doc_ref.get().to_dict()
