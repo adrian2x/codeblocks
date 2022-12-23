@@ -25,7 +25,9 @@ firebase.auth().onAuthStateChanged((signedInUser) => {
       photoURL: signedInUser.photoURL,
       displayName: signedInUser.displayName,
       email: signedInUser.email,
-      created: new Date(signedInUser.metadata.creationTime!).getTime(),
+      created: signedInUser.metadata.creationTime
+        ? new Date(signedInUser.metadata.creationTime).getTime()
+        : undefined,
       lastSeen: new Date().getTime()
     })
     // Generate a new auth token for requests
