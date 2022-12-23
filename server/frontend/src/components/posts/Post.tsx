@@ -1,9 +1,12 @@
 import escape from 'escape-html'
+// @ts-expect-error
+import { ago } from 'time-ago'
 import { useEffect, useState } from 'preact/hooks'
 import { useLoaderData } from 'react-router-dom'
 import { getPost, TPost } from '../../common/requests'
 import { user } from '../../stores/uiState'
-import { CodeEditor, generateGradient, updateStyles } from '../CodeEditor'
+import { autoSize, CodeEditor, generateGradient, updateStyles } from '../CodeEditor'
+import './post.scss'
 
 export async function postLoader({ params }: any) {
   if (params.post_id) {
@@ -24,10 +27,14 @@ export function Post() {
 export function ReadOnlyPost({ post }: { post: TPost }) {
   const [background, setBackground] = useState(generateGradient())
   let hljs = import('highlight.js/es/common').then((module) => module.default)
+  let highlightAll = () => hljs.then((hljs) => hljs.highlightAll())
 
   useEffect(() => {
-    if (post.theme) updateStyles('Default', post.theme)
-    hljs.then((hljs) => hljs.highlightAll())
+    if (post.theme && post.theme != 'Default') {
+      updateStyles('Default', post.theme).then(highlightAll)
+    }
+    highlightAll()
+    autoSize()
   }, [])
 
   return (
@@ -35,6 +42,13 @@ export function ReadOnlyPost({ post }: { post: TPost }) {
       <div class='post-header'>
         <div>
           <h4 class='title m0'>{post.title}</h4>
+          <div class='byline'>
+            <span>
+              <a href={`/@${post.user.uid}`}>{post.user.displayName ?? 'Anonymous'}</a>
+            </span>
+            <span class='sep'>{`  •  `}</span>
+            <span>{ago(post.created)}</span>
+          </div>
         </div>
 
         <p>{post.description}</p>
@@ -45,10 +59,24 @@ export function ReadOnlyPost({ post }: { post: TPost }) {
           </div>
 
           <div id='code-window' class='code-window hljs'>
-            <div className='flex buttons'>
-              <div className='btn-1'></div>
-              <div className='btn-2'></div>
-              <div className='btn-3'></div>
+            <div className='window-title'>
+              <div className='buttons flex'>
+                <div className='btn-1'></div>
+                <div className='btn-2'></div>
+                <div className='btn-3'></div>
+              </div>
+              <div>
+                <button
+                  className='outline dark'
+                  onClick={(e) => {
+                    let target = e.currentTarget
+                    copyToClipboard(post.code).then(() => {
+                      target.innerText = 'Copied'
+                    })
+                  }}>
+                  Copy
+                </button>
+              </div>
             </div>
 
             <div className='code-wrapper'>
@@ -63,23 +91,43 @@ export function ReadOnlyPost({ post }: { post: TPost }) {
           </div>
 
           <div className='credits flex justify-between'>
-            <div className='flex items-center'>
-              {post.user.photoUrl && (
-                <img
-                  class='avatar drop-shadow-4'
-                  src={post.user.photoUrl}
-                  alt={post.user.displayName ?? ''}
-                  referrerpolicy='no-referrer'
-                />
-              )}
-              <div class='text-white'>
-                <div className='author text-shadow'>{post.user.displayName}</div>
-                <small className='secondary text-shadow'>{post.user.handleName}</small>
-              </div>
-            </div>
+            <Avatar
+              photoUrl={post.user.photoUrl}
+              handleName={post.user.handleName}
+              displayName={post.user.displayName}
+            />
           </div>
         </div>
       </div>
     </div>
   )
+}
+
+export function Avatar({
+  photoUrl,
+  handleName,
+  displayName
+}: {
+  photoUrl?: string | null
+  handleName: string
+  displayName?: string
+}) {
+  return (
+    <div className='flex items-center'>
+      <img
+        class='avatar drop-shadow-4'
+        src={photoUrl ?? `https://www.gravatar.com/avatar/?d=mp&s=48`}
+        alt={handleName ?? ''}
+        referrerpolicy='no-referrer'
+      />
+      <div>
+        {displayName && <div className='author text-shadow'>{displayName}</div>}
+        <small className='secondary text-shadow'>{handleName}</small>
+      </div>
+    </div>
+  )
+}
+
+function copyToClipboard(text: string) {
+  return navigator.clipboard.writeText(text)
 }

@@ -23,7 +23,8 @@ export function PostsList() {
                   style={{
                     background: `url(${previewUrl}) 50% 0 no-repeat`,
                     backgroundSize: 'cover'
-                  }}></div>
+                  }}
+                  title={`${p.description}`}></div>
                 {/* <picture>
                   <source srcSet={previewUrl} type='image/png' />
                   <img src={previewUrl} alt='' loading='lazy' />

@@ -19,7 +19,8 @@
     "preact": "^10.11.3",
     "preact-hooks": "^0.0.0",
     "react-hot-toast": "^2.4.0",
-    "react-router-dom": "^6.6.0"
+    "react-router-dom": "^6.6.0",
+    "time-ago": "^0.2.1"
   },
   "devDependencies": {
     "@preact/preset-vite": "^2.4.0",
