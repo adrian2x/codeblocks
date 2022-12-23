@@ -5,9 +5,9 @@ import { PostsList } from '../posts/PostList'
 import { generateGradient, uploadImage } from '../posts/CodeEditor'
 import toast from 'react-hot-toast'
 import { currentUser } from '../../stores/uiState'
-
-import './users-page.scss'
 import { updateCurrentUser } from '../../common/firebase'
+
+import './user-page.scss'
 
 export async function userPostsLoader({ params }: { params: Params }) {
   if (params.user_id) {
@@ -54,7 +54,7 @@ export function UserPage() {
           <PhotoUploader
             value={userState.photoUrl}
             altText={userState.displayName ?? ''}
-            allowEditing
+            allowEditing={allowEditing}
             onUpdate={(url) => {
               setUser({ photoUrl: url })
               updateCurrentUser({ photoURL: url })

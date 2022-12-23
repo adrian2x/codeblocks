@@ -34,6 +34,25 @@
     }
   }
 
+  .avatar-container {
+    position: relative;
+
+    .btn-upload {
+      background-color: rgba(0, 0, 0, 0.8);
+      border-radius: 50%;
+      border-color: var(--color-primary);
+      font-size: 2rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      position: absolute;
+      transition: 0.2s ease;
+      top: 0;
+      z-index: 1;
+    }
+  }
+
   // editor states
   &[data-active='true'] {
     .banner {
@@ -45,35 +64,17 @@
       }
     }
 
-    .avatar,
-    .title {
-      cursor: pointer;
-    }
-
-    .btn-upload {
-      background-color: rgba(0, 0, 0, 0.8);
-      border-radius: 50%;
-      border-color: var(--color-primary);
-      cursor: pointer;
-      position: absolute;
-      top: 0;
-      opacity: 0;
-      z-index: 1;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 2rem;
-      transition: 0.2s ease;
-    }
-
     .avatar-container {
-      position: relative;
-
       &:hover {
         .btn-upload {
           opacity: 1;
         }
       }
+    }
+
+    .avatar,
+    .title {
+      cursor: pointer;
     }
   }
 }
