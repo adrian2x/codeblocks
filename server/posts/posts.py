@@ -19,11 +19,21 @@ def read_posts_uid():
     "Retrieve all posts created by a user id"
     posts = db.collection("posts")
 
+    post_id = request.args.get("id")
     uid = request.args.get("uid")
     if uid:
         posts = posts.where("user.uid", "==", uid)
 
-    posts = posts.order_by("created", direction=firestore.Query.DESCENDING).stream()
+    if post_id:
+        pagination_doc = db.collection("posts").document(post_id).get()
+        posts = (
+            posts.order_by("created", direction=firestore.Query.DESCENDING)
+            .start_after(pagination_doc)
+            .limit(10)
+            .stream()
+        )
+    else:
+        posts = posts.order_by("created", direction=firestore.Query.DESCENDING).stream()
     list_of_posts = [post.to_dict() for post in posts]
 
     return jsonify(list_of_posts)
