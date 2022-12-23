@@ -9,9 +9,16 @@ users_blueprint = Blueprint("users", __name__)
 def create_user():
     "Create a user"
     data = request.get_json()
-    doc = db.collection("users").document()
-    doc.set(data)
-    return jsonify(doc.get().to_dict())
+    doc_ref = db.collection("users").document(data.get("id"))
+
+    if not doc_ref.get().exists:
+        # TODO: generate new username
+        data.update("displayHandle", "")  # set this to the username
+
+    doc_ref.update(data)
+    doc = doc_ref.get().to_dict()
+    # return the updated document
+    return jsonify(doc)
 
 
 @users_blueprint.route("/<uid>", methods=["GET"])
