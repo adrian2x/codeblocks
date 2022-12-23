@@ -7,6 +7,15 @@ from pyug import get_random_username
 users_blueprint = Blueprint("users", __name__)
 
 
+def generate_username(email: str = None):
+    "Create a username from the email"
+    try:
+        username = email.split("@")[0] + str(random.randrange(1000))
+    except:
+        username = get_random_username() + str(random.randrange(1000))
+    return username
+
+
 @users_blueprint.route("/", methods=["POST"])
 def create_user():
     "Create a user"
@@ -15,13 +24,7 @@ def create_user():
 
     if not doc_ref.get().exists:
         # DONE: generate new username
-        try:
-            email = data.get("email")
-            print(email)
-            username = email.split("@")[0]
-        except:
-            username = get_random_username() + str(random.randrange(1000))
-            print(username)
+        username = generate_username(data.get("email"))
         data.update("displayHandle", username)  # set this to the username
 
     doc_ref.update(data)
