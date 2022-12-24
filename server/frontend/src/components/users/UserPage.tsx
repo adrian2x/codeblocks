@@ -94,6 +94,17 @@ export function UserPage() {
             </span>
             <span class='sep'>{`  •  `}</span>
           </div>
+          {(userProfile.about || allowEditing) && (
+            <Editable
+              className='bio text-center'
+              readOnly={!allowEditing}
+              defaultValue={userProfile.about}
+              placeholder='About me...'
+              onChange={(about) => {
+                setUser({ about })
+              }}
+            />
+          )}
         </div>
       </header>
       <div className='container'>
@@ -101,6 +112,48 @@ export function UserPage() {
           <PostsList posts={posts} />
         </div>
       </div>
+    </div>
+  )
+}
+
+export function Editable({
+  className,
+  readOnly,
+  defaultValue,
+  placeholder,
+  onChange
+}: {
+  className?: string
+  readOnly?: boolean
+  defaultValue?: string
+  placeholder?: string
+  onChange?: (value: string) => any
+}) {
+  return (
+    <div
+      className={className}
+      contentEditable={!readOnly}
+      onInput={(e) => {
+        // Trim content if it becomes too long
+        let value = e.currentTarget.innerText
+        if (value.trim().length >= 100) {
+          value = value.trim().substring(0, 100)
+          e.currentTarget.innerText = value
+        }
+      }}
+      onKeyPress={(e) => {
+        // Enforce max length
+        let value = e.currentTarget.innerText
+        if (value.trim().length >= 100) {
+          e.preventDefault()
+          return false
+        }
+      }}
+      onBlur={(e) => {
+        let value = e.currentTarget.innerText.trim()
+        if (value !== defaultValue) onChange?.(value)
+      }}>
+      {defaultValue ?? placeholder ?? ''}
     </div>
   )
 }
