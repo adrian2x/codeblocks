@@ -28,7 +28,7 @@ def create_user():
         username = generate_username(data.get("email"))
         data.update({"displayHandle": username})
 
-    doc_ref.update(data)
+    doc_ref.set(data, merge=True)
     doc = doc_ref.get().to_dict()
     # return the updated document
     return jsonify(doc)
