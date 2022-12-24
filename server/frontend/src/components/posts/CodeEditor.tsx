@@ -298,10 +298,15 @@ export function CodeEditor({ post }: { post?: TPost }) {
           </div>
 
           <div id='code-window' class='code-window hljs'>
-            <div className='flex buttons'>
-              <div className='btn-1'></div>
-              <div className='btn-2'></div>
-              <div className='btn-3'></div>
+            <div className='window-title'>
+              <div className='flex buttons'>
+                <div className='btn-1'></div>
+                <div className='btn-2'></div>
+                <div className='btn-3'></div>
+              </div>
+              <div class='label' contentEditable>
+                Untitled
+              </div>
             </div>
 
             <div className='code-wrapper'>
