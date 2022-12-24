@@ -1,2 +1,1 @@
-cd server/frontend && npm run build && cd ../..
-flask run
+sh build.sh && flask run
