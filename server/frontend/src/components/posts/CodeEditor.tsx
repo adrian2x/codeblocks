@@ -2,13 +2,15 @@
 import domtoimage from 'dom-to-image-more'
 import escape from 'escape-html'
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
-import { createPost, TPost, updatePost } from '../../common/requests'
+import { createPost, deletePost, TPost, updatePost } from '../../common/requests'
 import { useStore } from '../../hooks/useStore'
 import { currentUser as userSignal } from '../../stores/uiState'
 import { FirebaseUser } from '../../types'
 import { Dropdown } from '../Dropdown'
 import { PhotoUploader, uploadImage } from '../users/PhotoUploader'
+import { FaTrash } from 'react-icons/fa'
 import './code-editor.scss'
 
 export function CodeEditor({ post }: { post?: TPost }) {
@@ -86,6 +88,24 @@ export function CodeEditor({ post }: { post?: TPost }) {
         loading: 'Saving...',
         success: 'Your post was saved!',
         error: 'There was an error'
+      })
+      .finally(() => {
+        setSaving(false)
+      })
+  }
+
+  const navigate = useNavigate()
+
+  function handleDelete(e: any) {
+    setSaving(true)
+    toast
+      .promise(deletePost(post!.id), {
+        loading: 'Deleting...',
+        success: 'Your post was deleted.',
+        error: 'There was an error'
+      })
+      .then(() => {
+        navigate('/')
       })
       .finally(() => {
         setSaving(false)
@@ -276,6 +296,20 @@ export function CodeEditor({ post }: { post?: TPost }) {
           </div>
 
           <div class='flex items-baseline ml-auto'>
+            {post?.id && (
+              <button
+                className='outline'
+                disabled={isSaving}
+                title='Delete'
+                onClick={() => {
+                  if (window.confirm('Do you really want to delete this post?')) {
+                    handleDelete(post!.id)
+                  }
+                }}>
+                &nbsp; <FaTrash />
+              </button>
+            )}
+
             <button class='outline' onClick={() => getScreenshot(true)}>
               Export
             </button>

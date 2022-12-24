@@ -1,7 +1,7 @@
 export function request<TResponse = {}>(
   endpoint: string,
   body: any = undefined,
-  customConfig: any = {}
+  customConfig: RequestInit = {}
 ) {
   const config: any = {
     method: body ? 'POST' : 'GET',
@@ -16,6 +16,17 @@ export function request<TResponse = {}>(
   }
   return window.fetch(endpoint, config).then((response) => response.json() as TResponse)
 }
+
+request.get = <T>(url: string) => request<T>(url)
+
+request.post = <T>(url: string, body: any, customConfig: RequestInit = {}) =>
+  request<T>(url, body, customConfig)
+
+request.delete = <T>(url: string, body = undefined, customConfig: RequestInit = {}) =>
+  request<T>(url, body, {
+    method: 'DELETE',
+    ...customConfig
+  })
 
 export interface TPost {
   id: string
@@ -61,6 +72,7 @@ export type CustomUser = {
   displayName: string
   displayHandle: string
   backgroundColor?: string
+  about?: string
 }
 
 export type GetUserResponse = {
@@ -78,4 +90,12 @@ export function createUser(user: any) {
 
 export function updateUser(userId: string, user: any) {
   return request(`/api/users/${userId}`, user)
+}
+
+export function deletePost(id: string) {
+  return request.delete<TPost>(`/api/posts/${id}`)
+}
+
+export function deleteUser(id: string) {
+  return request.delete<TPost>(`/api/users/${id}`)
 }
