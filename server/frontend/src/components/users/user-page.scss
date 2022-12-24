@@ -30,26 +30,11 @@
     .title {
       font-size: 2rem;
       font-weight: bold;
-      margin: 1rem 0 0.25rem;
+      margin: 0.5rem 0 0;
     }
-  }
 
-  .avatar-container {
-    position: relative;
-
-    .btn-upload {
-      background-color: rgba(0, 0, 0, 0.8);
-      border-radius: 50%;
-      border-color: var(--color-primary);
-      font-size: 2rem;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      opacity: 0;
-      position: absolute;
-      transition: 0.2s ease;
-      top: 0;
-      z-index: 1;
+    .details {
+      margin: 0.25rem 0;
     }
   }
 
@@ -64,18 +49,8 @@
       }
     }
 
-    .avatar-container {
-      &:hover {
-        .btn-upload {
-          opacity: 1;
-          cursor: pointer;
-        }
-      }
-    }
-
-    .avatar,
-    .title {
-      cursor: pointer;
+    .danger {
+      margin-top: 40px;
     }
   }
 }

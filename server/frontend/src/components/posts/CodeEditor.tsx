@@ -1,7 +1,6 @@
 // @ts-expect-error
 import domtoimage from 'dom-to-image-more'
 import escape from 'escape-html'
-import { getStorage, ref, uploadBytes } from 'firebase/storage'
 import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { createPost, TPost, updatePost } from '../../common/requests'
@@ -9,6 +8,7 @@ import { useStore } from '../../hooks/useStore'
 import { currentUser as userSignal } from '../../stores/uiState'
 import { FirebaseUser } from '../../types'
 import { Dropdown } from '../Dropdown'
+import { PhotoUploader, uploadImage } from '../users/PhotoUploader'
 import './code-editor.scss'
 
 export function CodeEditor({ post }: { post?: TPost }) {
@@ -329,11 +329,14 @@ export function CodeEditor({ post }: { post?: TPost }) {
           <div className='credits flex justify-between'>
             <div className='flex items-center' hidden={!editorState.watermark}>
               {currentUser && editorState.watermark === 'avatar' && (
-                <img
-                  class='avatar drop-shadow-4'
-                  src={post?.user.photoUrl ?? currentUser?.photoURL ?? ''}
-                  alt={currentUser?.displayName ?? ''}
-                  referrerpolicy='no-referrer'
+                <PhotoUploader
+                  fileName={currentUser.uid}
+                  value={editorState.photoUrl ?? post?.user.photoUrl ?? currentUser?.photoURL}
+                  altText={editorState?.displayName ?? currentUser.displayName}
+                  allowEditing
+                  onUpdate={(url) => {
+                    setEditor({ photoUrl: url })
+                  }}
                 />
               )}
               <div class='text-white'>
@@ -457,11 +460,4 @@ async function onSubmit(
   })
 
   return response
-}
-
-export async function uploadImage(name: string, blob: Blob | ArrayBuffer | Uint8Array) {
-  const storage = getStorage()
-  const fileRef = ref(storage, name)
-  let result = await uploadBytes(fileRef, blob)
-  return result
 }
