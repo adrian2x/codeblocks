@@ -56,7 +56,6 @@ def update_user(uid):
 @users_blueprint.route("/<uid>", methods=["DELETE"])
 def delete_user(uid):
     "Delete user by user id"
-    data = request.get_json()
     doc = db.collection("users").document(uid)
     doc.delete()
-    return jsonify(data)
+    return jsonify({"message": "User deleted successfully."})

@@ -63,7 +63,6 @@ def update_post(post_id):
 @posts_blueprint.route("/<post_id>", methods=["DELETE"])
 def delete_post(post_id):
     "Delete post by post id"
-    data = request.get_json()
     doc = db.collection("posts").document(post_id)
     doc.delete()
-    return jsonify(data)
+    return jsonify({"message": "Post deleted successfully."})
