@@ -42,7 +42,7 @@ export function ReadOnlyPost({ post }: { post: TPost }) {
     <div class='post-form'>
       <div class='post-header'>
         <div>
-          <h4 class='title m0'>{post.title}</h4>
+          <h4 class='title m0'>{post.title || 'Untitled'}</h4>
           <div class='details'>
             <span>
               <Link to={`/@/${post.user.uid}`}>{post.user.displayName ?? 'Anonymous'}</Link>
@@ -115,12 +115,14 @@ export function Avatar({
 }) {
   return (
     <div className='flex items-center'>
-      <img
-        class='avatar drop-shadow-4'
-        src={photoUrl ?? `https://www.gravatar.com/avatar/?d=mp&s=48`}
-        alt={displayHandle ?? ''}
-        referrerpolicy='no-referrer'
-      />
+      <div className='avatar-container'>
+        <img
+          class='avatar drop-shadow-4'
+          src={photoUrl ?? `https://www.gravatar.com/avatar/?d=mp&s=48`}
+          alt={displayHandle ?? ''}
+          referrerpolicy='no-referrer'
+        />
+      </div>
       <div>
         {displayName && <div className='author text-shadow'>{displayName}</div>}
         <small className='secondary text-shadow'>{displayHandle}</small>

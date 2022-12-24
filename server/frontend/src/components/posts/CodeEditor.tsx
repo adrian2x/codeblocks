@@ -313,7 +313,10 @@ export function CodeEditor({ post }: { post?: TPost }) {
             <button class='outline' onClick={() => getScreenshot(true)}>
               Export
             </button>
-            <button class='primary outline mr0' disabled={isSaving} onClick={handleSubmit}>
+            <button
+              class='primary outline mr0'
+              disabled={isSaving || !userSignal.value}
+              onClick={handleSubmit}>
               Save
             </button>
           </div>
@@ -485,7 +488,7 @@ async function onSubmit(
         user: {
           uid: currentUser.uid,
           photoUrl: currentUser.photoURL,
-          displayName: editorState.displayName,
+          displayName: editorState.displayName || undefined,
           displayHandle: editorState.displayHandle
         }
       }))

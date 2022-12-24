@@ -51,7 +51,7 @@ export function PostsList({ posts }: { posts: TPost[] }) {
                 </Link>
                 <div class='title'>
                   <h4 class='title'>
-                    <Link to={`/post/${p.id}`}>{p.title}</Link>
+                    <Link to={`/post/${p.id}`}>{p.title || 'Untitled'}</Link>
                   </h4>
                   <Link class='author' to={`/@${uid}`}>
                     {displayName}
