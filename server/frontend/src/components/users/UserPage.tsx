@@ -1,8 +1,8 @@
 import toast from 'react-hot-toast'
 import { useState } from 'preact/hooks'
-import { Params, useLoaderData } from 'react-router-dom'
+import { Params, useLoaderData, useNavigate } from 'react-router-dom'
 import { updateCurrentUser } from '../../common/firebase'
-import { getUser, GetUserResponse, updateUser } from '../../common/requests'
+import { deleteUser, getUser, GetUserResponse, updateUser } from '../../common/requests'
 import { currentUser } from '../../stores/uiState'
 import { generateGradient } from '../posts/CodeEditor'
 import { PostsList } from '../posts/PostList'
@@ -33,8 +33,25 @@ export function UserPage() {
     })
   }
 
+  const [isSaving, setSaving] = useState(false)
+  const navigate = useNavigate()
+
+  async function handleDelete(userId: string) {
+    try {
+      setSaving(true)
+      await toast.promise(deleteUser(userId), {
+        loading: 'Deleting...',
+        success: 'Your account was deleted.',
+        error: 'There was an error'
+      })
+      navigate('/')
+    } finally {
+      setSaving(false)
+    }
+  }
+
   return (
-    <div className='user-page' data-active={allowEditing}>
+    <div className='user-page' data-active={allowEditing && !isSaving}>
       <header>
         <div
           key={background[0]}
@@ -52,7 +69,7 @@ export function UserPage() {
         <div className='user-avatar'>
           <PhotoUploader
             fileName={currentUser.value?.uid ?? ''}
-            value={userProfile.photoUrl}
+            value={userProfile.photoUrl ?? userProfile.photoURL}
             altText={userProfile.displayName ?? ''}
             allowEditing={allowEditing}
             onUpdate={(url) => {
@@ -111,6 +128,19 @@ export function UserPage() {
         <div className='post-list grid grid-cols-3 gap-4'>
           <PostsList posts={posts} />
         </div>
+        {allowEditing && (
+          <div className='danger flex justify-center'>
+            <button
+              className='outline'
+              onClick={(e) => {
+                if (window.confirm('You sure you want to delete your profile and posts?')) {
+                  handleDelete(userProfile.id)
+                }
+              }}>
+              Delete account
+            </button>
+          </div>
+        )}
       </div>
     </div>
   )

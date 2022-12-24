@@ -69,6 +69,7 @@ export async function updatePost(id: string, post: Partial<TPost>) {
 export type CustomUser = {
   id: string
   photoUrl: string
+  photoURL: string
   displayName: string
   displayHandle: string
   backgroundColor?: string
