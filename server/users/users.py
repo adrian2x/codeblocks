@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from server.firebase import db
+from server.firebase import db, delete_firebase_user
 from server.posts.posts import get_by_user_id
 import random
 from pyug import get_random_username
@@ -56,6 +56,5 @@ def update_user(uid):
 @users_blueprint.route("/<uid>", methods=["DELETE"])
 def delete_user(uid):
     "Delete user by user id"
-    doc = db.collection("users").document(uid)
-    doc.delete()
-    return jsonify({"message": "User deleted successfully."})
+    delete_firebase_user(uid)
+    return jsonify(success=True)
