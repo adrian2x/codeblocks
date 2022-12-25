@@ -20,6 +20,8 @@ export function CodeEditor({ post }: { post?: TPost }) {
 
   // Get editor preferences
   const [editorState, updateEditorState] = useStore('editorState', {
+    background: true,
+    showTitle: true,
     theme: post?.theme ?? 'Default',
     watermark: 'avatar'
   })
@@ -29,6 +31,7 @@ export function CodeEditor({ post }: { post?: TPost }) {
   // This is the initial post state
   const [postState, setPostState] = useState(
     post ?? {
+      id: undefined,
       title: '',
       description: '',
       code: '',
@@ -78,20 +81,20 @@ export function CodeEditor({ post }: { post?: TPost }) {
     hljs.then((hljs) => hljs.highlightAll())
   }, [postState.language])
 
-  function handleSubmit(e: any) {
+  async function handleSubmit(e: any) {
     setSaving(true)
     // Let's save some state for later...
-    setEditor({ content: postState.code })
+    let { id, code, title, description } = postState
+    setEditor({ code, title, description })
+    let request = onSubmit(id, currentUser, postState, editorState)
+      .then((value) => value && setPostState(value))
+      .finally(() => setSaving(false))
     // Update the ui to show pending message
-    toast
-      .promise(onSubmit(post?.id, currentUser, postState, editorState), {
-        loading: 'Saving…',
-        success: 'Your post was saved!',
-        error: 'There was an error'
-      })
-      .finally(() => {
-        setSaving(false)
-      })
+    toast.promise(request, {
+      loading: 'Saving…',
+      success: 'Your post was saved!',
+      error: 'There was an error'
+    })
   }
 
   const navigate = useNavigate()
@@ -253,72 +256,68 @@ export function CodeEditor({ post }: { post?: TPost }) {
                     </svg>
                   </button>
                 }>
-                <div class='flex'>
-                  <div className='watermark'>
-                    <label>Watermark</label>
-                    <label>
-                      <input
-                        type='radio'
-                        value='avatar'
-                        radioGroup='watermark'
-                        checked={editorState.watermark === 'avatar'}
-                        onChange={(e) => {
-                          setEditor({ watermark: e.currentTarget.value })
-                        }}
-                      />{' '}
-                      Avatar
-                    </label>
-                    <label>
-                      <input
-                        type='radio'
-                        value='simple'
-                        radioGroup='watermark'
-                        checked={editorState.watermark === 'simple'}
-                        onChange={(e) => {
-                          setEditor({ watermark: e.currentTarget.value })
-                        }}
-                      />{' '}
-                      Simple
-                    </label>
-                    <label>
-                      <input
-                        type='radio'
-                        value=''
-                        radioGroup='watermark'
-                        checked={editorState.watermark === ''}
-                        onChange={(e) => {
-                          setEditor({ watermark: '' })
-                        }}
-                      />{' '}
-                      Hide
-                    </label>
-                  </div>
+                <div className='watermark'>
+                  <label>Watermark</label>
+                  <label>
+                    <input
+                      type='radio'
+                      value='avatar'
+                      radioGroup='watermark'
+                      checked={editorState.watermark === 'avatar'}
+                      onChange={(e) => {
+                        setEditor({ watermark: e.currentTarget.value })
+                      }}
+                    />{' '}
+                    Avatar
+                  </label>
+                  <label>
+                    <input
+                      type='radio'
+                      value='simple'
+                      radioGroup='watermark'
+                      checked={editorState.watermark === 'simple'}
+                      onChange={(e) => {
+                        setEditor({ watermark: e.currentTarget.value })
+                      }}
+                    />{' '}
+                    Simple
+                  </label>
+                  <label>
+                    <input
+                      type='radio'
+                      value=''
+                      radioGroup='watermark'
+                      checked={editorState.watermark === ''}
+                      onChange={(e) => {
+                        setEditor({ watermark: '' })
+                      }}
+                    />{' '}
+                    Hide
+                  </label>
+                </div>
 
-                  <div class='ml4'>
-                    <label>Background</label>
-                    <label>
-                      <input
-                        type='radio'
-                        radioGroup='backgroundColor'
-                        checked={!editorState.background}
-                        onChange={(e) => {
-                          setEditor({ background: '' })
-                        }}
-                      />{' '}
-                      Colored
-                    </label>
-                    <label>
-                      <input
-                        type='radio'
-                        radioGroup='backgroundColor'
-                        checked={editorState.background === 'transparent'}
-                        onChange={(e) => {
-                          setEditor({ background: 'transparent' })
-                        }}
-                      />{' '}
-                      Transparent
-                    </label>
-                  </div>
+                <div>
+                  <label>Background</label>
+                  <label>
+                    <input
+                      type='checkbox'
+                      checked={!editorState.background}
+                      onChange={(e) => {
+                        setEditor({ background: !editorState.background })
+                      }}
+                    />{' '}
+                    Color
+                  </label>
+                  <label>
+                    <input
+                      type='checkbox'
+                      checked={editorState.showTitle}
+                      onChange={(e) => {
+                        setEditor({ showTitle: !editorState.showTitle })
+                      }}
+                    />{' '}
+                    Title
+                  </label>
                 </div>
               </Dropdown>
             </div>
@@ -353,10 +352,13 @@ export function CodeEditor({ post }: { post?: TPost }) {
           </div>
         </div>
 
-        <div id='code-background' style={{ background: editorState.background || background[0] }}>
+        <div
+          id='code-background'
+          style={{ background: (editorState.background && 'transparent') || background[0] }}>
           <div class='flex flex-justify-center'>
             <h5
               className='title'
+              aria-hidden={!editorState.showTitle}
               contentEditable
               onBlur={(e) => {
                 setEditor({ title: e.currentTarget.innerText })

@@ -77,11 +77,15 @@
     input {
       margin-left: 0;
     }
+
+    & > div {
+      margin-right: 2em;
+    }
   }
 }
 
 #code-background {
-  padding: 1rem;
+  padding: 1.5rem 1rem 1rem;
   margin: auto;
   min-width: calc(800px - 2rem);
   position: absolute;
@@ -90,12 +94,19 @@
 
   .title {
     color: white;
-    margin: 1rem auto;
     font-weight: 500;
-    display: inline-block;
-    text-align: center;
+    height: auto;
     letter-spacing: 0.01em;
     line-height: 1;
+    margin: 0 auto 1rem;
+    opacity: 1;
+    text-align: center;
+    transition: 0.1s ease;
+
+    &[aria-hidden='true'] {
+      height: 0;
+      opacity: 0;
+    }
   }
 }
 
@@ -167,7 +178,7 @@
 }
 
 .credits {
-  margin-top: 1.61rem;
+  margin-top: 1.5rem;
   letter-spacing: 0.05em;
   font-size: 16px;
   line-height: 1.2;

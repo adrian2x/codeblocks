@@ -18,7 +18,7 @@ export function PhotoUploader({
   let imageRef = useRef<HTMLImageElement>(null)
 
   return (
-    <div class='avatar-container' data-editor={allowEditing}>
+    <div class='avatar-container' data-editor={allowEditing} title='Change photo'>
       <img
         ref={imageRef}
         class='avatar drop-shadow-4'
