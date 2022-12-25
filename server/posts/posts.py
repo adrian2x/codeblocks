@@ -1,11 +1,11 @@
-from flask import Blueprint, render_template, request, jsonify
-from server.firebase import db, firestore
+from flask import Blueprint, request, jsonify
+from server.firebase import db, get_posts_by_user_id, get_user_by_id_handle
 
 posts_blueprint = Blueprint("posts", __name__)
 
 
 @posts_blueprint.route("/", methods=["POST"])
-def posts():
+def create_post():
     "Create a post"
     data = request.get_json()
     doc = db.collection("posts").document()
@@ -14,32 +14,13 @@ def posts():
     return jsonify(doc.get().to_dict())
 
 
-def get_by_user_id(uid="", cursor="", limit=10):
-    "Retrieve all posts created by a user id"
-    posts = db.collection("posts")
-
-    # Filter by user id
-    if uid:
-        posts = posts.where("user.uid", "==", uid)
-
-    # Sort by created at
-    posts = posts.order_by("created", direction=firestore.Query.DESCENDING)
-
-    # Set the page offset
-    if cursor:
-        pagination_doc = db.collection("posts").document(cursor).get()
-        posts = posts.start_after(pagination_doc)
-
-    posts = posts.limit(limit).stream()
-    return [post.to_dict() for post in posts]
-
-
 @posts_blueprint.route("/", methods=["GET"])
-def read_posts_uid():
+def get_posts():
     "Retrieve all posts created by a user id"
     uid = request.args.get("uid")
     cursor = request.args.get("cursor")
-    results = get_by_user_id(uid, cursor)
+    search = request.args.get("search")
+    results = get_posts_by_user_id(uid, cursor, search)
     return jsonify(results)
 
 

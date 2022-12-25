@@ -1,6 +1,5 @@
 from flask import Blueprint, request, jsonify
-from server.firebase import db, delete_firebase_user
-from server.posts.posts import get_by_user_id
+from server.firebase import db, delete_firebase_user, get_user_by_id_handle, get_posts_by_user_id
 import random
 from pyug import get_random_username
 
@@ -35,11 +34,11 @@ def create_user():
 
 
 @users_blueprint.route("/<uid>", methods=["GET"])
-def read_user(uid):
+def read_user(uid: str):
     "Retrieve user by user id"
-    user = db.collection("users").document(uid).get().to_dict()
-    posts = get_by_user_id(uid)
-    return jsonify({"user": user, "posts": posts})
+    user = get_user_by_id_handle(uid)
+    posts = get_posts_by_user_id(user.id)
+    return jsonify({"user": user.to_dict(), "posts": posts})
 
 
 @users_blueprint.route("/<uid>", methods=["POST"])
