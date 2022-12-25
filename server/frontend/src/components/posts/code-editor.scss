@@ -43,7 +43,7 @@
   display: flex;
   align-items: center;
   justify-content: space-around;
-  margin-bottom: 3px;
+  margin-bottom: 1px;
 
   & > div:not(:last-child) {
     margin-right: 0.5rem;
@@ -74,10 +74,6 @@
       margin-bottom: 0.5rem;
     }
 
-    & > div {
-      margin-right: 1.5rem;
-    }
-
     input {
       margin-left: 0;
     }
@@ -87,7 +83,7 @@
 #code-background {
   padding: 1rem;
   margin: auto;
-  min-width: calc(768px - 2rem);
+  min-width: calc(800px - 2rem);
   position: absolute;
   // left: 50%;
   // transform: translateX(-50%);

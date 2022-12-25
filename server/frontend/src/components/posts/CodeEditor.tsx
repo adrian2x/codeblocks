@@ -85,7 +85,7 @@ export function CodeEditor({ post }: { post?: TPost }) {
     // Update the ui to show pending message
     toast
       .promise(onSubmit(post?.id, currentUser, postState, editorState), {
-        loading: 'Saving...',
+        loading: 'Saving…',
         success: 'Your post was saved!',
         error: 'There was an error'
       })
@@ -100,7 +100,7 @@ export function CodeEditor({ post }: { post?: TPost }) {
     setSaving(true)
     toast
       .promise(deletePost(post!.id), {
-        loading: 'Deleting...',
+        loading: 'Deleting…',
         success: 'Your post was deleted.',
         error: 'There was an error'
       })
@@ -225,7 +225,7 @@ export function CodeEditor({ post }: { post?: TPost }) {
               onClick={() => setBackground(generateGradient())}>
               <div
                 style={{
-                  backgroundColor: background[2],
+                  background: background[0],
                   width: '1.6rem',
                   height: '1.6rem',
                   borderRadius: 4
@@ -236,23 +236,26 @@ export function CodeEditor({ post }: { post?: TPost }) {
               <Dropdown
                 target={
                   <button class='outline'>
-                    More{' '}
+                    More
                     <svg
                       xmlns='http://www.w3.org/2000/svg'
-                      viewBox='0 0 20 20'
-                      fill='currentColor'
                       aria-hidden='true'
-                      class='ml-2 icon'>
+                      class='ml-2 icon'
+                      fill='none'
+                      viewBox='0 0 20 20'>
                       <path
-                        fill-rule='evenodd'
-                        d='M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z'
-                        clip-rule='evenodd'></path>
+                        stroke='currentColor'
+                        stroke-linecap='round'
+                        stroke-linejoin='round'
+                        stroke-width='1.5'
+                        d='M6 8l4 4 4-4'
+                      />
                     </svg>
                   </button>
                 }>
-                <div>
+                <div class='flex'>
                   <div className='watermark'>
-                    <label htmlFor=''>Watermark</label>
+                    <label>Watermark</label>
                     <label>
                       <input
                         type='radio'
@@ -290,6 +293,32 @@ export function CodeEditor({ post }: { post?: TPost }) {
                       Hide
                     </label>
                   </div>
+
+                  <div class='ml4'>
+                    <label>Background</label>
+                    <label>
+                      <input
+                        type='radio'
+                        radioGroup='backgroundColor'
+                        checked={!editorState.background}
+                        onChange={(e) => {
+                          setEditor({ background: '' })
+                        }}
+                      />{' '}
+                      Colored
+                    </label>
+                    <label>
+                      <input
+                        type='radio'
+                        radioGroup='backgroundColor'
+                        checked={editorState.background === 'transparent'}
+                        onChange={(e) => {
+                          setEditor({ background: 'transparent' })
+                        }}
+                      />{' '}
+                      Transparent
+                    </label>
+                  </div>
                 </div>
               </Dropdown>
             </div>
@@ -324,7 +353,7 @@ export function CodeEditor({ post }: { post?: TPost }) {
           </div>
         </div>
 
-        <div id='code-background' style={{ background: background[0] }}>
+        <div id='code-background' style={{ background: editorState.background || background[0] }}>
           <div class='flex flex-justify-center'>
             <h5
               className='title'
