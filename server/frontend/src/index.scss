@@ -18,9 +18,10 @@ html {
 }
 
 .avatar {
-  height: 48px;
   border-radius: 50%;
   box-shadow: inset 0 2px 4px 0 hsla(0, 0%, 0%, 0.2);
+  height: 48px;
+  width: 48px;
 }
 
 .text-white {
@@ -28,7 +29,7 @@ html {
 }
 
 .container {
-  max-width: 768px;
+  max-width: 800px;
 }
 
 .nav .brand {

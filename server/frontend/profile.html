@@ -9,18 +9,14 @@
 
     <meta property="og:title" content="{{user.displayName}}" />
     <meta property="og:description" content="{{user.about}}" />
-    <meta
-      property="og:image"
-      content="{{user.photoUrl}}" />
+    <meta property="og:image" content="{{user.photoUrl}}" />
     <meta property="og:image:alt" content="{{user.displayName}}" />
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:creator" content="{{user.displayHandle}}" />
     <meta name="twitter:title" content="{{user.displayName}}" />
     <meta name="twitter:description" content="{{user.about}}" />
-    <meta
-      name="twitter:image"
-      content="{{user.photoUrl}}" />
+    <meta name="twitter:image" content="{{user.photoUrl}}" />
     <meta property="twitter:image:alt" content="{{user.displayName}}" />
 
     <link rel="stylesheet" href="src/index.scss" />
@@ -119,10 +115,13 @@
         <header>
           <div class="banner"></div>
         </header>
-        <div class="user-avatar">
-          <itemscope itemtype="http://schema.org/CreativeWork">
+        <div class="user-avatar" itemscope itemtype="http://schema.org/CreativeWork">
           <div class="avatar-container">
-              <img class="avatar" itemprop="image" src="{{user.photoUrl}}" alt="{{user.displayName}}" />
+            <img
+              class="avatar"
+              itemprop="image"
+              src="{{user.photoUrl}}"
+              alt="{{user.displayName}}" />
           </div>
           <h1 class="title" itemprop="name">{{user.displayName}}</h1>
           <h2 itemprop="headline">{{user.displayName}}</h2>

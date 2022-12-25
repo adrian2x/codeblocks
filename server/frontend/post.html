@@ -113,15 +113,17 @@
         <div class="nav-end"></div>
       </nav>
       <div class="p4">
-        <main class="container">
-          <itemscope itemtype="http://schema.org/CreativeWork">
-            <h1 itemprop="name">{{post.title}}</h1>
-            <h2 itemprop="headline">{{post.title}}</h2>
-            <h2 itemprop="description">{{post.description}}</h2>
-            <p itemprop="author">{{post.user.displayName}}</p>
-            <p itemprop="creator">{{post.user.displayHandle}}</p>
-            <p itemprop="keywords">{{post.language}}</p>
-            <img itemprop="image" src="https://firebasestorage.googleapis.com/v0/b/codeblocks-991a2.appspot.com/o/{{post.id}}.png?alt=media" alt="{{post.code|safe}}" />
+        <main class="container" itemscope itemtype="http://schema.org/CreativeWork">
+          <h1 itemprop="name">{{post.title}}</h1>
+          <h2 itemprop="headline">{{post.title}}</h2>
+          <h2 itemprop="description">{{post.description}}</h2>
+          <p itemprop="author">{{post.user.displayName}}</p>
+          <p itemprop="creator">{{post.user.displayHandle}}</p>
+          <p itemprop="keywords">{{post.language}}</p>
+          <img
+            itemprop="image"
+            src="https://firebasestorage.googleapis.com/v0/b/codeblocks-991a2.appspot.com/o/{{post.id}}.png?alt=media"
+            alt="{{post.code|safe}}" />
         </main>
       </div>
     </div>

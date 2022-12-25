@@ -27,7 +27,7 @@ export function ProfilePage() {
     setUserProfile({ ...userProfile, ...data })
     toast.dismiss()
     return toast.promise(updateUser(currentUser.value!.uid, data), {
-      loading: 'Saving...',
+      loading: 'Saving…',
       success: 'Success!',
       error: 'There was an error.'
     })
@@ -40,7 +40,7 @@ export function ProfilePage() {
     try {
       setSaving(true)
       await toast.promise(deleteUser(userId), {
-        loading: 'Deleting...',
+        loading: 'Deleting…',
         success: 'Your account was deleted.',
         error: 'There was an error'
       })
@@ -116,7 +116,7 @@ export function ProfilePage() {
               className='bio text-center'
               readOnly={!allowEditing}
               defaultValue={userProfile.about}
-              placeholder='About me...'
+              placeholder='About me…'
               onChange={(about) => {
                 setUser({ about })
               }}
