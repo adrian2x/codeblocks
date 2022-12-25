@@ -8,7 +8,7 @@ import { generateGradient } from '../posts/CodeEditor'
 import { PostsList } from '../posts/PostList'
 import { PhotoUploader } from './PhotoUploader'
 
-import './user-page.scss'
+import './profile-page.scss'
 
 export async function userPostsLoader({ params }: { params: Params }) {
   if (params.user_id) {
@@ -16,7 +16,7 @@ export async function userPostsLoader({ params }: { params: Params }) {
   }
 }
 
-export function UserPage() {
+export function ProfilePage() {
   const { user, posts } = useLoaderData() as GetUserResponse
   const allowEditing = user.id === currentUser.value?.uid
 

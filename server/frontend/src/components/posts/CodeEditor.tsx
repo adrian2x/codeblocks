@@ -306,7 +306,9 @@ export function CodeEditor({ post }: { post?: TPost }) {
                     handleDelete(post!.id)
                   }
                 }}>
-                &nbsp; <FaTrash />
+                &nbsp;
+                <FaTrash />
+                &nbsp;
               </button>
             )}
 

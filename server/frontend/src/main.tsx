@@ -4,7 +4,7 @@ import { App } from './app'
 import ErrorPage from './routes/errorPage'
 import { Post, postLoader } from './components/posts/Post'
 import { PostsContainer, postsLoader } from './components/posts/PostList'
-import { UserPage, userPostsLoader } from './components/users/UserPage'
+import { ProfilePage, userPostsLoader } from './components/users/ProfilePage'
 import './index.scss'
 
 const router = createBrowserRouter([
@@ -29,7 +29,7 @@ const router = createBrowserRouter([
       },
       {
         path: '@/:user_id',
-        element: <UserPage key={Math.random()} />,
+        element: <ProfilePage key={Math.random()} />,
         loader: userPostsLoader
       }
     ]
