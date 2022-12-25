@@ -1,6 +1,6 @@
 import toast from 'react-hot-toast'
 import { useState } from 'preact/hooks'
-import { Params, useLoaderData, useNavigate } from 'react-router-dom'
+import { Link, Params, useLoaderData, useNavigate } from 'react-router-dom'
 import { updateCurrentUser } from '../../common/firebase'
 import { deleteUser, getUser, GetUserResponse, updateUser } from '../../common/requests'
 import { currentUser } from '../../stores/uiState'
@@ -92,14 +92,14 @@ export function ProfilePage() {
           </h1>
           <div className='details'>
             <span>
-              <a
-                href={`/@/${user.id}`}
+              <Link
+                to={`/@/${user.id}`}
                 key={userProfile.displayHandle}
                 contentEditable={allowEditing}
-                onClick={(e) => {
+                onClick={(e: any) => {
                   if (allowEditing) e.preventDefault()
                 }}
-                onBlur={(e) => {
+                onBlur={(e: any) => {
                   let value = e.currentTarget.innerHTML
                   if (value !== userProfile.displayHandle) {
                     setUser({ displayHandle: value })
@@ -107,7 +107,7 @@ export function ProfilePage() {
                   }
                 }}>
                 {userProfile.displayHandle ?? 'Anonymous'}
-              </a>
+              </Link>
             </span>
             <span class='sep'>{`  •  `}</span>
           </div>
