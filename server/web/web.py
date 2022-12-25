@@ -1,5 +1,5 @@
-from flask import Blueprint, render_template, request, jsonify
-from server.firebase import db, firestore
+from flask import Blueprint, render_template
+from server.firebase import db, get_user_by_id_handle
 
 web_blueprint = Blueprint(
     "web",
@@ -19,27 +19,15 @@ def get_post(post_id=None):
     return render_template("post.html", post=data)
 
 
-@web_blueprint.route("/@/<uid_or_username>")
-def get_profile(uid_or_username=""):
+@web_blueprint.route("/@/<user_id>")
+def get_profile(user_id=""):
     "Renders the profile html page"
-    user = db.collection("users").document(uid_or_username).get()
-
-    if not user.exists:
-        # Find by handle instead
-        query = (
-            db.collection("users")
-            .where("displayHandle", "==", uid_or_username.lower())
-            .limit(1)
-            .stream()
-        )
-        user = next(query)
-
+    user = get_user_by_id_handle(user_id)
     return render_template("profile.html", user=user.to_dict())
 
 
 @web_blueprint.route("/")
 @web_blueprint.route("/post")
-@web_blueprint.route("/posts/<path>")
 def catch_all(path=None):
     print("request", path)
     return web_blueprint.send_static_file("index.html")
