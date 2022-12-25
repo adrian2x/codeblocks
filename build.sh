@@ -1,1 +1,3 @@
-cd server/frontend && npm run build && cd ../..
+cd server/frontend
+npm install && npm run build
+cd ../..
