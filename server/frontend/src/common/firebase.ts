@@ -1,7 +1,9 @@
 import firebase from 'firebase/compat/app'
 import 'firebase/compat/auth'
+import { currentUser } from '../stores/uiState'
+import { createUser } from './requests'
 
-const app = firebase.initializeApp({
+firebase.initializeApp({
   apiKey: 'AIzaSyCiG1NWj4_fIo8B22HW2IGc-9BjJFgb6bU',
   authDomain: 'codeblocks-991a2.firebaseapp.com',
   projectId: 'codeblocks-991a2',
@@ -11,23 +13,54 @@ const app = firebase.initializeApp({
   measurementId: 'G-S9928XTV4P'
 })
 
-export { firebase, app }
+export { firebase }
 
-// Handle auth events
-app.auth().onAuthStateChanged((user) => {
-  if (user) {
-    console.log('signed in', user)
-    // User is signed in, get auth token
+// Handle firebase auth events
+firebase.auth().onAuthStateChanged((signedInUser) => {
+  if (signedInUser) {
+    // User is signed in
+    console.log('onAuthStateChanged', signedInUser)
+    createUser({
+      id: signedInUser.uid,
+      photoURL: signedInUser.photoURL,
+      displayName: signedInUser.displayName,
+      email: signedInUser.email,
+      created: signedInUser.metadata.creationTime
+        ? new Date(signedInUser.metadata.creationTime).getTime()
+        : undefined,
+      lastSeen: new Date().getTime()
+    })
+    // Generate a new auth token for requests
     firebase
-      .auth(app)
+      .auth()
       .currentUser?.getIdToken()
       .then((token) => {
         localStorage.setItem('token', token)
+        localStorage.setItem(
+          'user',
+          JSON.stringify({
+            uid: signedInUser.uid,
+            displayName: signedInUser.displayName,
+            photoURL: signedInUser.photoURL
+          })
+        )
+        // Update the ui state with the user
+        currentUser.value = signedInUser
         console.log('session saved')
       })
   } else {
     // User is signed out, close session.
-    localStorage.removeItem('token')
-    console.log('logged out')
+    console.log('signed out')
+    localStorage.removeItem('user')
+    // Update the ui state with the user
+    currentUser.value = null
   }
 })
+
+export async function updateCurrentUser(data: any) {
+  let authUser = currentUser.value
+  if (authUser) {
+    await firebase.auth().currentUser?.updateProfile(data)
+    currentUser.value = firebase.auth().currentUser
+  }
+}

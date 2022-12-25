@@ -5,12 +5,13 @@
     align-items: flex-start !important;
 
     svg {
-      width: 16px;
-      height: 16px;
+      width: 1.25em;
+      height: 1.25em;
       line-height: 1;
       display: inline-block;
       margin-right: 0;
       margin-left: 0.5rem;
+      opacity: 0.8;
     }
   }
 
@@ -23,9 +24,9 @@
     transform: scale(1, 1);
     transform-origin: top right;
     transition: 0.1s ease;
-    width: 14rem;
+    min-width: 14rem;
     border-radius: 0.25rem;
-    padding: 1rem;
+    padding: 0.8rem;
 
     &[aria-hidden='true'] {
       z-index: -1;

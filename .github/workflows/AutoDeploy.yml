@@ -1,0 +1,25 @@
+name: release
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    name: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      # Checking if the app build successfully
+      - name: npm install
+        run: sh build.sh
+
+      - name: Deploy an App Engine app
+        id: deploy-app
+        uses: google-github-actions/deploy-appengine@v0.3.1
+        with:
+          project_id: ${{ secrets.PROJECT_ID }}
+          deliverables: app.yaml
+          credentials: ${{ secrets.GCP_SA_KEY}}
+          version: v1

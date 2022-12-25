@@ -4,93 +4,132 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{user.displayName}}</title>
+    <meta name="description" content="{{user.about}}" />
 
-    <title>Codeblocks</title>
+    <meta property="og:title" content="{{user.displayName}}" />
+    <meta property="og:description" content="{{user.about}}" />
+    <meta property="og:image" content="{{user.photoUrl}}" />
+    <meta property="og:image:alt" content="{{user.displayName}}" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:creator" content="{{user.displayHandle}}" />
+    <meta name="twitter:title" content="{{user.displayName}}" />
+    <meta name="twitter:description" content="{{user.about}}" />
+    <meta name="twitter:image" content="{{user.photoUrl}}" />
+    <meta property="twitter:image:alt" content="{{user.displayName}}" />
 
     <link rel="stylesheet" href="src/index.scss" />
 
     <link
-      title="Default"
       rel="stylesheet"
+      title="Default"
       href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css" />
 
     <link
-      title="Androidstudio"
       rel="alternate stylesheet"
+      title="Androidstudio"
       href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/androidstudio.min.css"
       disabled="disabled" />
 
     <link
-      title="Atom One Dark"
       rel="alternate stylesheet"
+      title="Atom One Dark"
       href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css"
       disabled="disabled" />
 
     <link
-      title="Material"
       rel="alternate stylesheet"
+      title="Material"
       href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/base16/material.min.css"
       disabled="disabled" />
 
     <link
-      title="Tomorrow Night"
       rel="alternate stylesheet"
+      title="Tomorrow Night"
       href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/base16/tomorrow-night.min.css"
       disabled="disabled" />
 
     <link
-      title="Github"
       rel="alternate stylesheet"
+      title="Github"
       href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css"
       disabled="disabled" />
 
     <link
-      title="Github Dark"
       rel="alternate stylesheet"
+      title="Github Dark"
       href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github-dark.min.css"
       disabled="disabled" />
 
     <link
-      title="Hybrid"
       rel="alternate stylesheet"
+      title="Hybrid"
       href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/hybrid.min.css"
       disabled="disabled" />
 
     <link
-      title="Sublime"
       rel="alternate stylesheet"
+      title="Sublime"
       href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/monokai-sublime.min.css"
       disabled="disabled" />
 
     <link
-      title="Tokyo Night Dark"
       rel="alternate stylesheet"
+      title="Tokyo Night Dark"
       href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/tokyo-night-dark.min.css"
       disabled="disabled" />
 
     <link
-      title="Tomorrow Night Blue"
       rel="alternate stylesheet"
+      title="Tomorrow Night Blue"
       href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/tomorrow-night-blue.min.css"
       disabled="disabled" />
 
     <link
-      title="Vs 2015"
       rel="alternate stylesheet"
+      title="Vs 2015"
       href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/vs2015.min.css"
       disabled="disabled" />
 
     <link
-      title="Xcode"
       rel="alternate stylesheet"
+      title="Xcode"
       href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/xcode.min.css"
       disabled="disabled" />
 
     <meta name="referrer" content="no-referrer" />
+    <script src="src/main.tsx" type="module"></script>
   </head>
 
   <body>
-    <div id="app"></div>
-    <script src="src/main.tsx" type="module"></script>
+    <div>
+      <nav class="nav">
+        <div class="nav-start">
+          <a class="brand" href="/">Codeblocks</a>
+          <a href="/post">Create new</a>
+        </div>
+        <div class="nav-end"></div>
+      </nav>
+      <div class="user-page">
+        <header>
+          <div class="banner"></div>
+        </header>
+        <div class="user-avatar" itemscope itemtype="http://schema.org/CreativeWork">
+          <div class="avatar-container">
+            <img
+              class="avatar"
+              itemprop="image"
+              src="{{user.photoUrl}}"
+              alt="{{user.displayName}}" />
+          </div>
+          <h1 class="title" itemprop="name">{{user.displayName}}</h1>
+          <h2 itemprop="headline">{{user.displayName}}</h2>
+          <h2 itemprop="description">{{user.about}}</h2>
+          <p itemprop="author">{{user.displayName}}</p>
+          <p itemprop="creator">{{user.displayHandle}}</p>
+        </div>
+      </div>
+    </div>
   </body>
 </html>

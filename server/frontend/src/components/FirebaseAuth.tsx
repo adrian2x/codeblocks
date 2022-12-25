@@ -1,19 +1,39 @@
+import { useEffect } from 'preact/hooks'
+import { currentUser } from '../stores/uiState'
 import { firebase } from '../common/firebase'
-import * as firebaseui from 'firebaseui'
 import 'firebaseui/dist/firebaseui.css'
 
-export class FirebaseAuth extends HTMLElement {
-  constructor() {
-    super()
-    this.innerHTML = `<dialog id='firebase-auth'>
-    <form method='dialog'>
-      <button value='cancel'>Close</button>
-    </form>
-  </dialog>`
-  }
+export { showDialog, closeDialog }
 
-  connectedCallback() {
-    // Initialize the FirebaseUI Widget using Firebase.
+export function FirebaseAuth() {
+  useEffect(onRender, [])
+  return (
+    <dialog id='firebaseAuthDialog'>
+      <form method='dialog'>
+        <div className='flex flex-row-reverse'>
+          <button class='clear p0' value='cancel'>
+            <div>✕</div>
+          </button>
+        </div>
+        <div id='firebase-auth-ui'></div>
+      </form>
+    </dialog>
+  )
+}
+
+function showDialog(id = 'firebaseAuthDialog') {
+  let dialog = document.getElementById(id)
+  return (dialog as HTMLDialogElement).showModal()
+}
+
+function closeDialog(id = 'firebaseAuthDialog') {
+  let dialog = document.getElementById(id)
+  return (dialog as HTMLDialogElement).close()
+}
+
+function onRender() {
+  // Initialize the FirebaseUI Widget using Firebase.
+  import('firebaseui').then((firebaseui) => {
     let ui = new firebaseui.auth.AuthUI(firebase.auth())
 
     let data = null
@@ -21,7 +41,7 @@ export class FirebaseAuth extends HTMLElement {
     let anonymousUser = firebase.auth().currentUser
 
     // The start method will wait until the DOM is loaded.
-    ui.start(`#firebase-auth`, {
+    ui.start(`#firebase-auth-ui`, {
       // Will use popup for IDP Providers sign-in flow instead of the default, redirect.
       signInFlow: 'popup',
       // signInSuccessUrl: '',
@@ -46,9 +66,8 @@ export class FirebaseAuth extends HTMLElement {
           // User successfully signed in.
           // Return type determines whether we continue the redirect automatically
           // or whether we leave that to developer to handle.
-          console.log('authResult', authResult)
           const user = authResult.user
-          console.log('user received', user)
+          closeDialog()
           localStorage.setItem(
             'user',
             JSON.stringify({
@@ -57,8 +76,6 @@ export class FirebaseAuth extends HTMLElement {
               photoURL: user.photoURL
             })
           )
-          let dialog = document.getElementById('firebase-auth') as HTMLDialogElement
-          dialog.close()
           return false
         },
         // signInFailure callback must be provided to handle merge conflicts which
@@ -80,15 +97,9 @@ export class FirebaseAuth extends HTMLElement {
         uiShown: () => {
           // The widget is rendered.
           // Hide the loader.
-          let user = localStorage.getItem('user')
-          if (!user) {
-            let dialog = document.getElementById('firebase-auth') as HTMLDialogElement
-            dialog.showModal()
-          }
+          if (!currentUser.value) showDialog()
         }
       }
     })
-  }
+  })
 }
-
-customElements.define('firebase-auth', FirebaseAuth)
