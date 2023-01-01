@@ -1,7 +1,3 @@
+"This is only used for flask run."
+"Mostly exports. DO NOT ADD any extra functionality here."
 from server import app
-
-
-@app.get("/_ah/warmup")
-def _warmup():
-    # Google app engine warmup
-    return "OK"
