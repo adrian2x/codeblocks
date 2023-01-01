@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from server.firebase import db, get_posts_by_user_id, get_user_by_id_handle
+from server.firebase import db, get_posts_by_user_id
 
 posts_blueprint = Blueprint("posts", __name__)
 
@@ -9,8 +9,8 @@ def create_post():
     "Create a post"
     data = request.get_json()
     doc = db.collection("posts").document()
+    data.update(id=doc.id)
     doc.set(data)
-    doc.update({"id": doc.id})
     return jsonify(doc.get().to_dict())
 
 

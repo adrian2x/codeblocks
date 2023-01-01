@@ -1,8 +1,7 @@
-import firebase_admin
-from firebase_admin import credentials, firestore, auth
+from firebase_admin import initialize_app, firestore, auth
 
 # Exports the firebase app
-firebase = firebase_admin.initialize_app(credentials.Certificate("server/key.json"))
+firebase = initialize_app()
 
 # Exports the firestore client
 db = firestore.client()
