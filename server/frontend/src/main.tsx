@@ -3,7 +3,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { App } from './app'
 import ErrorPage from './routes/errorPage'
 import { Post, postLoader } from './components/posts/Post'
-import { PostsContainer, postsLoader } from './components/posts/PostList'
+import { PostsContainer } from './components/posts/PostList'
 import { ProfilePage, userPostsLoader } from './components/users/ProfilePage'
 import './index.scss'
 
@@ -15,8 +15,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: '',
-        element: <PostsContainer />,
-        loader: postsLoader
+        element: <PostsContainer />
       },
       {
         path: 'post',
