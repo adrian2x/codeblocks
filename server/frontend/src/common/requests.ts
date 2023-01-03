@@ -48,10 +48,11 @@ export function getPost(id: string) {
   return request<TPost>(`/api/posts/${id}`)
 }
 
-export function getPosts(uid?: string) {
+export function getPosts(uid?: string, cursor?: string) {
   let params = new URLSearchParams()
   if (uid) params.set('uid', uid)
-  return request(`/api/posts/?${params.toString()}`)
+  if (cursor) params.set('cursor', cursor)
+  return request<TPost[]>(`/api/posts/?${params.toString()}`)
 }
 
 export async function createPost(post: any) {

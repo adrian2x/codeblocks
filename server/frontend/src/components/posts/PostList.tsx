@@ -1,22 +1,50 @@
+import { useState } from 'react'
 import { Link, useLoaderData } from 'react-router-dom'
 import { getPosts, TPost } from '../../common/requests'
+import useInfiniteScroll from '../../hooks/useInfiniteScroll'
 import './post-list.scss'
 
-export async function postsLoader() {
-  const posts = await getPosts()
-  return posts
+export async function loadPosts() {
+  return await getPosts()
 }
 
 export function PostsContainer() {
   const posts = useLoaderData() as TPost[]
   return (
     <section className='container post-list grid grid-cols-3 gap-4'>
-      <PostsList posts={posts} />
+      <PostsList />
     </section>
   )
 }
 
-export function PostsList({ posts }: { posts: TPost[] }) {
+const PAGE_SIZE = 10
+
+export type PostsListProps = {
+  uid?: string
+}
+
+export function PostsList({ uid }: PostsListProps) {
+  const [posts, setPosts] = useState<TPost[]>([])
+  const [disabled, setDisabled] = useState(false)
+  const [loading, setLoading] = useState(false)
+
+  async function onLoadMore() {
+    if (loading || disabled) return false
+    try {
+      setLoading(true)
+      let nextPosts = await getPosts(uid, posts[posts.length - 1]?.id)
+      setPosts(posts.concat(nextPosts))
+      setDisabled(nextPosts.length < PAGE_SIZE)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const observerRef = useInfiniteScroll({
+    disabled,
+    onLoadMore
+  })
+
   return (
     <>
       {posts.map((p) => {
@@ -62,6 +90,10 @@ export function PostsList({ posts }: { posts: TPost[] }) {
           </article>
         )
       })}
+      <div ref={observerRef}>
+        <p></p>
+        {loading && 'Loading...'}
+      </div>
     </>
   )
 }
