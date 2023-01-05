@@ -56,7 +56,7 @@ export function CodeEditor({ post }: { post?: TPost }) {
     autoSize()
     // Load theme preferences
     if (editorState.theme !== 'Default') {
-      updateStyles('Default', editorState.theme)
+      updateStyles('Default', editorState.theme).then(highlightAll).then(autoSize)
     }
     highlightAll()
   }, [])
