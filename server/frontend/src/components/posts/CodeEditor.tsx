@@ -355,59 +355,61 @@ export function CodeEditor({ post }: { post?: TPost }) {
         <div
           id='code-background'
           style={{ background: (editorState.background && 'transparent') || background[0] }}>
-          <div class='flex flex-justify-center'>
-            <h5
-              className='title'
-              aria-hidden={!editorState.showTitle}
-              contentEditable
-              onBlur={(e) => {
-                setEditor({ title: e.currentTarget.innerText })
-              }}>
-              {postState.title}
-            </h5>
-          </div>
-
-          <div id='code-window' class='code-window hljs'>
-            <div className='window-title'>
-              <div className='flex buttons'>
-                <div className='btn-1'></div>
-                <div className='btn-2'></div>
-                <div className='btn-3'></div>
-              </div>
-              <div
-                class='label'
+          <div class='flex flex-column flex-1 justify-center'>
+            <div class='flex flex-justify-center'>
+              <h5
+                className='title'
+                aria-hidden={!editorState.showTitle}
                 contentEditable
                 onBlur={(e) => {
-                  setPost({ windowTitle: e.currentTarget.innerText })
+                  setEditor({ title: e.currentTarget.innerText })
                 }}>
-                {postState.windowTitle ?? 'Untitled'}
-              </div>
+                {postState.title}
+              </h5>
             </div>
 
-            <div className='code-wrapper'>
-              <pre class={`${postState.language ?? ''}`}>
-                <code
-                  id='code'
-                  class={
-                    postState.code
-                      ? `hljs ${postState.language ? 'language-' + postState.language : ''}`
-                      : ''
-                  }
-                  dangerouslySetInnerHTML={{ __html: escape(postState.code) }}
+            <div id='code-window' class='code-window hljs'>
+              <div className='window-title'>
+                <div className='flex buttons'>
+                  <div className='btn-1'></div>
+                  <div className='btn-2'></div>
+                  <div className='btn-3'></div>
+                </div>
+                <div
+                  class='label'
                   contentEditable
                   onBlur={(e) => {
-                    const self = e.currentTarget
-                    const code = self.innerText.replace(/\n\n\n/gm, '\n\n')
-                    setPost({ code: code })
-                    if (code.trim()) autoSize()
-                  }}
-                />
-              </pre>
+                    setPost({ windowTitle: e.currentTarget.innerText })
+                  }}>
+                  {postState.windowTitle ?? 'Untitled'}
+                </div>
+              </div>
+
+              <div className='code-wrapper'>
+                <pre class={`${postState.language ?? ''}`}>
+                  <code
+                    id='code'
+                    class={
+                      postState.code
+                        ? `hljs ${postState.language ? 'language-' + postState.language : ''}`
+                        : ''
+                    }
+                    dangerouslySetInnerHTML={{ __html: escape(postState.code) }}
+                    contentEditable
+                    onBlur={(e) => {
+                      const self = e.currentTarget
+                      const code = self.innerText.replace(/\n\n\n/gm, '\n\n')
+                      setPost({ code: code })
+                      if (code.trim()) autoSize()
+                    }}
+                  />
+                </pre>
+              </div>
             </div>
           </div>
 
           <div className='credits flex justify-between'>
-            <div className='flex items-center' hidden={!editorState.watermark}>
+            <div className='flex items-center ml2' hidden={!editorState.watermark}>
               {currentUser && editorState.watermark === 'avatar' && (
                 <PhotoUploader
                   fileName={currentUser.uid}
@@ -539,10 +541,13 @@ async function onSubmit(
     let width = node.clientWidth
     let height = node.clientHeight
     console.log('image size', width, height)
-    if (width < height * 2) {
-      node.style.width = `${Math.round(height * 2)}px`
+    let ratio = 1.91
+    if (width < height * ratio) {
+      let newWidth = Math.ceil(height * ratio)
+      node.style.width = `${newWidth}px`
     } else {
-      node.style.height = `${Math.round(width / 2)}px`
+      let newHeight = Math.ceil(width / ratio)
+      node.style.height = `${newHeight}px`
     }
     let blob = await domtoimage.toBlob(node)
     let image = await uploadImage(`${response.id}.png`, blob)
