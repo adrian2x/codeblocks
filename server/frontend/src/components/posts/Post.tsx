@@ -8,6 +8,7 @@ import { currentUser } from '../../stores/uiState'
 import { autoSize, CodeEditor, generateGradient, updateStyles } from './CodeEditor'
 import { RouteProps } from '../../types'
 import './post.scss'
+import './code-editor.scss'
 
 export async function postLoader({ params }: RouteProps) {
   if (params.post_id) {
@@ -33,7 +34,7 @@ export function ReadOnlyPost({ post }: { post: TPost }) {
   useEffect(() => {
     autoSize()
     if (post.theme && post.theme != 'Default') {
-      updateStyles('Default', post.theme).then(highlightAll)
+      updateStyles('Default', post.theme).then(highlightAll).then(autoSize)
     }
     highlightAll()
   }, [])

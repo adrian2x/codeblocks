@@ -11,7 +11,6 @@ import { FirebaseUser } from '../../types'
 import { Dropdown } from '../Dropdown'
 import { PhotoUploader, uploadImage } from '../users/PhotoUploader'
 import { FaTrash } from 'react-icons/fa'
-import './code-editor.scss'
 
 export function CodeEditor({ post }: { post?: TPost }) {
   // import highlightjs module
@@ -449,9 +448,11 @@ export function updateStyles(theme: string, nextTheme: string) {
     .forEach((link) => link.setAttribute('disabled', 'disabled'))
   return new Promise((resolve, reject) => {
     let link = document.querySelector(`link[title="${nextTheme}"]`) as HTMLLinkElement
-    link.onload = resolve
-    link.onerror = reject
-    link.removeAttribute('disabled')
+    if (link) {
+      link.onload = resolve
+      link.onerror = reject
+      link.removeAttribute('disabled')
+    }
   })
 }
 
