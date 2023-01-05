@@ -34,6 +34,7 @@ export interface TPost {
   description: string
   created: number
   code: string
+  windowTitle?: string
   language: string
   theme: string
   user: {

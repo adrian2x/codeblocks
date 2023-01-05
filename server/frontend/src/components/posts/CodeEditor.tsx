@@ -34,7 +34,8 @@ export function CodeEditor({ post }: { post?: TPost }) {
       title: '',
       description: '',
       code: '',
-      language: ''
+      language: '',
+      windowTitle: 'Untitled'
     }
   )
 
@@ -373,8 +374,13 @@ export function CodeEditor({ post }: { post?: TPost }) {
                 <div className='btn-2'></div>
                 <div className='btn-3'></div>
               </div>
-              <div class='label' contentEditable>
-                Untitled
+              <div
+                class='label'
+                contentEditable
+                onBlur={(e) => {
+                  setPost({ windowTitle: e.currentTarget.innerText })
+                }}>
+                {postState.windowTitle ?? 'Untitled'}
               </div>
             </div>
 
@@ -530,6 +536,14 @@ async function onSubmit(
   // Upload the code screenshot
   setTimeout(async () => {
     let node = document.getElementById('code-background')!
+    let width = node.clientWidth
+    let height = node.clientHeight
+    console.log('image size', width, height)
+    if (width < height * 2) {
+      node.style.width = `${Math.round(height * 2)}px`
+    } else {
+      node.style.height = `${Math.round(width / 2)}px`
+    }
     let blob = await domtoimage.toBlob(node)
     let image = await uploadImage(`${response.id}.png`, blob)
     console.log('uploaded image', image.ref)
