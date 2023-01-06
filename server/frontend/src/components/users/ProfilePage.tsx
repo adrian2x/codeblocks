@@ -51,7 +51,7 @@ export function ProfilePage() {
   }
 
   return (
-    <div className='user-page' data-active={allowEditing && !isSaving}>
+    <div className='container profile-page' data-active={allowEditing && !isSaving}>
       <header>
         <div
           key={background[0]}
@@ -125,8 +125,8 @@ export function ProfilePage() {
         </div>
       </header>
       <div className='container'>
-        <div className='post-list grid grid-cols-1 md-grid-cols-3 gap-4'>
-          <PostsList uid={userProfile.id} />
+        <div className='post-list grid grid-cols-1 md-grid-cols-2 lg-grid-cols-3'>
+          <PostsList uid={userProfile.id} noHeader />
         </div>
         {allowEditing && (
           <div className='danger flex justify-center'>
