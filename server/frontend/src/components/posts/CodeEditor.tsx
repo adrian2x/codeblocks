@@ -324,7 +324,7 @@ export function CodeEditor({ post }: { post?: TPost }) {
             </div>
           </div>
 
-          <div class='flex items-baseline ml-auto'>
+          <div class='flex items-baseline'>
             {post?.id && (
               <button
                 className='outline'
