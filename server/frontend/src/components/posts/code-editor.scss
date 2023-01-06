@@ -40,6 +40,7 @@
 
 .toolbar {
   font-size: 15px;
+  flex-wrap: wrap;
   display: flex;
   align-items: center;
   justify-content: space-around;
@@ -85,9 +86,7 @@
 }
 
 #code-background {
-  padding: 1.5rem 1rem 1rem;
-  margin: auto;
-  min-width: 800px;
+  padding: 1.6rem;
   position: absolute;
   display: flex;
   flex-direction: column;

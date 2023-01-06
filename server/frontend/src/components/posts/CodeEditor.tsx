@@ -1,5 +1,5 @@
 // @ts-expect-error
-import domtoimage from 'dom-to-image-more'
+import domtoimg from 'dom-to-image-more'
 import escape from 'escape-html'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -237,6 +237,7 @@ export function CodeEditor({ post }: { post?: TPost }) {
             </button>
             <div class='mr2'>
               <Dropdown
+                modal
                 target={
                   <button class='outline'>
                     More
@@ -409,7 +410,7 @@ export function CodeEditor({ post }: { post?: TPost }) {
           </div>
 
           <div className='credits flex justify-between'>
-            <div className='flex items-center ml2' hidden={!editorState.watermark}>
+            <div className='flex items-center' hidden={!editorState.watermark}>
               {currentUser && editorState.watermark === 'avatar' && (
                 <PhotoUploader
                   fileName={currentUser.uid}
@@ -503,8 +504,7 @@ export function autoSize() {
  * Generates the code preview screenshot from the editor.
  */
 async function getScreenshot(download = false, fileName = 'codeblocks.png') {
-  let node = document.getElementById('code-background')!
-  let dataUrl: string = await domtoimage.toPng(node)
+  let dataUrl = await domtoimg.toPng(setImageSize('code-background', 1.333))
   if (download) {
     var link = document.createElement('a')
     link.download = fileName
@@ -537,22 +537,23 @@ async function onSubmit(
 
   // Upload the code screenshot
   setTimeout(async () => {
-    let node = document.getElementById('code-background')!
-    let width = node.clientWidth
-    let height = node.clientHeight
-    console.log('image size', width, height)
-    let ratio = 1.91
-    if (width < height * ratio) {
-      let newWidth = Math.ceil(height * ratio)
-      node.style.width = `${newWidth}px`
-    } else {
-      let newHeight = Math.ceil(width / ratio)
-      node.style.height = `${newHeight}px`
-    }
-    let blob = await domtoimage.toBlob(node)
-    let image = await uploadImage(`${response.id}.png`, blob)
-    console.log('uploaded image', image.ref)
+    let data = await domtoimg.toBlob(setImageSize('code-background', 1.91))
+    uploadImage(`${response.id}.png`, data)
   })
 
   return response
+}
+
+function setImageSize(id: string, ratio = 1.91) {
+  let node = document.getElementById(id)!
+  let width = node.clientWidth
+  let height = node.clientHeight
+  if (width < height * ratio) {
+    let newWidth = Math.ceil(height * ratio)
+    node.style.width = `${newWidth}px`
+  } else {
+    let newHeight = Math.ceil(width / ratio)
+    node.style.height = `${newHeight}px`
+  }
+  return node
 }

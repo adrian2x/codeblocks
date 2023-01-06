@@ -125,7 +125,7 @@ export function ProfilePage() {
         </div>
       </header>
       <div className='container'>
-        <div className='post-list grid grid-cols-3 gap-4'>
+        <div className='post-list grid grid-cols-1 md-grid-cols-3 gap-4'>
           <PostsList uid={userProfile.id} />
         </div>
         {allowEditing && (
