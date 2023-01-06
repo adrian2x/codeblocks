@@ -3,6 +3,8 @@ import { Toaster } from 'react-hot-toast'
 import { FirebaseAuth, showDialog } from './components/FirebaseAuth'
 import { currentUser } from './stores/uiState'
 import { firebase } from './common/firebase'
+import { Dropdown } from './components/Dropdown'
+import { RxHamburgerMenu } from 'react-icons/rx'
 
 function Navbar() {
   return (
@@ -12,10 +14,21 @@ function Navbar() {
           <NavLink className='brand' to={`/`}>
             Codeblocks
           </NavLink>
-          <NavLink to={`/post`}>Create new</NavLink>
         </div>
-        <div class='nav-end'>
+        <div class='nav-end sm-hide'>
           <UserMenu user={currentUser.value} />
+        </div>
+        <div class='nav-end md-hide'>
+          <Dropdown
+            target={
+              <button class='outline icon-only'>
+                <RxHamburgerMenu />
+              </button>
+            }>
+            <div className='flex flex-column'>
+              <UserMenu user={currentUser.value} />
+            </div>
+          </Dropdown>
         </div>
       </nav>
       <FirebaseAuth />
@@ -27,7 +40,8 @@ function UserMenu({ user }: { user: any }) {
   if (user) {
     return (
       <>
-        <Link to={`/@/${user.uid}`}>My profile</Link>
+        <NavLink to={`/post`}>Create</NavLink>
+        <NavLink to={`/@/${user.uid}`}>Profile</NavLink>
         <button
           className='outline'
           onClick={() => {
