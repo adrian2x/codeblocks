@@ -1,5 +1,6 @@
 @import 'atomic-theme';
 @import 'atomic-theme/src/_dialog';
+@import 'grid.scss';
 
 html {
   tab-size: 4;
@@ -32,8 +33,42 @@ html {
   max-width: 800px;
 }
 
-.nav .brand {
-  font-weight: 700;
+.nav {
+  flex-direction: row;
+
+  .brand {
+    font-weight: 700;
+    padding: 1rem 1.25rem;
+  }
+
+  .nav-start {
+    align-items: center;
+  }
+
+  button.icon-only {
+    margin: 0;
+    padding: 0.33rem;
+  }
+
+  .nav-end {
+    align-items: center;
+    justify-content: flex-end;
+
+    .dropdown-element:last-child {
+      margin-right: 1rem;
+    }
+
+    .dropdown-details {
+      right: -1rem;
+      width: 100vw !important;
+      transform-origin: top;
+      transition: 0.5s ease;
+
+      .flex-column {
+        align-items: center;
+      }
+    }
+  }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -43,4 +78,21 @@ html {
     background-color: var(--bg-color);
     color: var(--font-color);
   }
+}
+
+@media (max-width: 640px) {
+  .sm-hide {
+    display: none;
+  }
+}
+
+/* Medium screens */
+@media only screen and (min-width: 768px) {
+  .md-hide {
+    display: none;
+  }
+}
+
+/* Desktops and laptops */
+@media only screen and (min-width: 1224px) {
 }

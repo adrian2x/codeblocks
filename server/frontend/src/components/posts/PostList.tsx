@@ -11,7 +11,7 @@ export async function loadPosts() {
 export function PostsContainer() {
   const posts = useLoaderData() as TPost[]
   return (
-    <section className='container post-list grid grid-cols-3 gap-4'>
+    <section className='container post-list grid grid-cols-1 md-grid-cols-3 gap-4'>
       <PostsList />
     </section>
   )
