@@ -37,37 +37,40 @@ function Navbar() {
 }
 
 function UserMenu({ user }: { user: any }) {
-  if (user) {
-    return (
-      <>
-        <NavLink to={`/post`}>Create</NavLink>
-        <NavLink to={`/@/${user.uid}`}>Profile</NavLink>
-        <button
-          className='outline'
-          onClick={() => {
-            firebase.auth().signOut()
-          }}>
-          Sign out
-        </button>
-      </>
-    )
-  }
-
-  return (
-    <>
-      <button className='primary radius-4' onClick={() => showDialog()}>
-        Sign up
-      </button>
-    </>
+  return user != null ? (
+    <button className='outline' onClick={() => firebase.auth().signOut()}>
+      Sign out
+    </button>
+  ) : (
+    <button className='round primary' onClick={() => showDialog()}>
+      Sign up
+    </button>
   )
 }
 
 export function App() {
   return (
-    <div>
+    <div id='app'>
       <Toaster />
       <Navbar />
-      <Outlet />
+      <main className='flex' style={{ paddingTop: '4rem' }}>
+        <aside class='hidden lg-show'>
+          <div className='grid grid-col-1 gap-4'>
+            <NavLink to={`/`}>Home</NavLink>
+            <NavLink to={`/post`}>Explore</NavLink>
+            {currentUser.value != null && (
+              <>
+                <NavLink to={`/saved`}>Saved</NavLink>
+                <NavLink to={`/@/${currentUser.value?.uid}`}>Profile</NavLink>
+              </>
+            )}
+            <NavLink to={`/post`}>
+              <button className='round primary w-100'>Create</button>
+            </NavLink>
+          </div>
+        </aside>
+        <Outlet />
+      </main>
     </div>
   )
 }

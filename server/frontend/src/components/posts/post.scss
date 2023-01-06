@@ -1,4 +1,4 @@
-.post-header {
+.post {
   .sep {
     display: inline-block;
     margin: 0 0.5rem;
@@ -15,5 +15,9 @@
     .avatar-container {
       margin-right: 0.75rem;
     }
+  }
+
+  #code-window {
+    margin: 1rem 0;
   }
 }

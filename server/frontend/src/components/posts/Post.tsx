@@ -39,26 +39,48 @@ export function ReadOnlyPost({ post }: { post: TPost }) {
     highlightAll()
   }, [])
 
+  const { uid, displayName, displayHandle, photoUrl } = post.user
+
   return (
     <div class='post-form'>
-      <div class='post-header'>
-        <div>
-          <h4 class='title m0'>{post.title || 'Untitled'}</h4>
-          <div class='details'>
-            <span>
-              <Link to={`/@/${post.user.uid}`}>{post.user.displayName ?? 'Anonymous'}</Link>
-            </span>
-            <span class='sep'>{`  •  `}</span>
-            <span>{ago(post.created)}</span>
+      <div class='post'>
+        <header class='header flex flex-row'>
+          <Link
+            to={`/@/${uid}`}
+            style={{
+              marginRight: 8
+            }}>
+            <img class='avatar' src={photoUrl!} alt={displayName} referrerpolicy='no-referrer' />
+          </Link>
+
+          <div class='flex-column'>
+            <div className='meta flex-row'>
+              <span>
+                <Link class='author' to={`/@/${uid}`}>
+                  {displayName} {displayHandle}
+                </Link>
+              </span>
+              <span class='sep mx1'>{`•`}</span>
+              <span>{ago(post.created, false)}</span>
+            </div>
+            <div class='title'>
+              {post.title && (
+                <h4 class='title'>
+                  <Link to={`/post/${post.id}`}>{post.title || 'Untitled'}</Link>
+                </h4>
+              )}
+            </div>
           </div>
-        </div>
+        </header>
 
-        <p>{post.description}</p>
+        {post.description && <p>{post.description}</p>}
 
-        <div id='code-background' style={{ background: background[0] }}>
-          <div class='flex flex-justify-center'>
+        <div
+          id='code-background'
+          style={{ background: 'transparent', padding: 0, position: 'relative' }}>
+          {/* <div class='flex flex-justify-center'>
             <h5 className='title'>{post.title}</h5>
-          </div>
+          </div> */}
 
           <div id='code-window' class='code-window hljs'>
             <div className='window-title'>
@@ -92,13 +114,13 @@ export function ReadOnlyPost({ post }: { post: TPost }) {
             </div>
           </div>
 
-          <div className='credits flex justify-between'>
+          {/* <div className='credits flex justify-between'>
             <Avatar
               photoUrl={post.user.photoUrl}
               displayHandle={post.user.displayHandle}
               displayName={post.user.displayName}
             />
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
