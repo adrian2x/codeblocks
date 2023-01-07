@@ -15,10 +15,10 @@
 
   .dropdown-details {
     background-color: var(--bg-color);
-    margin-top: 0.07rem;
     position: absolute;
-    z-index: 10;
     right: 0;
+    top: 100%;
+    z-index: 10;
     transform: scale(1, 1);
     transform-origin: top right;
     transition: 0.1s ease;
