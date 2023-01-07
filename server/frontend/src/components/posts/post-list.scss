@@ -17,19 +17,9 @@
 
   .header {
     display: flex;
-    align-items: center;
 
     a {
       color: var(--font-color);
-    }
-
-    .title {
-      font-size: 96%;
-      letter-spacing: initial;
-      margin: 0;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
     }
   }
 
@@ -39,11 +29,26 @@
     max-width: 40px;
   }
 
+  .post-meta {
+    flex-direction: column;
+    max-width: calc(100% - 48px);
+  }
+
   .meta {
     display: block;
     font-size: 80%;
-    line-height: 1.5;
+    line-height: 1;
+    margin-bottom: 0.25rem;
     opacity: 0.9;
+  }
+
+  .title {
+    font-size: 96%;
+    letter-spacing: initial;
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal;
   }
 
   .cover {

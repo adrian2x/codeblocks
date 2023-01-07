@@ -64,11 +64,7 @@ export function ReadOnlyPost({ post }: { post: TPost }) {
               <span>{ago(post.created, false)}</span>
             </div>
             <div class='title'>
-              {post.title && (
-                <h4 class='title'>
-                  <Link to={`/post/${post.id}`}>{post.title || 'Untitled'}</Link>
-                </h4>
-              )}
+              {post.title && <h4 class='title'>{post.title || 'Untitled'}</h4>}
             </div>
           </div>
         </header>
@@ -148,7 +144,7 @@ export function Avatar({
       </div>
       <div>
         {displayName && <div className='author text-shadow'>{displayName}</div>}
-        <small className='secondary text-shadow'>{displayHandle}</small>
+        {displayHandle && <small className='secondary text-shadow'>{displayHandle}</small>}
       </div>
     </div>
   )

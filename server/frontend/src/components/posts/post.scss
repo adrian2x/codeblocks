@@ -4,9 +4,8 @@
     margin: 0 0.5rem;
   }
 
-  .byline {
-    font-size: 80%;
-    color: var(--color-mediumGrey);
+  p {
+    margin-left: 0.25rem;
   }
 
   .credits {
@@ -18,6 +17,6 @@
   }
 
   #code-window {
-    margin: 1rem 0;
+    margin: 0;
   }
 }

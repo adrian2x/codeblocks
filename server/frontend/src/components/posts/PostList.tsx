@@ -78,7 +78,7 @@ export function PostDisplay({ noHeader, p }: any) {
               <img class='avatar' src={photoUrl!} alt={displayName} referrerpolicy='no-referrer' />
             </Link>
 
-            <div class='flex-column'>
+            <div class='post-meta'>
               <div className='meta'>
                 <span>
                   <Link class='author' to={`/@/${uid}`}>
@@ -88,13 +88,7 @@ export function PostDisplay({ noHeader, p }: any) {
                 <span class='sep mx1'>{`•`}</span>
                 <span>{ago(p.created, false)}</span>
               </div>
-              <div class='title'>
-                {p.title && (
-                  <h4 class='title'>
-                    <Link to={`/post/${p.id}`}>{p.title || 'Untitled'}</Link>
-                  </h4>
-                )}
-              </div>
+              <div class='title'>{p.title && <h4 class='title'>{p.title || 'Untitled'}</h4>}</div>
             </div>
           </header>
         )}
