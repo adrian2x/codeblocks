@@ -302,9 +302,9 @@ export function CodeEditor({ post }: { post?: TPost }) {
                   <label>
                     <input
                       type='checkbox'
-                      checked={!editorState.background}
+                      checked={editorState.background}
                       onChange={(e) => {
-                        setEditor({ background: !editorState.background })
+                        setEditor({ background: !!!editorState.background })
                       }}
                     />{' '}
                     Color
@@ -355,7 +355,7 @@ export function CodeEditor({ post }: { post?: TPost }) {
 
         <div
           id='code-background'
-          style={{ background: (editorState.background && 'transparent') || background[0] }}>
+          style={{ background: editorState.background ? background[0] : 'transparent' }}>
           <div class='flex flex-column flex-1 justify-center'>
             <div class='flex flex-justify-center'>
               <h5
