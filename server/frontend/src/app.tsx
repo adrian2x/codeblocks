@@ -5,13 +5,14 @@ import { currentUser } from './stores/uiState'
 import { firebase } from './common/firebase'
 import { Dropdown } from './components/Dropdown'
 import { FaBars } from 'react-icons/fa'
+import { avatarUrl } from './components/users/avatarUrl'
 
 function Navbar() {
   return (
     <div>
       <FirebaseAuth />
       <nav class='nav'>
-        <div className='max-width flex flex-1 items-baseline'>
+        <div className='max-width flex flex-1 items-center'>
           <div class='nav-start'>
             <NavLink className='brand' to={`/`}>
               Codeblocks
@@ -58,7 +59,7 @@ function AuthMenu({ user }: { user: firebase.User }) {
           target={
             <img
               class='avatar drop-shadow-4'
-              src={user?.photoURL ?? `https://www.gravatar.com/avatar/?d=mp&s=48`}
+              src={user?.photoURL ?? avatarUrl(user?.displayName ?? '')}
               alt={user?.displayName ?? ''}
               referrerpolicy='no-referrer'
             />
