@@ -69,7 +69,7 @@ export function ReadOnlyPost({ post }: { post: TPost }) {
           </div>
         </header>
 
-        {post.description && <p>{post.description}</p>}
+        <p>{post.description}</p>
 
         <div
           id='code-background'
