@@ -12,7 +12,7 @@ export function FirebaseAuth() {
     <dialog id='firebaseAuthDialog'>
       <form method='dialog'>
         <div className='flex flex-row-reverse'>
-          <button class='clear p0' value='cancel'>
+          <button class='clear p0 m0' value='cancel'>
             <div>✕</div>
           </button>
         </div>

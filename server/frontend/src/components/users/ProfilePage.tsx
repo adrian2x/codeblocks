@@ -1,5 +1,5 @@
 import toast from 'react-hot-toast'
-import { useState } from 'preact/hooks'
+import { useEffect, useState } from 'preact/hooks'
 import { Link, Params, useLoaderData, useNavigate } from 'react-router-dom'
 import { updateCurrentUser } from '../../common/firebase'
 import { deleteUser, getUser, GetUserResponse, updateUser } from '../../common/requests'
@@ -18,12 +18,21 @@ export async function userPostsLoader({ params }: { params: Params }) {
 
 export function ProfilePage() {
   const { user, posts } = useLoaderData() as GetUserResponse
-  const allowEditing = user.id === currentUser.value?.uid
-
   const [userProfile, setUserProfile] = useState(user)
   const [background, setBackground] = useState([user.backgroundColor] ?? generateGradient())
+  const [isSaving, setSaving] = useState(false)
+  const navigate = useNavigate()
 
-  const setUser = (data: Object) => {
+  const allowEditing = currentUser.value?.uid === user.id
+
+  useEffect(() => {
+    if (user) {
+      setUserProfile(user)
+      setBackground([user.backgroundColor] ?? generateGradient())
+    }
+  }, [user, setUserProfile, setBackground])
+
+  function setUser(data: Object) {
     setUserProfile({ ...userProfile, ...data })
     toast.dismiss()
     return toast.promise(updateUser(currentUser.value!.uid, data), {
@@ -32,9 +41,6 @@ export function ProfilePage() {
       error: 'There was an error.'
     })
   }
-
-  const [isSaving, setSaving] = useState(false)
-  const navigate = useNavigate()
 
   async function handleDelete(userId: string) {
     try {

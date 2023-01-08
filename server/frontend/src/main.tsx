@@ -28,7 +28,7 @@ const router = createBrowserRouter([
       },
       {
         path: '@/:user_id',
-        element: <ProfilePage key={Math.random()} />,
+        element: <ProfilePage />,
         loader: userPostsLoader
       }
     ]
