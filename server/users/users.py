@@ -2,19 +2,8 @@ from flask import Blueprint, request, jsonify
 from server.firebase import db
 from server.models.user import User
 from server.models.post import Post
-import random
-from pyug import get_random_username
 
 users_blueprint = Blueprint("users", __name__)
-
-
-def generate_username(email: str = None):
-    "Create a username from the email"
-    try:
-        username = email.split("@")[0]
-    except:
-        username = get_random_username()
-    return username + str(random.randrange(1000))
 
 
 @users_blueprint.route("/", methods=["POST"])
@@ -26,7 +15,7 @@ def create_user():
 
     if not snapshot.exists or snapshot.get("displayHandle") is None:
         # generate new username
-        username = generate_username(data.get("email"))
+        username = User.generate_username(data.get("email"))
         data.update({"displayHandle": username})
 
     doc_ref.set(data, merge=True)
@@ -47,10 +36,8 @@ def read_user(uid: str):
 def update_user(uid):
     "Update user by user id"
     data = request.get_json()
-    doc = db.collection("users").document(uid)
-    doc.update(data)
     # return the updated document
-    updated_doc = doc.get().to_dict()
+    updated_doc = User(uid).update(data).to_dict()
     return jsonify(updated_doc)
 
 

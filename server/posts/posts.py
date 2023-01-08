@@ -28,7 +28,7 @@ def get_posts():
 @posts_blueprint.route("/<post_id>", methods=["GET"])
 def read_post(post_id):
     "Retrieve post by post id"
-    post = db.collection("posts").document(post_id).get().to_dict()
+    post = Post(post_id).get().to_dict()
     return jsonify(post)
 
 
@@ -36,15 +36,11 @@ def read_post(post_id):
 def update_post(post_id):
     "Update post by post id"
     data = request.get_json()
-    doc = db.collection("posts").document(post_id)
-    doc.update(data)
-    updated_doc = db.collection("posts").document(post_id).get().to_dict()
+    updated_doc = Post(post_id).update(data).to_dict()
     return jsonify(updated_doc)
 
 
 @posts_blueprint.route("/<post_id>", methods=["DELETE"])
 def delete_post(post_id):
     "Delete post by post id"
-    doc = db.collection("posts").document(post_id)
-    doc.delete()
-    return jsonify({"message": "Post deleted successfully."})
+    return jsonify(Post(post_id).delete().to_dict())

@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template
 from server.firebase import db
 from server.models.user import User
+from server.models.post import Post
 
 web_blueprint = Blueprint(
     "web",
@@ -14,8 +15,8 @@ web_blueprint = Blueprint(
 @web_blueprint.route("/post/<post_id>")
 def get_post(post_id=None):
     "Renders the post html page"
-    post = db.collection("posts").document(post_id)
-    data = post.get().to_dict()
+    post = Post(post_id).get()
+    data = post.to_dict()
     data.update({"id": post.id})
     return render_template("post.html", post=data)
 
