@@ -109,42 +109,7 @@ export function ReadOnlyPost({ post }: { post: TPost }) {
               </pre>
             </div>
           </div>
-
-          {/* <div className='credits flex justify-between'>
-            <Avatar
-              photoUrl={post.user.photoUrl}
-              displayHandle={post.user.displayHandle}
-              displayName={post.user.displayName}
-            />
-          </div> */}
         </div>
-      </div>
-    </div>
-  )
-}
-
-export function Avatar({
-  photoUrl,
-  displayHandle,
-  displayName
-}: {
-  photoUrl?: string | null
-  displayHandle: string
-  displayName?: string
-}) {
-  return (
-    <div className='flex items-center'>
-      <div className='avatar-container'>
-        <img
-          class='avatar drop-shadow-4'
-          src={photoUrl ?? `https://www.gravatar.com/avatar/?d=mp&s=48`}
-          alt={displayHandle ?? ''}
-          referrerpolicy='no-referrer'
-        />
-      </div>
-      <div>
-        {displayName && <div className='author text-shadow'>{displayName}</div>}
-        {displayHandle && <small className='secondary text-shadow'>{displayHandle}</small>}
       </div>
     </div>
   )

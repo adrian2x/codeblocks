@@ -11,6 +11,7 @@
   "dependencies": {
     "@preact/signals": "^1.1.2",
     "atomic-theme": "^1.0.1",
+    "boring-avatars": "^1.7.0",
     "dom-to-image-more": "^2.13.1",
     "escape-html": "^1.0.3",
     "firebase": "^9.15.0",

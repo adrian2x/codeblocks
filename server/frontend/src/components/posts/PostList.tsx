@@ -1,6 +1,7 @@
 // @ts-expect-error
 import { ago } from 'time-ago'
 import { useState } from 'react'
+import Avatar from 'boring-avatars'
 import { Link, useLoaderData } from 'react-router-dom'
 import { getPosts, TPost } from '../../common/requests'
 import useInfiniteScroll from '../../hooks/useInfiniteScroll'
@@ -75,7 +76,13 @@ export function PostDisplay({ noHeader, p }: any) {
                 width: 40,
                 marginRight: 8
               }}>
-              <img class='avatar' src={photoUrl!} alt={displayName} referrerpolicy='no-referrer' />
+              {/* <img class='avatar' src={photoUrl} alt={displayName} referrerpolicy='no-referrer' /> */}
+              <Avatar
+                size={40}
+                name={displayName}
+                variant='beam'
+                colors={['#92A1C6', '#146A7C', '#F0AB3D', '#C271B4', '#C20D90']}
+              />
             </Link>
 
             <div class='post-meta'>
