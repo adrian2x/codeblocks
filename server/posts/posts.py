@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
-from server.firebase import db, get_posts_by_user_id
+from server.firebase import db
+from server.models.post import Post
 
 posts_blueprint = Blueprint("posts", __name__)
 
@@ -20,7 +21,7 @@ def get_posts():
     uid = request.args.get("uid")
     cursor = request.args.get("cursor")
     search = request.args.get("search")
-    results = get_posts_by_user_id(uid, cursor, search)
+    results = Post.get_posts_by_user_id(uid, cursor, search)
     return jsonify(results)
 
 

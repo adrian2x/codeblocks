@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template
-from server.firebase import db, get_user_by_id_handle
+from server.firebase import db
+from server.models.user import User
 
 web_blueprint = Blueprint(
     "web",
@@ -22,7 +23,7 @@ def get_post(post_id=None):
 @web_blueprint.route("/@/<user_id>")
 def get_profile(user_id=""):
     "Renders the profile html page"
-    user = get_user_by_id_handle(user_id)
+    user = User.get_user_by_id_handle(user_id)
     return render_template("profile.html", user=user.to_dict())
 
 
