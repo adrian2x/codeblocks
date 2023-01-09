@@ -1,3 +1,4 @@
+"""Posts Blueprint"""
 from flask import Blueprint, request, jsonify
 from server.firebase import db
 from server.models.post import Post
@@ -43,4 +44,4 @@ def update_post(post_id):
 @posts_blueprint.route("/<post_id>", methods=["DELETE"])
 def delete_post(post_id):
     "Delete post by post id"
-    return jsonify(Post(post_id).delete().to_dict())
+    return jsonify(Post(post_id).delete())

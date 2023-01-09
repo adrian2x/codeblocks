@@ -1,5 +1,5 @@
+"Web Blueprint"
 from flask import Blueprint, render_template
-from server.firebase import db
 from server.models.user import User
 from server.models.post import Post
 
@@ -31,5 +31,6 @@ def get_profile(user_id=""):
 @web_blueprint.route("/")
 @web_blueprint.route("/post")
 def catch_all(path=None):
+    "Renders the index html page"
     print("request", path)
     return web_blueprint.send_static_file("index.html")

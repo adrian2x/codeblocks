@@ -1,9 +1,12 @@
-from server.firebase import db, auth, firestore
+"""User model"""
 import random
 from pyug import get_random_username
+from server.firebase import db, auth
 
 
 class User:
+    "User model class"
+
     def __init__(self, uid: str) -> None:
         self.doc = db.collection("users").document(uid)
 
@@ -41,9 +44,9 @@ class User:
     @staticmethod
     def generate_username(email: str = None):
         "Create a username from the email"
-        try:
+        if "@" in email:
             username = email.split("@")[0]
-        except:
+        else:
             username = get_random_username()
         return username + str(random.randrange(1000))
 
