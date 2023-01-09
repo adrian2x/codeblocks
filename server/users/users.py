@@ -45,4 +45,4 @@ def update_user(uid):
 def delete_user(uid):
     "Delete user by user id"
     User.delete_firebase_user(uid)
-    return jsonify(success=True)
+    return jsonify(ok=True)

@@ -2,6 +2,8 @@ from server.firebase import db, firestore
 
 
 class Post:
+    "Post model class"
+
     def __init__(self, pid: str) -> None:
         self.doc = db.collection("posts").document(pid)
 
@@ -43,4 +45,4 @@ class Post:
     def delete(self):
         "Delete a post document"
         self.doc.delete()
-        return {"message": "Post deleted successfully."}
+        return self

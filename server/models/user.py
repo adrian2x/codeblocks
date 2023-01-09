@@ -62,4 +62,4 @@ class User:
     def delete(self):
         "Delete a user document"
         self.doc.delete()
-        return {"message": "User deleted successfully."}
+        return self

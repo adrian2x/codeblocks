@@ -5,14 +5,8 @@ from server.posts.posts import posts_blueprint
 from server.users.users import users_blueprint
 from server.web.web import web_blueprint
 
-csp = {
-    "default-src": "'self'",
-    "img-src": "*",
-    "script-src": "*",
-}
-
 app = Flask(__name__)
-Talisman(app, content_security_policy=csp)
+Talisman(app, content_security_policy=None)
 # This is for Google app engine health check
 @app.route("/_ah/warmup")
 def warmup():
