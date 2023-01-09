@@ -1,4 +1,6 @@
-.user-page {
+.profile-page {
+  padding: 0 !important;
+
   header {
     position: relative;
   }
@@ -22,15 +24,15 @@
 
     .avatar,
     .btn-upload {
-      height: 96px;
-      width: 96px;
-      border: 3px solid var(--bg-color);
+      height: 90px;
+      width: 90px;
     }
 
     .title {
       font-size: 2rem;
       font-weight: bold;
       margin: 0.5rem 0 0;
+      text-align: center;
     }
 
     .details {

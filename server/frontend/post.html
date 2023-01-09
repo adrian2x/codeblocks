@@ -6,105 +6,127 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{{post.title}}</title>
     <meta name="description" content="{{post.description}}" />
+    <link rel="canonical" href="https://codeblocks.cloud/post/{{post.id}}" />
 
     <meta property="og:type" content="article" />
     <meta property="og:title" content="{{post.title}}" />
     <meta
       property="og:image"
       content="https://firebasestorage.googleapis.com/v0/b/codeblocks-991a2.appspot.com/o/{{post.id}}.png?alt=media" />
+    <!-- <meta property="og:image:alt" content="{{post.code|escape}}" /> -->
+    <meta property="og:image:alt" content="" />
     <meta property="og:site_name" content="Codeblocks" />
     <meta property="og:description" content="{{post.description}}" />
-    <meta property="og:image:alt" content="{{post.code|safe}}" />
+
+    <meta property="twitter:url" content="https://codeblocks.cloud/post/{{post.id}}" />
+    <meta
+      property="twitter:image"
+      content="https://firebasestorage.googleapis.com/v0/b/codeblocks-991a2.appspot.com/o/{{post.id}}.png?alt=media" />
+    <meta property="twitter:image:alt" content="" />
+    <meta property="twitter:title" content="{{post.title}}" />
+    <meta property="twitter:description" content="{{post.description}}" />
     <meta name="twitter:card" content="summary_large_image" />
 
+    <meta name="twitter:site" content="@hackerture" />
     <meta name="twitter:creator" content="{{post.user.displayHandle}}" />
-    <!-- <meta name="twitter:site" content="@website-username"> -->
 
     <link rel="stylesheet" href="src/index.scss" />
 
     <link
-      rel="stylesheet"
+      crossorigin="anonymous"
+      rel="alternate stylesheet"
       title="Default"
       href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css" />
 
     <link
+      crossorigin="anonymous"
       rel="alternate stylesheet"
       title="Androidstudio"
       href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/androidstudio.min.css"
       disabled="disabled" />
 
     <link
+      crossorigin="anonymous"
       rel="alternate stylesheet"
       title="Atom One Dark"
       href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css"
       disabled="disabled" />
 
     <link
+      crossorigin="anonymous"
       rel="alternate stylesheet"
       title="Material"
       href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/base16/material.min.css"
       disabled="disabled" />
 
     <link
+      crossorigin="anonymous"
       rel="alternate stylesheet"
       title="Tomorrow Night"
       href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/base16/tomorrow-night.min.css"
       disabled="disabled" />
 
     <link
+      crossorigin="anonymous"
       rel="alternate stylesheet"
       title="Github"
       href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css"
       disabled="disabled" />
 
     <link
+      crossorigin="anonymous"
       rel="alternate stylesheet"
       title="Github Dark"
       href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github-dark.min.css"
       disabled="disabled" />
 
     <link
+      crossorigin="anonymous"
       rel="alternate stylesheet"
       title="Hybrid"
       href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/hybrid.min.css"
       disabled="disabled" />
 
     <link
+      crossorigin="anonymous"
       rel="alternate stylesheet"
       title="Sublime"
       href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/monokai-sublime.min.css"
       disabled="disabled" />
 
     <link
+      crossorigin="anonymous"
       rel="alternate stylesheet"
       title="Tokyo Night Dark"
       href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/tokyo-night-dark.min.css"
       disabled="disabled" />
 
     <link
+      crossorigin="anonymous"
       rel="alternate stylesheet"
       title="Tomorrow Night Blue"
       href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/tomorrow-night-blue.min.css"
       disabled="disabled" />
 
     <link
+      crossorigin="anonymous"
       rel="alternate stylesheet"
       title="Vs 2015"
       href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/vs2015.min.css"
       disabled="disabled" />
 
     <link
+      crossorigin="anonymous"
       rel="alternate stylesheet"
       title="Xcode"
       href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/xcode.min.css"
       disabled="disabled" />
 
     <meta name="referrer" content="no-referrer" />
-    <script src="src/main.tsx" type="module"></script>
   </head>
 
   <body>
-    <div>
+    <div id="app">
       <nav class="nav">
         <div class="nav-start">
           <a class="brand" href="/">Codeblocks</a>
@@ -112,20 +134,19 @@
         </div>
         <div class="nav-end"></div>
       </nav>
-      <div class="p4">
-        <main class="container" itemscope itemtype="http://schema.org/CreativeWork">
-          <h1 itemprop="name">{{post.title}}</h1>
-          <h2 itemprop="headline">{{post.title}}</h2>
-          <h2 itemprop="description">{{post.description}}</h2>
-          <p itemprop="author">{{post.user.displayName}}</p>
-          <p itemprop="creator">{{post.user.displayHandle}}</p>
-          <p itemprop="keywords">{{post.language}}</p>
-          <img
-            itemprop="image"
-            src="https://firebasestorage.googleapis.com/v0/b/codeblocks-991a2.appspot.com/o/{{post.id}}.png?alt=media"
-            alt="{{post.code|safe}}" />
-        </main>
-      </div>
+      <article class="container" itemscope itemtype="http://schema.org/CreativeWork">
+        <h1 itemprop="name">{{post.title}}</h1>
+        <h2 itemprop="headline">{{post.title}}</h2>
+        <h2 itemprop="description">{{post.description}}</h2>
+        <p itemprop="author">{{post.user.displayName}}</p>
+        <p itemprop="creator">{{post.user.displayHandle}}</p>
+        <p itemprop="keywords">{{post.language}}</p>
+        <img
+          itemprop="image"
+          src="https://firebasestorage.googleapis.com/v0/b/codeblocks-991a2.appspot.com/o/{{post.id}}.png?alt=media"
+          alt="{{post.code|escape}}" />
+      </article>
     </div>
+    <script src="src/main.tsx" type="module"></script>
   </body>
 </html>

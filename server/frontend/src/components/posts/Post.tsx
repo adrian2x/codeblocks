@@ -8,6 +8,7 @@ import { currentUser } from '../../stores/uiState'
 import { autoSize, CodeEditor, generateGradient, updateStyles } from './CodeEditor'
 import { RouteProps } from '../../types'
 import './post.scss'
+import './code-editor.scss'
 
 export async function postLoader({ params }: RouteProps) {
   if (params.post_id) {
@@ -33,31 +34,49 @@ export function ReadOnlyPost({ post }: { post: TPost }) {
   useEffect(() => {
     autoSize()
     if (post.theme && post.theme != 'Default') {
-      updateStyles('Default', post.theme).then(highlightAll)
+      updateStyles('Default', post.theme).then(highlightAll).then(autoSize)
     }
     highlightAll()
   }, [])
 
+  const { uid, displayName, displayHandle, photoUrl } = post.user
+
   return (
     <div class='post-form'>
-      <div class='post-header'>
-        <div>
-          <h4 class='title m0'>{post.title || 'Untitled'}</h4>
-          <div class='details'>
-            <span>
-              <Link to={`/@/${post.user.uid}`}>{post.user.displayName ?? 'Anonymous'}</Link>
-            </span>
-            <span class='sep'>{`  •  `}</span>
-            <span>{ago(post.created)}</span>
+      <div class='post'>
+        <header class='header flex flex-row'>
+          <Link
+            to={`/@/${uid}`}
+            style={{
+              marginRight: 8
+            }}>
+            <img class='avatar' src={photoUrl!} alt={displayName} referrerpolicy='no-referrer' />
+          </Link>
+
+          <div class='flex-column'>
+            <div className='meta flex-row'>
+              <span>
+                <Link class='author' to={`/@/${uid}`}>
+                  {displayName} {displayHandle}
+                </Link>
+              </span>
+              <span class='sep mx1'>{`•`}</span>
+              <span>{ago(post.created, false)}</span>
+            </div>
+            <div class='title'>
+              {post.title && <h4 class='title'>{post.title || 'Untitled'}</h4>}
+            </div>
           </div>
-        </div>
+        </header>
 
         <p>{post.description}</p>
 
-        <div id='code-background' style={{ background: background[0] }}>
-          <div class='flex flex-justify-center'>
+        <div
+          id='code-background'
+          style={{ background: 'transparent', padding: 0, position: 'relative' }}>
+          {/* <div class='flex flex-justify-center'>
             <h5 className='title'>{post.title}</h5>
-          </div>
+          </div> */}
 
           <div id='code-window' class='code-window hljs'>
             <div className='window-title'>
@@ -90,42 +109,7 @@ export function ReadOnlyPost({ post }: { post: TPost }) {
               </pre>
             </div>
           </div>
-
-          <div className='credits flex justify-between'>
-            <Avatar
-              photoUrl={post.user.photoUrl}
-              displayHandle={post.user.displayHandle}
-              displayName={post.user.displayName}
-            />
-          </div>
         </div>
-      </div>
-    </div>
-  )
-}
-
-export function Avatar({
-  photoUrl,
-  displayHandle,
-  displayName
-}: {
-  photoUrl?: string | null
-  displayHandle: string
-  displayName?: string
-}) {
-  return (
-    <div className='flex items-center'>
-      <div className='avatar-container'>
-        <img
-          class='avatar drop-shadow-4'
-          src={photoUrl ?? `https://www.gravatar.com/avatar/?d=mp&s=48`}
-          alt={displayHandle ?? ''}
-          referrerpolicy='no-referrer'
-        />
-      </div>
-      <div>
-        {displayName && <div className='author text-shadow'>{displayName}</div>}
-        <small className='secondary text-shadow'>{displayHandle}</small>
       </div>
     </div>
   )

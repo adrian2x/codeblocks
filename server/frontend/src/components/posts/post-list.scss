@@ -1,38 +1,22 @@
 .post-list {
+  gap: 2.22rem;
+
   .post {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
     padding: 0;
-  }
 
-  .cover {
-    background: var(--color-mediumGrey);
-    background-size: cover;
-    border-radius: 16px;
+    @media (min-width: 768px) {
+      max-width: 470px;
+    }
+  }
+}
+
+.post {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+
+  .header {
     display: flex;
-    flex: 1;
-    min-height: 200px;
-    position: relative;
-    transform: scale(1);
-    transition: all 0.2s ease-out;
-    filter: drop-shadow(0 20px 13px rgba(190 190 190 / 0));
-
-    &:hover {
-      transform: scale(1.05);
-      filter: drop-shadow(0 20px 13px rgba(120, 120, 120, 0.2));
-    }
-
-    .image {
-      border-radius: 12px;
-      position: absolute;
-      height: 200px;
-      width: 100%;
-    }
-  }
-
-  .footer {
-    padding: 0.75rem 0.5rem;
 
     a {
       color: var(--font-color);
@@ -45,18 +29,57 @@
     max-width: 40px;
   }
 
+  .post-meta {
+    flex-direction: column;
+    max-width: calc(100% - 48px);
+  }
+
+  .meta {
+    display: block;
+    font-size: 80%;
+    line-height: 1;
+    margin-bottom: 0.25rem;
+    opacity: 0.9;
+  }
+
   .title {
-    font-size: 94%;
+    font-size: 96%;
     letter-spacing: initial;
     margin: 0;
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;
+    white-space: normal;
   }
 
-  .author {
-    display: block;
-    font-size: 80%;
-    line-height: 1.5;
+  .cover {
+    background: var(--color-mediumGrey);
+    background-size: cover;
+    border-radius: 16px;
+    display: flex;
+    flex: 1;
+    min-height: 270px;
+    margin-top: 0.5rem;
+    position: relative;
+    transform: scale(1);
+    transition: all 0.2s ease-out;
+    filter: drop-shadow(0 20px 13px rgba(190 190 190 / 0));
+    margin-left: -0.25rem;
+    margin-right: -0.25rem;
+
+    &:hover {
+      transform: scale(1.03);
+      filter: drop-shadow(0 20px 13px rgba(120, 120, 120, 0.2));
+    }
+
+    .image {
+      border-radius: 12px;
+      position: absolute;
+      height: 100%;
+      width: 100%;
+    }
+  }
+
+  .content p {
+    word-break: break-word;
   }
 }

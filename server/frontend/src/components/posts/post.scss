@@ -1,12 +1,11 @@
-.post-header {
+.post {
   .sep {
     display: inline-block;
     margin: 0 0.5rem;
   }
 
-  .byline {
-    font-size: 80%;
-    color: var(--color-mediumGrey);
+  p {
+    margin-left: 0.25rem;
   }
 
   .credits {
@@ -15,5 +14,9 @@
     .avatar-container {
       margin-right: 0.75rem;
     }
+  }
+
+  #code-window {
+    margin: 0;
   }
 }

@@ -2,6 +2,7 @@ import { useEffect } from 'preact/hooks'
 import { currentUser } from '../stores/uiState'
 import { firebase } from '../common/firebase'
 import 'firebaseui/dist/firebaseui.css'
+import { createUser } from '../common/requests'
 
 export { showDialog, closeDialog }
 
@@ -11,7 +12,7 @@ export function FirebaseAuth() {
     <dialog id='firebaseAuthDialog'>
       <form method='dialog'>
         <div className='flex flex-row-reverse'>
-          <button class='clear p0' value='cancel'>
+          <button class='clear p0 m0' value='cancel'>
             <div>✕</div>
           </button>
         </div>
@@ -62,12 +63,25 @@ function onRender() {
       // Privacy policy url.
       // privacyPolicyUrl: '<your-privacy-policy-url>',
       callbacks: {
-        signInSuccessWithAuthResult: function (authResult, redirectUrl) {
+        signInSuccessWithAuthResult(authResult, redirectUrl) {
           // User successfully signed in.
           // Return type determines whether we continue the redirect automatically
           // or whether we leave that to developer to handle.
-          const user = authResult.user
           closeDialog()
+          const user = authResult.user
+          const credential = authResult.credential
+          const isNewUser = authResult.additionalUserInfo.isNewUser
+          const providerId = authResult.additionalUserInfo.providerId
+          const operationType = authResult.operationType
+          if (isNewUser) {
+            createUser({
+              id: user.uid,
+              email: user.email,
+              displayName: user.displayName,
+              photoURL: user.photoURL,
+              created: Date.now()
+            })
+          }
           localStorage.setItem(
             'user',
             JSON.stringify({
@@ -80,7 +94,7 @@ function onRender() {
         },
         // signInFailure callback must be provided to handle merge conflicts which
         // occur when an existing credential is linked to an anonymous user.
-        signInFailure: function (error) {
+        signInFailure(error) {
           // For merge conflicts, the error.code will be
           // 'firebaseui/anonymous-upgrade-merge-conflict'.
           if (error.code == 'firebaseui/anonymous-upgrade-merge-conflict') {
@@ -94,7 +108,7 @@ function onRender() {
           }
           console.error(error)
         },
-        uiShown: () => {
+        uiShown() {
           // The widget is rendered.
           // Hide the loader.
           if (!currentUser.value) showDialog()

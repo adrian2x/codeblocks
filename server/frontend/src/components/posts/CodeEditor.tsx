@@ -1,5 +1,5 @@
 // @ts-expect-error
-import domtoimage from 'dom-to-image-more'
+import domtoimg from 'dom-to-image-more'
 import escape from 'escape-html'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -11,7 +11,6 @@ import { FirebaseUser } from '../../types'
 import { Dropdown } from '../Dropdown'
 import { PhotoUploader, uploadImage } from '../users/PhotoUploader'
 import { FaTrash } from 'react-icons/fa'
-import './code-editor.scss'
 
 export function CodeEditor({ post }: { post?: TPost }) {
   // import highlightjs module
@@ -35,7 +34,8 @@ export function CodeEditor({ post }: { post?: TPost }) {
       title: '',
       description: '',
       code: '',
-      language: ''
+      language: '',
+      windowTitle: 'Untitled'
     }
   )
 
@@ -57,7 +57,7 @@ export function CodeEditor({ post }: { post?: TPost }) {
     autoSize()
     // Load theme preferences
     if (editorState.theme !== 'Default') {
-      updateStyles('Default', editorState.theme)
+      updateStyles('Default', editorState.theme).then(highlightAll).then(autoSize)
     }
     highlightAll()
   }, [])
@@ -237,6 +237,7 @@ export function CodeEditor({ post }: { post?: TPost }) {
             </button>
             <div class='mr2'>
               <Dropdown
+                modal
                 target={
                   <button class='outline'>
                     More
@@ -301,9 +302,9 @@ export function CodeEditor({ post }: { post?: TPost }) {
                   <label>
                     <input
                       type='checkbox'
-                      checked={!editorState.background}
+                      checked={editorState.background}
                       onChange={(e) => {
-                        setEditor({ background: !editorState.background })
+                        setEditor({ background: !!!editorState.background })
                       }}
                     />{' '}
                     Color
@@ -323,7 +324,7 @@ export function CodeEditor({ post }: { post?: TPost }) {
             </div>
           </div>
 
-          <div class='flex items-baseline ml-auto'>
+          <div class='flex items-baseline'>
             {post?.id && (
               <button
                 className='outline'
@@ -354,50 +355,57 @@ export function CodeEditor({ post }: { post?: TPost }) {
 
         <div
           id='code-background'
-          style={{ background: (editorState.background && 'transparent') || background[0] }}>
-          <div class='flex flex-justify-center'>
-            <h5
-              className='title'
-              aria-hidden={!editorState.showTitle}
-              contentEditable
-              onBlur={(e) => {
-                setEditor({ title: e.currentTarget.innerText })
-              }}>
-              {postState.title}
-            </h5>
-          </div>
-
-          <div id='code-window' class='code-window hljs'>
-            <div className='window-title'>
-              <div className='flex buttons'>
-                <div className='btn-1'></div>
-                <div className='btn-2'></div>
-                <div className='btn-3'></div>
-              </div>
-              <div class='label' contentEditable>
-                Untitled
-              </div>
+          style={{ background: editorState.background ? background[0] : 'transparent' }}>
+          <div class='flex flex-column flex-1 justify-center'>
+            <div class='flex flex-justify-center'>
+              <h5
+                className='title'
+                aria-hidden={!editorState.showTitle}
+                contentEditable
+                onBlur={(e) => {
+                  setEditor({ title: e.currentTarget.innerText })
+                }}>
+                {postState.title}
+              </h5>
             </div>
 
-            <div className='code-wrapper'>
-              <pre class={`${postState.language ?? ''}`}>
-                <code
-                  id='code'
-                  class={
-                    postState.code
-                      ? `hljs ${postState.language ? 'language-' + postState.language : ''}`
-                      : ''
-                  }
-                  dangerouslySetInnerHTML={{ __html: escape(postState.code) }}
+            <div id='code-window' class='code-window hljs'>
+              <div className='window-title'>
+                <div className='flex buttons'>
+                  <div className='btn-1'></div>
+                  <div className='btn-2'></div>
+                  <div className='btn-3'></div>
+                </div>
+                <div
+                  class='label'
                   contentEditable
                   onBlur={(e) => {
-                    const self = e.currentTarget
-                    const code = self.innerText.replace(/\n\n\n/gm, '\n\n')
-                    setPost({ code: code })
-                    if (code.trim()) autoSize()
-                  }}
-                />
-              </pre>
+                    setPost({ windowTitle: e.currentTarget.innerText })
+                  }}>
+                  {postState.windowTitle ?? 'Untitled'}
+                </div>
+              </div>
+
+              <div className='code-wrapper'>
+                <pre class={`${postState.language ?? ''}`}>
+                  <code
+                    id='code'
+                    class={
+                      postState.code
+                        ? `hljs ${postState.language ? 'language-' + postState.language : ''}`
+                        : ''
+                    }
+                    dangerouslySetInnerHTML={{ __html: escape(postState.code) }}
+                    contentEditable
+                    onBlur={(e) => {
+                      const self = e.currentTarget
+                      const code = self.innerText.replace(/\n\n\n/gm, '\n\n')
+                      setPost({ code: code })
+                      if (code.trim()) autoSize()
+                    }}
+                  />
+                </pre>
+              </div>
             </div>
           </div>
 
@@ -449,9 +457,11 @@ export function updateStyles(theme: string, nextTheme: string) {
     .forEach((link) => link.setAttribute('disabled', 'disabled'))
   return new Promise((resolve, reject) => {
     let link = document.querySelector(`link[title="${nextTheme}"]`) as HTMLLinkElement
-    link.onload = resolve
-    link.onerror = reject
-    link.removeAttribute('disabled')
+    if (link) {
+      link.onload = resolve
+      link.onerror = reject
+      link.removeAttribute('disabled')
+    }
   })
 }
 
@@ -494,8 +504,7 @@ export function autoSize() {
  * Generates the code preview screenshot from the editor.
  */
 async function getScreenshot(download = false, fileName = 'codeblocks.png') {
-  let node = document.getElementById('code-background')!
-  let dataUrl: string = await domtoimage.toPng(node)
+  let dataUrl = await domtoimg.toPng(setImageSize('code-background', 1.333))
   if (download) {
     var link = document.createElement('a')
     link.download = fileName
@@ -528,11 +537,23 @@ async function onSubmit(
 
   // Upload the code screenshot
   setTimeout(async () => {
-    let node = document.getElementById('code-background')!
-    let blob = await domtoimage.toBlob(node)
-    let image = await uploadImage(`${response.id}.png`, blob)
-    console.log('uploaded image', image.ref)
+    let data = await domtoimg.toBlob(setImageSize('code-background', 1.91))
+    uploadImage(`${response.id}.png`, data)
   })
 
   return response
+}
+
+function setImageSize(id: string, ratio = 1.91) {
+  let node = document.getElementById(id)!
+  let width = node.clientWidth
+  let height = node.clientHeight
+  if (width < height * ratio) {
+    let newWidth = Math.ceil(height * ratio)
+    node.style.width = `${newWidth}px`
+  } else {
+    let newHeight = Math.ceil(width / ratio)
+    node.style.height = `${newHeight}px`
+  }
+  return node
 }

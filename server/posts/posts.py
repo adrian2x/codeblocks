@@ -1,5 +1,7 @@
+"""Posts Blueprint"""
 from flask import Blueprint, request, jsonify
-from server.firebase import db, get_posts_by_user_id
+from server.firebase import db
+from server.models.post import Post
 
 posts_blueprint = Blueprint("posts", __name__)
 
@@ -20,14 +22,14 @@ def get_posts():
     uid = request.args.get("uid")
     cursor = request.args.get("cursor")
     search = request.args.get("search")
-    results = get_posts_by_user_id(uid, cursor, search)
+    results = Post.get_posts_by_user_id(uid, cursor, search)
     return jsonify(results)
 
 
 @posts_blueprint.route("/<post_id>", methods=["GET"])
 def read_post(post_id):
     "Retrieve post by post id"
-    post = db.collection("posts").document(post_id).get().to_dict()
+    post = Post(post_id).get().to_dict()
     return jsonify(post)
 
 
@@ -35,15 +37,12 @@ def read_post(post_id):
 def update_post(post_id):
     "Update post by post id"
     data = request.get_json()
-    doc = db.collection("posts").document(post_id)
-    doc.update(data)
-    updated_doc = db.collection("posts").document(post_id).get().to_dict()
+    updated_doc = Post(post_id).update(data).to_dict()
     return jsonify(updated_doc)
 
 
 @posts_blueprint.route("/<post_id>", methods=["DELETE"])
 def delete_post(post_id):
     "Delete post by post id"
-    doc = db.collection("posts").document(post_id)
-    doc.delete()
-    return jsonify({"message": "Post deleted successfully."})
+    Post(post_id).delete()
+    return jsonify(ok=True)
