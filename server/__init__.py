@@ -8,6 +8,7 @@ from server.web.web import web_blueprint
 csp = {
     "default-src": "'self'",
     "img-src": "*",
+    "script-src": "*",
 }
 
 app = Flask(__name__)
