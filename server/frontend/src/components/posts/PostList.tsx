@@ -2,6 +2,7 @@
 import { ago } from 'time-ago'
 import { useState } from 'react'
 import { Link, useLoaderData } from 'react-router-dom'
+import ReactMarkdown from 'react-markdown'
 import { getPosts, TPost } from '../../common/requests'
 import useInfiniteScroll from '../../hooks/useInfiniteScroll'
 import { avatarUrl } from '../users/avatarUrl'
@@ -52,7 +53,7 @@ export function PostsList({ uid, noHeader }: PostsListProps) {
   return (
     <>
       {posts.map((post) => {
-        return <PostDisplay p={post} noHeader={noHeader} />
+        return <PostItem p={post} noHeader={noHeader} />
       })}
       <div ref={observerRef}>
         <p></p>
@@ -62,7 +63,7 @@ export function PostsList({ uid, noHeader }: PostsListProps) {
   )
 }
 
-export function PostDisplay({ noHeader, p }: any) {
+export function PostItem({ noHeader, p }: any) {
   let previewUrl = `https://firebasestorage.googleapis.com/v0/b/codeblocks-991a2.appspot.com/o/${p.id}.png?alt=media`
   const { uid, displayName, displayHandle, photoUrl } = p.user
   return (
@@ -100,7 +101,11 @@ export function PostDisplay({ noHeader, p }: any) {
         )}
 
         <div className='content'>
-          {!noHeader && <p>{p.description}</p>}
+          {!noHeader && (
+            <p>
+              <ReactMarkdown>{p.description}</ReactMarkdown>
+            </p>
+          )}
 
           <Link to={`/post/${p.id}`} className='cover'>
             <div

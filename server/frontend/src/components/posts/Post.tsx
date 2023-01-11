@@ -1,8 +1,9 @@
 import escape from 'escape-html'
 // @ts-expect-error
 import { ago } from 'time-ago'
-import { useEffect, useState } from 'preact/hooks'
+import { useEffect, useState } from 'react'
 import { useLoaderData, Link } from 'react-router-dom'
+import ReactMarkdown from 'react-markdown'
 import { getPost, TPost } from '../../common/requests'
 import { currentUser } from '../../stores/uiState'
 import { autoSize, CodeEditor, generateGradient, updateStyles } from './CodeEditor'
@@ -69,7 +70,9 @@ export function ReadOnlyPost({ post }: { post: TPost }) {
           </div>
         </header>
 
-        <p>{post.description}</p>
+        <p>
+          <ReactMarkdown>{post.description}</ReactMarkdown>
+        </p>
 
         <div
           id='code-background'
