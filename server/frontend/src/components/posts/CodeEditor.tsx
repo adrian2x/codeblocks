@@ -132,9 +132,10 @@ export function CodeEditor({ post }: { post?: TPost }) {
         <div>
           <textarea
             class='clear mb1'
-            placeholder='Add a nice description'
+            placeholder={`Add notes using markdown...\n- See [markdown](http://bit.ly/markdown)`}
             value={postState.description}
             style={{ lineHeight: 1.6 }}
+            rows={3}
             onBlur={(e) => {
               setPost({ description: e.currentTarget.value })
             }}></textarea>

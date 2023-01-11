@@ -20,6 +20,7 @@
     "preact-hooks": "^0.0.0",
     "react-hot-toast": "^2.4.0",
     "react-icons": "^4.7.1",
+    "react-markdown": "^8.0.4",
     "react-router-dom": "^6.6.0",
     "time-ago": "^0.2.1"
   },
