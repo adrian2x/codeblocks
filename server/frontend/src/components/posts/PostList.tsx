@@ -101,11 +101,7 @@ export function PostItem({ noHeader, p }: any) {
         )}
 
         <div className='content'>
-          {!noHeader && (
-            <p>
-              <ReactMarkdown>{p.description}</ReactMarkdown>
-            </p>
-          )}
+          {!noHeader && <ReactMarkdown>{p.description}</ReactMarkdown>}
 
           <Link to={`/post/${p.id}`} className='cover'>
             <div

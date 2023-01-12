@@ -70,9 +70,7 @@ export function ReadOnlyPost({ post }: { post: TPost }) {
           </div>
         </header>
 
-        <p>
-          <ReactMarkdown>{post.description}</ReactMarkdown>
-        </p>
+        <ReactMarkdown>{post.description}</ReactMarkdown>
 
         <div
           id='code-background'
