@@ -22,10 +22,10 @@
     "jsxImportSource": "preact",
     "paths": {
       "react": [
-        "./node_modules/preact/compat/"
+        "./types/react.d.ts"
       ],
       "react-dom": [
-        "./node_modules/preact/compat/"
+        "./node_modules/preact/compat"
       ]
     }
   },
