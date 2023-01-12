@@ -13,7 +13,8 @@ jobs:
 
       # Checking if the app build successfully
       - name: npm install
-        run: sh build.sh
+        working-directory: ./server/frontend
+        run: npm install && npm run build
 
       - name: Deploy an App Engine app
         id: deploy-app
