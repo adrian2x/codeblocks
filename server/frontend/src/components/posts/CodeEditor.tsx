@@ -132,9 +132,9 @@ export function CodeEditor({ post }: { post?: TPost }) {
         <div>
           <textarea
             class='clear mb1'
-            placeholder={`Add notes using markdown...\n- See [markdown](http://bit.ly/markdown)`}
+            placeholder={`Add notes using markdown...`}
             value={postState.description}
-            style={{ lineHeight: 1.6 }}
+            style={{ lineHeight: 1.6, overflow: 'auto' }}
             rows={3}
             onBlur={(e) => {
               setPost({ description: e.currentTarget.value })
@@ -537,15 +537,13 @@ async function onSubmit(
       }))
 
   // Upload the code screenshot
-  setTimeout(async () => {
-    let data = await domtoimg.toBlob(setImageSize('code-background', 1.91))
-    uploadImage(`${response.id}.png`, data)
-  })
-
+  // await saveScreenshot(response.id, 1.91)
+  await saveScreenshot(response.id + '@1.33', 1.33)
+  saveScreenshot(response.id, 1.91)
   return response
 }
 
-function setImageSize(id: string, ratio = 1.91) {
+function setImageSize(id: string, ratio = 1.91): [HTMLElement, number, number] {
   let node = document.getElementById(id)!
   let width = node.clientWidth
   let height = node.clientHeight
@@ -556,5 +554,13 @@ function setImageSize(id: string, ratio = 1.91) {
     let newHeight = Math.ceil(width / ratio)
     node.style.height = `${newHeight}px`
   }
-  return node
+  return [node, width, height]
+}
+
+async function saveScreenshot(name: string, ratio = 1.33) {
+  let [node, prevW, prevH] = setImageSize('code-background', ratio)
+  let blob = await domtoimg.toBlob(node)
+  node.style.width = `${prevW}px`
+  node.style.height = `${prevH}px`
+  return uploadImage(`${name}.png`, blob)
 }
