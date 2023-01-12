@@ -1,4 +1,4 @@
-runtime: python39
+runtime: python311
 instance_class: F2
 
 automatic_scaling:
@@ -11,4 +11,4 @@ handlers:
 inbound_services:
   - warmup
 
-entrypoint: gunicorn -b :$PORT -w 4 server:app
+entrypoint: gunicorn -b :$PORT -w 4 main:app

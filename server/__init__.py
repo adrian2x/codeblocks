@@ -1,22 +1,10 @@
 """Server module"""
-from flask import Flask, request, redirect
+from flask import Flask
 from server.posts.posts import posts_blueprint
 from server.users.users import users_blueprint
 from server.web.web import web_blueprint
 
-
 app = Flask(__name__)
-
-
-@app.before_request
-def before_request():
-    "Redirect to https"
-    scheme = request.headers.get("X-Forwarded-Proto")
-    if scheme and scheme == "http" and request.url.startswith("http://"):
-        url = request.url.replace("http://", "https://", 1)
-        code = 301
-        return redirect(url, code=code)
-
 
 # This is for Google app engine health check
 @app.route("/_ah/warmup")
