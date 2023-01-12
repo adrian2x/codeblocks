@@ -30,7 +30,7 @@ def get_profile(user_id=""):
 
 @web_blueprint.route("/")
 @web_blueprint.route("/post")
+@web_blueprint.route("/<path>")
 def catch_all(path=None):
     "Renders the index html page"
-    print("request", path)
     return web_blueprint.send_static_file("index.html")
