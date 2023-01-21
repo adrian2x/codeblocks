@@ -21,8 +21,8 @@ def get_posts():
     "Retrieve all posts created by a user id"
     uid = request.args.get("uid")
     cursor = request.args.get("cursor")
-    search = request.args.get("search")
-    results = Post.get_posts_by_user_id(uid, cursor, search)
+    language = request.args.get("language")
+    results = Post.get_posts_by_user_id(uid, cursor, language)
     return jsonify(results)
 
 
