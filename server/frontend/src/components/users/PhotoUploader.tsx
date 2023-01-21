@@ -70,7 +70,7 @@ async function handleFileUpload(fileName: string, file: File) {
   return url
 }
 
-function resizeImage(file: File, width = 640, quality = 1) {
+function resizeImage(file: File, width = 512, quality = 0.8) {
   return new Promise<Blob>((resolve, reject) => {
     const reader = new FileReader()
     reader.onload = () => {
