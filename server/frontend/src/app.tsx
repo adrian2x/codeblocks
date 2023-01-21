@@ -64,7 +64,7 @@ function AuthMenu({ user }: { user: firebase.User }) {
               referrerpolicy='no-referrer'
             />
           }>
-          <Link to={`/@/${user.uid}`}>Hey, {user?.displayName}</Link>
+          <Link to={`/@/${user.uid}`}>Hi, {user?.displayName}</Link>
           <Link to={`/@/${user.uid}`}>Profile</Link>
           <Link to={`/settings`}>Settings</Link>
           <Link to={`/`} onClick={() => firebase.auth().signOut()}>
@@ -73,7 +73,7 @@ function AuthMenu({ user }: { user: firebase.User }) {
         </Dropdown>
       </div>
       <div className='sm-show'>
-        <Link to={`/@/${user.uid}`}>Hey, {user?.displayName}</Link>
+        <Link to={`/@/${user.uid}`}>Hi, {user?.displayName}</Link>
         <Link to={`/@/${user.uid}`}>Profile</Link>
         <Link to={`/settings`}>Settings</Link>
         <Link to={`/`} onClick={() => firebase.auth().signOut()}>
@@ -91,9 +91,9 @@ export function App() {
       <Navbar />
       <main className='flex max-width' style={{ paddingTop: '4rem' }}>
         <aside class='hidden lg-show'>
-          <div className='grid grid-col-1 gap-4'>
+          <div className='mt4 grid grid-col-1 gap-5'>
             <NavLink to={`/`}>Home</NavLink>
-            <NavLink to={`/post`}>Explore</NavLink>
+            <NavLink to={`/explore`}>Explore</NavLink>
             {currentUser.value != null && (
               <>
                 <NavLink to={`/saved`}>Saved</NavLink>
