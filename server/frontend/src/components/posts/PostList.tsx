@@ -1,23 +1,45 @@
 // @ts-expect-error
 import { ago } from 'time-ago'
+import { signal } from '@preact/signals'
+import { useCallback, useEffect } from 'preact/hooks'
 import { useState } from 'react'
-import { Link, useLoaderData } from 'react-router-dom'
 import ReactMarkdown from 'react-markdown'
+import { Link, useLoaderData } from 'react-router-dom'
 import { getPosts, TPost } from '../../common/requests'
 import useInfiniteScroll from '../../hooks/useInfiniteScroll'
 import { avatarUrl } from '../users/avatarUrl'
+
 import './post-list.scss'
+
+export const postLanguage = signal('')
 
 export async function loadPosts() {
   return await getPosts()
 }
 
+function parseHash() {
+  return new URLSearchParams(location.hash.substr(1))
+}
+
+function setHash(name: string, value: string) {
+  let prev = new URLSearchParams(location.hash.substr(1))
+  prev.set(name, value)
+  location.hash = prev.toString()
+  return prev
+}
+
 export function PostsContainer() {
   const posts = useLoaderData() as TPost[]
+  useEffect(() => {
+    postLanguage.value = ''
+  }, [])
   return (
-    <section className='container post-list grid grid-cols-1'>
-      <PostsList />
-    </section>
+    <div className='flex w-100 justify-between'>
+      <section className='container post-list grid grid-cols-1'>
+        <PostsList />
+      </section>
+      <PostLanguages />
+    </div>
   )
 }
 
@@ -26,24 +48,36 @@ const PAGE_SIZE = 10
 export type PostsListProps = {
   uid?: string
   noHeader?: boolean
+  language?: string
 }
 
-export function PostsList({ uid, noHeader }: PostsListProps) {
+export function PostsList({ uid, noHeader, language }: PostsListProps) {
   const [posts, setPosts] = useState<TPost[]>([])
   const [disabled, setDisabled] = useState(false)
   const [loading, setLoading] = useState(false)
+
+  const resetState = useCallback(() => {
+    setPosts([])
+    setDisabled(false)
+    setLoading(false)
+  }, [setPosts, setDisabled, setLoading])
 
   async function onLoadMore() {
     if (loading || disabled) return false
     try {
       setLoading(true)
-      let nextPosts = await getPosts(uid, posts[posts.length - 1]?.id)
+      let nextPosts = await getPosts(uid, posts[posts.length - 1]?.id, postLanguage.value)
       setPosts(posts.concat(nextPosts))
       setDisabled(nextPosts.length < PAGE_SIZE)
     } finally {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    // Reset the results when the languange changes
+    resetState()
+  }, [postLanguage.value, resetState])
 
   const observerRef = useInfiniteScroll({
     disabled,
@@ -58,6 +92,7 @@ export function PostsList({ uid, noHeader }: PostsListProps) {
       <div ref={observerRef}>
         <p></p>
         {loading && 'Loading...'}
+        {!loading && posts.length === 0 && 'No posts to show.'}
       </div>
     </>
   )
@@ -115,5 +150,52 @@ export function PostItem({ noHeader, p }: any) {
         </div>
       </div>
     </article>
+  )
+}
+
+interface PostLanguagesProps {
+  title?: string
+}
+
+export function PostLanguages({ title }: PostLanguagesProps) {
+  const setPostLanguage = (e: any) => {
+    postLanguage.value = e.target.id
+  }
+
+  return (
+    <div className='aside sm-hide'>
+      <section class='w-100' onClick={setPostLanguage}>
+        <div className='title'>{title ?? 'Popular'}</div>
+        <a id='python'>Python</a>
+        <a id='c'>C</a>
+        <a id='java'>Java</a>
+        <a id='javascript'>JavaScript</a>
+        <a id='cpp'>C++</a>
+        <a id='csharp'>C#</a>
+        <a id='sql'>SQL</a>
+        <a id='php'>PHP</a>
+        <a id='swift'>Swift</a>
+        <a id='go'>Go</a>
+        <a id='r'>R</a>
+        <a id='ruby'>Ruby</a>
+        <a id='rust'>Rust</a>
+        <a id='kotlin'>Kotlin</a>
+        <a id='typescript'>TypeScript</a>
+        <a id='bash'>Bash</a>
+        <a id='html'>HTML</a>
+        <a id='css'>CSS</a>
+        <a id='scss'>SCSS</a>
+        <a id='xml'>XML</a>
+        <a id='markdown'>Markdown</a>
+        <a id='shell'>Shell</a>
+        <a id='powershell'>PowerShell</a>
+        {/* <a id='python-repl'>Python REPL</a> */}
+        <a id='makefile'>Makefile</a>
+        <a id='toml'>TOML</a>
+        <a id='yaml'>YAML</a>
+        <a id='json'>JSON</a>
+        <a id='plaintext'>Plain Text</a>
+      </section>
+    </div>
   )
 }

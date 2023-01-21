@@ -49,10 +49,11 @@ export function getPost(id: string) {
   return request<TPost>(`/api/posts/${id}`)
 }
 
-export function getPosts(uid?: string, cursor?: string) {
+export function getPosts(uid?: string, cursor?: string, language?: string) {
   let params = new URLSearchParams()
   if (uid) params.set('uid', uid)
   if (cursor) params.set('cursor', cursor)
+  if (language) params.set('language', language)
   return request<TPost[]>(`/api/posts/?${params.toString()}`)
 }
 
