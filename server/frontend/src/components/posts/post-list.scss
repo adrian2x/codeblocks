@@ -1,5 +1,5 @@
 .post-list {
-  gap: 2.22rem;
+  gap: 1.6rem;
 
   .post {
     padding: 0;
@@ -81,5 +81,34 @@
 
   .content p {
     word-break: break-word;
+  }
+}
+
+.aside {
+  width: 300px;
+  display: block;
+
+  section {
+    display: block;
+    width: 300px;
+    border-radius: 1rem;
+    padding-bottom: 0.5rem;
+  }
+
+  .title {
+    padding: 0.75rem 1rem;
+    font-weight: 700;
+  }
+
+  a {
+    display: block;
+    padding: 0.25rem 1rem;
+    font-size: smaller;
+    background-color: transparent;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.03);
+    }
   }
 }
