@@ -17,15 +17,23 @@ export async function loadPosts() {
   return await getPosts()
 }
 
-function parseHash() {
-  return new URLSearchParams(location.hash.substr(1))
+function parseURLParams() {
+  return new URLSearchParams(location.search)
 }
 
-function setHash(name: string, value: string) {
-  let prev = new URLSearchParams(location.hash.substr(1))
-  prev.set(name, value)
-  location.hash = prev.toString()
-  return prev
+function setURLParam(name: string, value: string) {
+  // Get current URL
+  const url = new URL(window.location.href)
+
+  // Update or remove a param
+  if (value) {
+    url.searchParams.set(name, value)
+  } else {
+    url.searchParams.delete(name)
+  }
+
+  // Update the current URL
+  window.history.replaceState(null, '', url)
 }
 
 export function PostsContainer() {

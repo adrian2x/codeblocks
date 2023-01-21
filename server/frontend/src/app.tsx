@@ -73,9 +73,11 @@ function AuthMenu({ user }: { user: firebase.User }) {
         </Dropdown>
       </div>
       <div className='sm-show'>
-        <Link to={`/@/${user.uid}`}>Hi, {user?.displayName}</Link>
+        <Link to={`/`}>Home</Link>
+        <Link to={`/explore`}>Explore</Link>
+        <Link to={`/saved`}>Saved</Link>
         <Link to={`/@/${user.uid}`}>Profile</Link>
-        <Link to={`/settings`}>Settings</Link>
+        <Link to={`/post`}>Create</Link>
         <Link to={`/`} onClick={() => firebase.auth().signOut()}>
           Sign out
         </Link>
