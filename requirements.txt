@@ -1,3 +1,4 @@
+algoliasearch==2.6.3
 astroid==2.13.2
 black==22.12.0
 CacheControl==0.12.11
