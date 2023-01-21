@@ -18,6 +18,10 @@ const router = createBrowserRouter([
         element: <PostsContainer />
       },
       {
+        path: 'explore',
+        element: <PostsContainer key='explore' />
+      },
+      {
         path: 'post',
         element: <Post key={Math.random()} />
       },
