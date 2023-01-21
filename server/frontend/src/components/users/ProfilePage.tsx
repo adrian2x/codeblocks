@@ -5,10 +5,11 @@ import { updateCurrentUser } from '../../common/firebase'
 import { deleteUser, getUser, GetUserResponse, updateUser } from '../../common/requests'
 import { currentUser } from '../../stores/uiState'
 import { generateGradient } from '../posts/CodeEditor'
-import { PostsList } from '../posts/PostList'
+import { postLanguage, PostLanguages, PostsList } from '../posts/PostList'
 import { PhotoUploader } from './PhotoUploader'
 
 import './profile-page.scss'
+import { Tabs } from '../tabs/Tabs'
 
 export async function userPostsLoader({ params }: { params: Params }) {
   if (params.user_id) {
@@ -23,7 +24,7 @@ export function ProfilePage() {
   const [isSaving, setSaving] = useState(false)
   const navigate = useNavigate()
 
-  const allowEditing = currentUser.value?.uid === user.id
+  const isOwner = currentUser.value?.uid === user.id
 
   useEffect(() => {
     if (user) {
@@ -31,6 +32,10 @@ export function ProfilePage() {
       setBackground([user.backgroundColor] ?? generateGradient())
     }
   }, [user, setUserProfile, setBackground])
+
+  useEffect(() => {
+    postLanguage.value = ''
+  }, [])
 
   function setUser(data: Object) {
     setUserProfile({ ...userProfile, ...data })
@@ -57,84 +62,105 @@ export function ProfilePage() {
   }
 
   return (
-    <div className='container profile-page' data-active={allowEditing && !isSaving}>
-      <header>
-        <div
-          key={background[0]}
-          className='banner'
-          style={{ background: background[0] }}
-          onClick={() => {
-            if (allowEditing) {
-              let backgroundGradient = generateGradient()
-              setBackground(backgroundGradient)
-              setUser({
-                backgroundColor: backgroundGradient[0]
-              })
-            }
-          }}></div>
-        <div className='user-avatar'>
-          <PhotoUploader
-            fileName={currentUser.value?.uid ?? ''}
-            value={userProfile.photoUrl ?? userProfile.photoURL}
-            altText={userProfile.displayName ?? ''}
-            allowEditing={allowEditing}
-            onUpdate={(url) => {
-              setUser({ photoUrl: url })
-              updateCurrentUser({ photoURL: url })
-            }}
-          />
-          <h1
-            key={userProfile.displayName}
-            className='title'
-            contentEditable={allowEditing}
-            onBlur={(e) => {
-              let value = e.currentTarget.innerHTML
-              if (value !== userProfile.displayName) {
-                setUser({ displayName: value })
-                updateCurrentUser({ displayName: value })
+    <>
+      <div className='container profile-page' data-active={isOwner && !isSaving}>
+        <header>
+          <div
+            key={background[0]}
+            className='banner'
+            style={{ background: background[0] }}
+            onClick={() => {
+              if (isOwner) {
+                let backgroundGradient = generateGradient()
+                setBackground(backgroundGradient)
+                setUser({
+                  backgroundColor: backgroundGradient[0]
+                })
               }
-            }}>
-            {userProfile.displayName}
-          </h1>
-          <div className='details'>
-            <span>
-              <Link
-                to={`/@/${user.id}`}
-                key={userProfile.displayHandle}
-                contentEditable={allowEditing}
-                onClick={(e: any) => {
-                  if (allowEditing) e.preventDefault()
-                }}
-                onBlur={(e: any) => {
-                  let value = e.currentTarget.innerHTML
-                  if (value !== userProfile.displayHandle) {
-                    setUser({ displayHandle: value })
-                    updateCurrentUser({ displayHandle: value })
-                  }
-                }}>
-                {userProfile.displayHandle ?? 'Anonymous'}
-              </Link>
-            </span>
-            <span class='sep'>{`  •  `}</span>
-          </div>
-          {(userProfile.about || allowEditing) && (
-            <Editable
-              className='bio text-center'
-              readOnly={!allowEditing}
-              defaultValue={userProfile.about}
-              placeholder='About me…'
-              onChange={(about) => {
-                setUser({ about })
+            }}></div>
+          <div className='user-avatar'>
+            <PhotoUploader
+              fileName={currentUser.value?.uid ?? ''}
+              value={userProfile.photoUrl ?? userProfile.photoURL}
+              altText={userProfile.displayName ?? ''}
+              allowEditing={isOwner}
+              onUpdate={(url) => {
+                setUser({ photoUrl: url })
+                updateCurrentUser({ photoURL: url })
               }}
             />
+            <h1
+              key={userProfile.displayName}
+              className='title'
+              contentEditable={isOwner}
+              onBlur={(e) => {
+                let value = e.currentTarget.innerHTML
+                if (value !== userProfile.displayName) {
+                  setUser({ displayName: value })
+                  updateCurrentUser({ displayName: value })
+                }
+              }}>
+              {userProfile.displayName}
+            </h1>
+            <div className='details'>
+              <span>
+                <Link
+                  to={`/@/${user.id}`}
+                  key={userProfile.displayHandle}
+                  contentEditable={isOwner}
+                  onClick={(e: any) => {
+                    if (isOwner) e.preventDefault()
+                  }}
+                  onBlur={(e: any) => {
+                    let value = e.currentTarget.innerHTML
+                    if (value !== userProfile.displayHandle) {
+                      setUser({ displayHandle: value })
+                      updateCurrentUser({ displayHandle: value })
+                    }
+                  }}>
+                  {userProfile.displayHandle ?? 'Anonymous'}
+                </Link>
+              </span>
+              <span class='sep'>{`  •  `}</span>
+            </div>
+            {(userProfile.about || isOwner) && (
+              <Editable
+                className='bio text-center'
+                readOnly={!isOwner}
+                defaultValue={userProfile.about}
+                placeholder='About me…'
+                onChange={(about) => {
+                  setUser({ about })
+                }}
+              />
+            )}
+          </div>
+        </header>
+        <div className='container p0'>
+          {isOwner && (
+            <>
+              <div className='w-100 flex justify-center'>
+                <Tabs
+                  current=''
+                  onChange={(current) => {
+                    postLanguage.value = current
+                  }}>
+                  <span id=''>Posts</span>
+                  <span id='saved'>Saved</span>
+                </Tabs>
+              </div>
+            </>
           )}
-        </div>
-      </header>
-      <div className='container'>
-        <div className='post-list grid grid-cols-1 md-grid-cols-2 lg-grid-cols-3'>
-          <PostsList uid={userProfile.id} noHeader />
-        </div>
-        {allowEditing && (
+          <div className='post-list grid grid-cols-1 md-grid-cols-2 p4'>
+            <PostsList
+              key={userProfile.id}
+              uid={userProfile.id}
+              language={postLanguage.value}
+              noHeader
+            />
+          </div>
+
+          {/* {isOwner && (
           <div className='danger flex justify-center'>
             <button
               className='outline'
@@ -146,9 +172,12 @@ export function ProfilePage() {
               Delete account
             </button>
           </div>
-        )}
+        )} */}
+        </div>
       </div>
-    </div>
+
+      {isOwner && <PostLanguages key={userProfile.id} title='My Languages' />}
+    </>
   )
 }
 
