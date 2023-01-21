@@ -1,0 +1,50 @@
+.tabs {
+  display: flex;
+
+  &.is-full {
+    border-bottom: 2px solid var(--color-mediumGrey);
+  }
+}
+
+.tabs a {
+  text-decoration: none;
+}
+
+.tabs > .dropdown > summary,
+.tabs > a {
+  padding: 0.5rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 1 auto;
+  color: var(--color-mediumGrey);
+  border-bottom: 2px solid transparent;
+  text-align: center;
+  margin-bottom: -2px;
+
+  & + a {
+    margin-left: 1.5rem;
+  }
+}
+
+.tabs > a[aria-current='page'],
+.tabs > a.active,
+.tabs > a:hover {
+  opacity: 1;
+  border-bottom: 2px solid var(--color-darkGrey);
+}
+
+.tabs > a[aria-current='page'],
+.tabs > a.active {
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.tabs.is-full a {
+  flex: 1 1 auto;
+}
+
+.tabs-container {
+  max-width: 100%;
+  overflow: auto;
+}
