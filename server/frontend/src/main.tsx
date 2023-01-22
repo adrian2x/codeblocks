@@ -14,26 +14,26 @@ const router = createBrowserRouter([
     errorElement: ErrorPage,
     children: [
       {
-        path: '',
-        element: <PostsContainer />
-      },
-      {
-        path: 'explore',
-        element: <PostsContainer key='explore' />
+        path: 'post/:post_id',
+        element: <Post key={Math.random()} />,
+        loader: postLoader
       },
       {
         path: 'post',
         element: <Post key={Math.random()} />
       },
       {
-        path: 'post/:post_id',
-        element: <Post key={Math.random()} />,
-        loader: postLoader
-      },
-      {
         path: '@/:user_id',
         element: <ProfilePage />,
         loader: userPostsLoader
+      },
+      {
+        path: 'explore',
+        element: <PostsContainer key='explore' />
+      },
+      {
+        path: '',
+        element: <PostsContainer key='home' />
       }
     ]
   }

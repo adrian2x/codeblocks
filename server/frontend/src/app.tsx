@@ -109,7 +109,7 @@ export function App() {
             </NavLink>
           </div>
         </aside>
-        <Outlet />
+        <Outlet key={Math.random()} />
       </main>
     </div>
   )
