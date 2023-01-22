@@ -24,7 +24,8 @@ export function postImageHref(id: string) {
 export function Post() {
   const post = useLoaderData() as TPost
   const isEditor = useMemo(() => {
-    return post?.user.uid === currentUser.value?.uid
+    if (!post) return true
+    return post.user.uid === currentUser.value?.uid
   }, [post])
   return (
     <div className='container'>
