@@ -60,7 +60,7 @@ export function CodeEditor({ post }: { post?: TPost }) {
       updateStyles('Default', editorState.theme).then(highlightAll).then(autoSize)
     }
     highlightAll()
-  }, [])
+  }, [post])
 
   useEffect(() => {
     // Update highlighted when code changes
@@ -74,12 +74,12 @@ export function CodeEditor({ post }: { post?: TPost }) {
         setPost({ language: '' })
       }
     })
-  }, [postState.code])
+  }, [postState.code, post])
 
   useEffect(() => {
     // Update highlighted when language changes
     hljs.then((hljs) => hljs.highlightAll())
-  }, [postState.language])
+  }, [postState.language, post])
 
   async function handleSubmit(e: any) {
     setSaving(true)
