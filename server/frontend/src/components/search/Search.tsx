@@ -1,4 +1,5 @@
 import algoliasearch from 'algoliasearch/lite'
+import { ReactNode } from 'react'
 import {
   Highlight,
   Hits,
@@ -64,7 +65,7 @@ function EmptyQueryBoundary({ children, fallback }: any) {
   return children
 }
 
-function NoResultsBoundary({ children, fallback }) {
+function NoResultsBoundary({ children, fallback }: { children: ReactNode; fallback: ReactNode }) {
   const { results } = useInstantSearch()
 
   // The `__isArtificial` flag makes sure not to display the No Results message
