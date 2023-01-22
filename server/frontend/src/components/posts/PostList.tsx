@@ -172,37 +172,39 @@ export function PostLanguages({ title }: PostLanguagesProps) {
 
   return (
     <div className='aside sm-hide'>
-      <section class='w-100' onClick={setPostLanguage}>
+      <section onClick={setPostLanguage}>
         <div className='title'>{title ?? 'Popular'}</div>
-        <a id='python'>Python</a>
-        <a id='c'>C</a>
-        <a id='java'>Java</a>
-        <a id='javascript'>JavaScript</a>
-        <a id='cpp'>C++</a>
-        <a id='csharp'>C#</a>
-        <a id='sql'>SQL</a>
-        <a id='php'>PHP</a>
-        <a id='swift'>Swift</a>
-        <a id='go'>Go</a>
-        <a id='r'>R</a>
-        <a id='ruby'>Ruby</a>
-        <a id='rust'>Rust</a>
-        <a id='kotlin'>Kotlin</a>
-        <a id='typescript'>TypeScript</a>
-        <a id='bash'>Bash</a>
-        <a id='html'>HTML</a>
-        <a id='css'>CSS</a>
-        <a id='scss'>SCSS</a>
-        <a id='xml'>XML</a>
-        <a id='markdown'>Markdown</a>
-        <a id='shell'>Shell</a>
-        <a id='powershell'>PowerShell</a>
-        {/* <a id='python-repl'>Python REPL</a> */}
-        <a id='makefile'>Makefile</a>
-        <a id='toml'>TOML</a>
-        <a id='yaml'>YAML</a>
-        <a id='json'>JSON</a>
-        <a id='plaintext'>Plain Text</a>
+        <div className='post-languages'>
+          <a id='python'>Python</a>
+          <a id='c'>C</a>
+          <a id='java'>Java</a>
+          <a id='javascript'>JavaScript</a>
+          <a id='cpp'>C++</a>
+          <a id='csharp'>C#</a>
+          <a id='sql'>SQL</a>
+          <a id='php'>PHP</a>
+          <a id='swift'>Swift</a>
+          <a id='go'>Go</a>
+          <a id='r'>R</a>
+          <a id='ruby'>Ruby</a>
+          <a id='rust'>Rust</a>
+          <a id='kotlin'>Kotlin</a>
+          <a id='typescript'>TypeScript</a>
+          <a id='bash'>Bash</a>
+          <a id='html'>HTML</a>
+          <a id='css'>CSS</a>
+          <a id='scss'>SCSS</a>
+          <a id='xml'>XML</a>
+          <a id='markdown'>Markdown</a>
+          <a id='shell'>Shell</a>
+          <a id='powershell'>PowerShell</a>
+          {/* <a id='python-repl'>Python REPL</a> */}
+          <a id='makefile'>Makefile</a>
+          <a id='toml'>TOML</a>
+          <a id='yaml'>YAML</a>
+          <a id='json'>JSON</a>
+          <a id='plaintext'>Plain Text</a>
+        </div>
       </section>
     </div>
   )

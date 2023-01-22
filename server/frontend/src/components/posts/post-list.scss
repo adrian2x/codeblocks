@@ -95,15 +95,21 @@
     padding-bottom: 0.5rem;
   }
 
+  .post-languages {
+    max-height: 25.5rem;
+    overflow-y: auto;
+  }
+
   .title {
     padding: 0.75rem 1rem;
-    font-weight: 700;
+    font-weight: 900;
   }
 
   a {
     display: block;
-    padding: 0.25rem 1rem;
-    font-size: smaller;
+    font-size: 95%;
+    line-height: 1.1;
+    padding: 0.75rem 1rem;
     background-color: transparent;
     transition: background-color 0.2s;
 
