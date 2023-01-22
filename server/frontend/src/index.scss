@@ -106,10 +106,6 @@ button {
     display: flex;
     justify-content: center;
     align-items: center;
-
-    &:active {
-      transform: translateY(-50%);
-    }
   }
 
   .dropdown-element:last-child {
@@ -150,6 +146,7 @@ aside {
 
     &.active {
       color: var(--color-primary);
+      font-weight: 700;
     }
   }
 

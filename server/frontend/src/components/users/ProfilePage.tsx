@@ -139,7 +139,7 @@ export function ProfilePage() {
         <div className='container p0'>
           {isOwner && (
             <>
-              <div className='w-100 flex justify-center'>
+              <div className='flex justify-center'>
                 <Tabs
                   current=''
                   onChange={(current) => {
