@@ -1,15 +1,15 @@
-import escape from 'escape-html'
 // @ts-expect-error
 import { ago } from 'time-ago'
-import { useEffect, useMemo, useState } from 'react'
-import { useLoaderData, Link } from 'react-router-dom'
+import escape from 'escape-html'
+import { useEffect, useMemo } from 'react'
 import ReactMarkdown from 'react-markdown'
+import { Link, useLoaderData } from 'react-router-dom'
 import { getPost, TPost } from '../../common/requests'
 import { currentUser } from '../../stores/uiState'
-import { autoSize, CodeEditor, generateGradient, updateStyles } from './CodeEditor'
 import { RouteProps } from '../../types'
-import './post.scss'
 import './code-editor.scss'
+import { autoSize, CodeEditor, updateStyles } from './CodeEditor'
+import './post.scss'
 
 export async function postLoader({ params }: RouteProps) {
   if (params.post_id) {
@@ -23,10 +23,13 @@ export function postImageHref(id: string) {
 
 export function Post() {
   const post = useLoaderData() as TPost
+
   const isEditor = useMemo(() => {
+    console.log('load post', post)
     if (!post) return true
     return post.user.uid === currentUser.value?.uid
   }, [post])
+
   return (
     <div className='container'>
       {isEditor ? <CodeEditor post={post} /> : <ReadOnlyPost post={post} />}
@@ -38,7 +41,7 @@ export function ReadOnlyPost({ post }: { post: TPost }) {
   let hljs = import('highlight.js/es/common').then((module) => module.default)
   let highlightAll = () => hljs.then((hljs) => hljs.highlightAll())
 
-  const [background, setBackground] = useState(generateGradient())
+  // const [background, setBackground] = useState(generateGradient())
 
   useEffect(() => {
     autoSize()

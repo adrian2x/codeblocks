@@ -22,5 +22,11 @@
 
   #code-window {
     margin: 0;
+    max-width: 100%;
+
+    code {
+      max-width: 100%;
+      overflow: auto;
+    }
   }
 }

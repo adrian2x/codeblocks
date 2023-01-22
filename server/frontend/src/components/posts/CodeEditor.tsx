@@ -488,17 +488,15 @@ function createHex() {
 }
 
 export function autoSize() {
-  console.log('autosizing')
   let code = document.getElementById('code')!
   code.style.width = '0'
-  code.style.width = code.scrollWidth + 'px'
+  code.style.width = code.scrollWidth + 2 + 'px'
   const codeWindow = document.getElementById('code-window')!
   if (code.style.width == '0px') code.style.width = 'auto'
   codeWindow.style.width = '0'
   codeWindow.style.width = code.scrollWidth + 36 + 'px'
-  if (parseInt(codeWindow.style.width) < 170) {
-    codeWindow.style.minWidth = '16ch'
-  }
+  codeWindow.style.minWidth = '16ch'
+  return codeWindow
 }
 
 /**
