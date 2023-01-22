@@ -1,7 +1,7 @@
 import escape from 'escape-html'
 // @ts-expect-error
 import { ago } from 'time-ago'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useLoaderData, Link } from 'react-router-dom'
 import ReactMarkdown from 'react-markdown'
 import { getPost, TPost } from '../../common/requests'
@@ -17,9 +17,15 @@ export async function postLoader({ params }: RouteProps) {
   }
 }
 
+export function postImageHref(id: string) {
+  return `https://firebasestorage.googleapis.com/v0/b/codeblocks-991a2.appspot.com/o/${id}.png?alt=media`
+}
+
 export function Post() {
   const post = useLoaderData() as TPost
-  const isEditor = !post || post?.user.uid === currentUser.value?.uid
+  const isEditor = useMemo(() => {
+    return post?.user.uid === currentUser.value?.uid
+  }, [post])
   return (
     <div className='container'>
       {isEditor ? <CodeEditor post={post} /> : <ReadOnlyPost post={post} />}
@@ -28,9 +34,10 @@ export function Post() {
 }
 
 export function ReadOnlyPost({ post }: { post: TPost }) {
-  const [background, setBackground] = useState(generateGradient())
   let hljs = import('highlight.js/es/common').then((module) => module.default)
   let highlightAll = () => hljs.then((hljs) => hljs.highlightAll())
+
+  const [background, setBackground] = useState(generateGradient())
 
   useEffect(() => {
     autoSize()
@@ -38,12 +45,12 @@ export function ReadOnlyPost({ post }: { post: TPost }) {
       updateStyles('Default', post.theme).then(highlightAll).then(autoSize)
     }
     highlightAll()
-  }, [])
+  }, [post])
 
   const { uid, displayName, displayHandle, photoUrl } = post.user
 
   return (
-    <div class='post-form'>
+    <div class='post-form' key={`post-${post.id}`}>
       <div class='post'>
         <header class='header flex flex-row'>
           <Link
