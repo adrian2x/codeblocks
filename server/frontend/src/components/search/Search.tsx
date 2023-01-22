@@ -19,11 +19,21 @@ const searchClient: typeof algoliaClient = {
   }
 }
 
+let timerId: any
+
+function debouncedQuery(query: any, search: any) {
+  if (timerId) {
+    clearTimeout(timerId)
+  }
+
+  timerId = setTimeout(() => search(query), 100)
+}
+
 export function Search() {
   return (
     <div className='search-box sm-hide ml4'>
       <InstantSearch searchClient={searchClient} indexName='posts'>
-        <SearchBox placeholder='Search' />
+        <SearchBox placeholder='Search' queryHook={debouncedQuery} />
         <div className='absolute'>
           <EmptyQueryBoundary fallback={null}>
             <NoResultsBoundary fallback={null}>
@@ -37,10 +47,9 @@ export function Search() {
 }
 
 function Hit({ hit }: { hit: any }) {
-  let p = hit
   return (
-    <article key={p.id} className='post'>
-      <a href={`/post/${p.id}`}>
+    <article key={hit.id} className='post'>
+      <a href={`/post/${hit.id}`}>
         <div class='flex flex-column flex-1'>
           <h1 className='title'>
             <Highlight attribute='title' hit={hit} />
@@ -70,7 +79,8 @@ function NoResultsBoundary({ children, fallback }: { children: ReactNode; fallba
 
   // The `__isArtificial` flag makes sure not to display the No Results message
   // when no hits have been returned yet.
-  if (!results.__isArtificial && results.nbHits === 0) {
+  let noMatches = !results.__isArtificial && results.nbHits === 0
+  if (noMatches) {
     return (
       <>
         {fallback}
