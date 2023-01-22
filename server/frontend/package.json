@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@preact/signals": "^1.1.2",
+    "algoliasearch": "^4.14.3",
+    "atomic-fns": "^0.4.3",
     "atomic-theme": "^1.0.1",
     "clsx": "^1.2.1",
     "dom-to-image-more": "^2.13.1",
@@ -17,10 +19,12 @@
     "firebase": "^9.15.0",
     "firebaseui": "^6.0.2",
     "highlight.js": "^11.7.0",
+    "instantsearch.css": "^8.0.0",
     "preact": "^10.11.3",
     "preact-hooks": "^0.0.0",
     "react-hot-toast": "^2.4.0",
     "react-icons": "^4.7.1",
+    "react-instantsearch-hooks-web": "^6.38.3",
     "react-markdown": "^8.0.4",
     "react-router-dom": "^6.6.0",
     "time-ago": "^0.2.1"
