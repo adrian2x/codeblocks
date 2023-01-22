@@ -6,6 +6,7 @@ import { firebase } from './common/firebase'
 import { Dropdown } from './components/Dropdown'
 import { FaBars } from 'react-icons/fa'
 import { avatarUrl } from './components/users/avatarUrl'
+import { Search } from './components/search/Search'
 
 function Navbar() {
   return (
@@ -17,6 +18,7 @@ function Navbar() {
             <NavLink className='brand' to={`/`}>
               Codeblocks
             </NavLink>
+            <Search />
           </div>
           <div class='nav-end sm-hide'>
             <NavMenu />
