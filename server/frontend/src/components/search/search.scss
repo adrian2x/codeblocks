@@ -1,0 +1,60 @@
+@import 'instantsearch.css/themes/algolia.css';
+
+.search-box {
+  max-width: 500px;
+  position: relative;
+
+  form {
+    display: flex;
+
+    input {
+      border-radius: 20px;
+      padding-left: 1.9rem;
+    }
+  }
+
+  .ais-Hits {
+    max-height: calc(100vh - 68px);
+    overflow-x: hidden;
+    overflow-y: auto;
+    width: 500px;
+    background-color: var(--bg-color);
+    filter: drop-shadow(0 20px 13px rgba(120, 120, 120, 0.2));
+    border-radius: 1rem;
+  }
+
+  .ais-Hits-list {
+    margin: 0;
+    padding-top: 1rem;
+    padding-bottom: 0.5rem;
+  }
+
+  .ais-Hits-item {
+    width: 100%;
+    border: 0;
+    box-shadow: none;
+    margin: 0;
+    padding: 0;
+
+    .title {
+      line-height: 1.1;
+    }
+
+    a {
+      padding: 0.5rem 1rem;
+      padding-left: 1.9em;
+
+      &:hover {
+        color: var(--color-primary);
+      }
+    }
+
+    p {
+      font-weight: 400;
+      line-height: 1.2;
+      margin: 0.4em 0 0.5rem;
+      max-height: 1.4em;
+      overflow: hidden;
+    }
+  }
+}

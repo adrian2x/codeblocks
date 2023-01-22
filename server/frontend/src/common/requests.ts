@@ -50,11 +50,12 @@ export function getPost(id: string) {
 }
 
 export function getPosts(uid?: string, cursor?: string, language?: string) {
-  let params = new URLSearchParams()
-  if (uid) params.set('uid', uid)
-  if (cursor) params.set('cursor', cursor)
-  if (language) params.set('language', language)
-  return request<TPost[]>(`/api/posts/?${params.toString()}`)
+  console.log(location)
+  let url = new URL('/api/posts/', location.origin)
+  if (uid) url.searchParams.set('uid', uid)
+  if (cursor) url.searchParams.set('cursor', cursor)
+  if (language) url.searchParams.set('language', language)
+  return request<TPost[]>(url.toString())
 }
 
 export async function createPost(post: any) {
