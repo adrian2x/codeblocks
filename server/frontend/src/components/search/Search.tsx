@@ -31,7 +31,7 @@ function debouncedQuery(query: any, search: any) {
 
 export function Search() {
   return (
-    <div className='search-box sm-hide ml4'>
+    <div className='search-box sm-hide'>
       <InstantSearch searchClient={searchClient} indexName='posts'>
         <SearchBox placeholder='Search' queryHook={debouncedQuery} />
         <div className='absolute'>

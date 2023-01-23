@@ -10,6 +10,7 @@ import { RouteProps } from '../../types'
 import './code-editor.scss'
 import { autoSize, CodeEditor, updateStyles } from './CodeEditor'
 import './post.scss'
+import { PostActions } from './PostActions'
 
 export async function postLoader({ params }: RouteProps) {
   if (params.post_id) {
@@ -25,10 +26,13 @@ export function Post() {
   const post = useLoaderData() as TPost
 
   const isEditor = useMemo(() => {
-    console.log('load post', post)
     if (!post) return true
-    return post.user.uid === currentUser.value?.uid
-  }, [post])
+    if (currentUser.value) {
+      let currentId = currentUser.value.uid
+      if (currentId === post.user.uid) return true
+      if (currentId === post.user.id) return true
+    }
+  }, [post, currentUser.value])
 
   return (
     <div className='container'>
@@ -121,6 +125,10 @@ export function ReadOnlyPost({ post }: { post: TPost }) {
               </pre>
             </div>
           </div>
+        </div>
+
+        <div className='mt4'>
+          <PostActions post={post} />
         </div>
       </div>
     </div>
