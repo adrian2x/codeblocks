@@ -27,6 +27,7 @@
     "react-instantsearch-hooks-web": "^6.38.3",
     "react-markdown": "^8.0.4",
     "react-router-dom": "^6.6.0",
+    "react-web-share": "^2.0.2",
     "time-ago": "^0.2.1"
   },
   "devDependencies": {
