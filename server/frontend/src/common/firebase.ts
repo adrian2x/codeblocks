@@ -35,7 +35,9 @@ firebase.auth().onAuthStateChanged((signedInUser) => {
           })
         )
         // Update the ui state with the user
-        currentUser.value = signedInUser
+        if (!currentUser.value) {
+          currentUser.value = signedInUser
+        }
         console.log('session saved')
       })
   } else {
@@ -43,7 +45,9 @@ firebase.auth().onAuthStateChanged((signedInUser) => {
     console.log('signed out')
     localStorage.removeItem('user')
     // Update the ui state with the user
-    currentUser.value = null
+    if (currentUser.value) {
+      currentUser.value = null
+    }
   }
 })
 
