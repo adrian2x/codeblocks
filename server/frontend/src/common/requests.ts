@@ -38,11 +38,13 @@ export interface TPost {
   language: string
   theme: string
   user: {
+    id: string
     uid: string
     displayName: string
     displayHandle: string
     photoUrl: string | null
   }
+  preview?: string
 }
 
 export function getPost(id: string) {
@@ -61,6 +63,15 @@ export function getPosts(uid?: string, cursor?: string, language?: string) {
 export async function createPost(post: any) {
   // Make a request with the post content
   let data = await request<TPost>('/api/posts/', post)
+  return data
+}
+
+export async function duplicatePost(userId: string, post: any) {
+  // Make a request with the post content
+  let data = await request<TPost>(`/api/posts/copy/${userId}`, {
+    ...post,
+    created: Date.now()
+  })
   return data
 }
 

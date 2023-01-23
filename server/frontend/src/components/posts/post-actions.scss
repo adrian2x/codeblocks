@@ -1,0 +1,32 @@
+.post_actions {
+  display: flex;
+  align-items: center;
+  margin-top: 0.5rem;
+
+  button {
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    margin: 0;
+    margin-right: 1.25rem;
+    padding: 0.5rem;
+    border: none;
+    opacity: 0.6;
+
+    &:hover {
+      opacity: 1;
+    }
+
+    &[data-active='true'] svg {
+      color: #ffc300;
+    }
+
+    svg {
+      width: 1rem;
+      height: 1rem;
+      margin-right: 0.75rem;
+      margin-bottom: 2px;
+    }
+  }
+}
