@@ -1,4 +1,4 @@
-# pylint: disable=no-member
+# pylint: disable=no-member, no-value-for-parameter
 """Posts Blueprint"""
 from flask import Blueprint, request, jsonify
 from server.firebase import db
@@ -78,3 +78,9 @@ def save_post(post_id, user_id):
     else:
         post.unsave(user_id)
     return jsonify(saved=status)
+
+
+@posts_blueprint.route("/saved/<user_id>", methods=["GET"])
+def retrieve_saved(user_id):
+    "Get saved posts"
+    return jsonify(Post().get_saved_posts_by_user_id(user_id))
