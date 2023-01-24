@@ -127,9 +127,7 @@ export function ReadOnlyPost({ post }: { post: TPost }) {
           </div>
         </div>
 
-        <div className='mt4'>
-          <PostActions post={post} />
-        </div>
+        <PostActions post={post} />
       </div>
     </div>
   )
