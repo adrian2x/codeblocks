@@ -46,3 +46,20 @@ def delete_post(post_id):
     "Delete post by post id"
     Post(post_id).delete()
     return jsonify(ok=True)
+
+
+@posts_blueprint.route("/save/<post_id>/<user_id>", methods=["POST"])
+def save_post(post_id, user_id):
+    "Save a post"
+    status = request.get_json().get("status")
+    doc = (
+        db.collection("user_posts")
+        .document(user_id)
+        .collection("saved")
+        .document(post_id)
+    )
+    if status:
+        doc.set({"id": post_id})
+    else:
+        doc.delete()
+    return jsonify(saved=status)
