@@ -81,6 +81,12 @@ export async function updatePost(id: string, post: Partial<TPost>) {
   return data
 }
 
+export async function savePost(postId: string, userId: string, status?: any) {
+  return await request.post(`/api/posts/save/${postId}/${userId}`, {
+    status: status ? true : undefined
+  })
+}
+
 export type CustomUser = {
   id: string
   photoUrl: string

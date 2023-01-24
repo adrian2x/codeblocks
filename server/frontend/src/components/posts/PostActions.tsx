@@ -1,38 +1,55 @@
-import { FaStar, FaRegStar } from 'react-icons/fa'
+import { useState } from 'react'
+import { FaRegStar, FaStar } from 'react-icons/fa'
 import { FiRepeat, FiShare2 } from 'react-icons/fi'
 import { RWebShare } from 'react-web-share'
-import toast from 'react-hot-toast'
-import { duplicatePost, TPost } from '../../common/requests'
+import { duplicatePost, savePost, TPost } from '../../common/requests'
 import { currentUser } from '../../stores/uiState'
-import { useState } from 'react'
 import './post-actions.scss'
 
 export function PostActions({ post }: { post: TPost }) {
   const postUrl = `${location.origin}/post/${post.id}`
+
+  // TODO: check if post was previously saved...
   const [isSaved, setSaved] = useState(false)
+
+  const [isDuplicated, setDuplicated] = useState(false)
 
   function handleDuplicate() {
     if (currentUser.value) {
-      toast.promise(duplicatePost(currentUser.value.uid, post), {
-        loading: 'Saving…',
-        success: 'Your post is now ready!',
-        error: 'There was an error.'
-      })
+      let prevDuplicated = isDuplicated
+      setDuplicated(!isDuplicated)
+      duplicatePost(currentUser.value.uid, post)
+        // Roll back if there was an error
+        .catch(() => setDuplicated(prevDuplicated))
+    }
+  }
+
+  function handleSave() {
+    if (currentUser.value) {
+      let prevSaved = isSaved
+      setSaved(!isSaved)
+      savePost(post.id, currentUser.value.uid, !isSaved)
+        // Roll back if there was an error
+        .catch(() => setSaved(prevSaved))
     }
   }
 
   return (
     <div className='post_actions'>
       <button
-        className='clear'
-        data-active={isSaved}
         title='Star'
-        onClick={() => {
-          setSaved(!isSaved)
+        onClick={handleSave}
+        style={{
+          color: isSaved ? '#ffc300' : 'inherit'
         }}>
         {isSaved ? <FaStar /> : <FaRegStar />} Star
       </button>
-      <button className='clear' title='Duplicate' onClick={handleDuplicate}>
+      <button
+        title='Duplicate'
+        onClick={handleDuplicate}
+        style={{
+          color: isDuplicated ? 'rgb(0, 186, 124)' : 'inherit'
+        }}>
         <FiRepeat /> Duplicate
       </button>
       <RWebShare
@@ -51,7 +68,7 @@ export function PostActions({ post }: { post: TPost }) {
           'mail',
           'copy'
         ]}>
-        <button className='clear' title='Share'>
+        <button title='Share'>
           <FiShare2 /> Share
         </button>
       </RWebShare>
