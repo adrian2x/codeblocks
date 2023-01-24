@@ -1,3 +1,4 @@
+# pylint: disable=no-member
 """Posts Blueprint"""
 from flask import Blueprint, request, jsonify
 from server.firebase import db
@@ -65,3 +66,15 @@ def delete_post(post_id):
     "Delete post by post id"
     Post(post_id).delete()
     return jsonify(ok=True)
+
+
+@posts_blueprint.route("/save/<post_id>/<user_id>", methods=["POST"])
+def save_post(post_id, user_id):
+    "Save a post"
+    post = Post(post_id)
+    status = request.get_json().get("status")
+    if status:
+        post.save(user_id)
+    else:
+        post.unsave(user_id)
+    return jsonify(saved=status)
