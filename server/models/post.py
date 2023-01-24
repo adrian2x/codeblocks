@@ -9,7 +9,9 @@ class Post:
         self.doc = db.collection("posts").document(pid)
 
     @staticmethod
-    def get_posts_by_user_id(uid: str = "", cursor="", language: str = "", limit: int = 10):
+    def get_posts_by_user_id(
+        uid: str = "", cursor="", language: str = "", limit: int = 10
+    ):
         "Retrieve all posts created by a user id"
         posts = db.collection("posts")
 
