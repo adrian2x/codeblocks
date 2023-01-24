@@ -57,5 +57,5 @@ def save_post(post_id, user_id):
     if status:
         post.save(user_id)
     else:
-        post.delete()
+        post.unsave(user_id)
     return jsonify(saved=status)

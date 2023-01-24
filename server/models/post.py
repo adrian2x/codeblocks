@@ -58,3 +58,14 @@ class Post:
         )
         doc.set({"id": self.doc.id})
         return self
+
+    def unsave(self, uid: str):
+        "Save a post document"
+        doc = (
+            db.collection("user_posts")
+            .document(uid)
+            .collection("saved")
+            .document(self.doc.id)
+        )
+        doc.delete()
+        return self
