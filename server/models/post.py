@@ -1,3 +1,4 @@
+# pylint: disable=no-member
 from server.firebase import db, firestore
 
 
@@ -45,4 +46,15 @@ class Post:
     def delete(self):
         "Delete a post document"
         self.doc.delete()
+        return self
+
+    def save(self, uid: str):
+        "Save a post document"
+        doc = (
+            db.collection("user_posts")
+            .document(uid)
+            .collection("saved")
+            .document(self.doc.id)
+        )
+        doc.set({"id": self.doc.id})
         return self
