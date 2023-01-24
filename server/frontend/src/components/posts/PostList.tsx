@@ -8,6 +8,7 @@ import { Link, useLoaderData } from 'react-router-dom'
 import { getPosts, TPost } from '../../common/requests'
 import useInfiniteScroll from '../../hooks/useInfiniteScroll'
 import { avatarUrl } from '../users/avatarUrl'
+import { PostActions } from './PostActions'
 
 import './post-list.scss'
 
@@ -62,7 +63,7 @@ export type PostsListProps = {
 export function PostsList({ uid, noHeader, language }: PostsListProps) {
   const [posts, setPosts] = useState<TPost[]>([])
   const [disabled, setDisabled] = useState(false)
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
 
   const resetState = useCallback(() => {
     setPosts([])
@@ -85,10 +86,10 @@ export function PostsList({ uid, noHeader, language }: PostsListProps) {
   useEffect(() => {
     // Reset the results when the languange changes
     resetState()
-  }, [postLanguage.value, resetState])
+  }, [postLanguage.value])
 
   const observerRef = useInfiniteScroll({
-    disabled,
+    disabled: disabled || loading,
     onLoadMore
   })
 
@@ -107,15 +108,18 @@ export function PostsList({ uid, noHeader, language }: PostsListProps) {
 }
 
 export function PostItem({ noHeader, p }: any) {
-  let previewUrl = `https://firebasestorage.googleapis.com/v0/b/codeblocks-991a2.appspot.com/o/${p.id}.png?alt=media`
-  const { uid, displayName, displayHandle, photoUrl } = p.user
+  const { id, uid, displayName, displayHandle, photoUrl } = p.user
+  let profileLink = `/@/${displayHandle || uid || id}`
+  let previewUrl =
+    p.preview ??
+    `https://firebasestorage.googleapis.com/v0/b/codeblocks-991a2.appspot.com/o/${p.id}.png?alt=media`
   return (
     <article key={p.id} className='post'>
       <div class='flex flex-column flex-1'>
         {!noHeader && (
           <header class='header'>
             <Link
-              to={`/@/${uid}`}
+              to={profileLink}
               style={{
                 width: 40,
                 marginRight: 8
@@ -131,14 +135,20 @@ export function PostItem({ noHeader, p }: any) {
             <div class='post-meta'>
               <div className='meta'>
                 <span>
-                  <Link class='author' to={`/@/${uid}`}>
+                  <Link class='author' to={profileLink}>
                     {displayName} {displayHandle}
                   </Link>
                 </span>
                 <span class='sep mx1'>{`•`}</span>
                 <span>{ago(p.created, false)}</span>
               </div>
-              <div class='title'>{p.title && <h4 class='title'>{p.title || 'Untitled'}</h4>}</div>
+              <div class='title'>
+                {p.title && (
+                  <h4 class='title'>
+                    <Link to={`/post/${p.id}`}>{p.title || 'Untitled'}</Link>
+                  </h4>
+                )}
+              </div>
             </div>
           </header>
         )}
@@ -155,6 +165,8 @@ export function PostItem({ noHeader, p }: any) {
               }}
               title={`${p.description}`}></div>
           </Link>
+
+          <PostActions post={p} />
         </div>
       </div>
     </article>

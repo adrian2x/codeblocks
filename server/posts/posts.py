@@ -3,6 +3,7 @@
 from flask import Blueprint, request, jsonify
 from server.firebase import db
 from server.models.post import Post
+from server.models.user import User
 
 posts_blueprint = Blueprint("posts", __name__)
 
@@ -15,6 +16,24 @@ def create_post():
     data.update(id=doc.id)
     doc.set(data)
     return jsonify(doc.get().to_dict())
+
+
+@posts_blueprint.route("/copy/<user_id>", methods=["POST"])
+def copy_post(user_id: str):
+    "Duplicates an existing post"
+    data = request.get_json()
+    prev_id = data["id"]
+    new_post = Post()
+    author = User(user_id).get().to_dict()
+    # Set the post id and user
+    data.update(
+        id=new_post.doc.id,
+        user=author,
+        preview=Post.preview_url(prev_id),
+    )
+    # Set the post data
+    new_post.doc.set(data)
+    return {"url": new_post.get_link()}
 
 
 @posts_blueprint.route("/", methods=["GET"])

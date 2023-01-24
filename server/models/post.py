@@ -5,13 +5,11 @@ from server.firebase import db, firestore
 class Post:
     "Post model class"
 
-    def __init__(self, pid: str) -> None:
+    def __init__(self, pid: str = None) -> None:
         self.doc = db.collection("posts").document(pid)
 
     @staticmethod
-    def get_posts_by_user_id(
-        uid: str = "", cursor="", language: str = "", limit: int = 10
-    ):
+    def get_posts_by_user_id(uid: str = "", cursor="", language: str = "", limit: int = 10):
         "Retrieve all posts created by a user id"
         posts = db.collection("posts")
 
@@ -69,3 +67,13 @@ class Post:
         )
         doc.delete()
         return self
+
+    def get_link(self):
+        return f"/posts/{self.doc.id}"
+
+    @staticmethod
+    def preview_url(post_id: str):
+        return f"https://firebasestorage.googleapis.com/v0/b/codeblocks-991a2.appspot.com/o/{post_id}.png?alt=media"
+
+    def get_preview(self):
+        return Post.preview_url(self.doc.id)

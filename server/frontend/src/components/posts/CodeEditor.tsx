@@ -529,7 +529,7 @@ async function onSubmit(
         user: {
           uid: currentUser.uid,
           photoUrl: currentUser.photoURL,
-          displayName: editorState.displayName || undefined,
+          displayName: editorState.displayName,
           displayHandle: editorState.displayHandle
         }
       }))
