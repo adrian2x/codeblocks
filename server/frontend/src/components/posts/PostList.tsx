@@ -5,7 +5,7 @@ import { useCallback, useEffect } from 'preact/hooks'
 import { useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import { Link, useLoaderData } from 'react-router-dom'
-import { getPosts, TPost } from '../../common/requests'
+import { getPosts, getSavedPosts, TPost } from '../../common/requests'
 import useInfiniteScroll from '../../hooks/useInfiniteScroll'
 import { avatarUrl } from '../users/avatarUrl'
 import { PostActions } from './PostActions'
@@ -58,9 +58,10 @@ export type PostsListProps = {
   uid?: string
   noHeader?: boolean
   language?: string
+  isSaved?: boolean
 }
 
-export function PostsList({ uid, noHeader, language }: PostsListProps) {
+export function PostsList({ uid, noHeader, isSaved }: PostsListProps) {
   const [posts, setPosts] = useState<TPost[]>([])
   const [disabled, setDisabled] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -75,7 +76,12 @@ export function PostsList({ uid, noHeader, language }: PostsListProps) {
     if (loading || disabled) return false
     try {
       setLoading(true)
-      let nextPosts = await getPosts(uid, posts[posts.length - 1]?.id, postLanguage.value)
+      let nextPosts: TPost[] = []
+      if (isSaved && uid) {
+        nextPosts = await getSavedPosts(uid, posts[posts.length - 1]?.id)
+      } else {
+        nextPosts = await getPosts(uid, posts[posts.length - 1]?.id, postLanguage.value)
+      }
       setPosts(posts.concat(nextPosts))
       setDisabled(nextPosts.length < PAGE_SIZE)
     } finally {
@@ -84,9 +90,9 @@ export function PostsList({ uid, noHeader, language }: PostsListProps) {
   }
 
   useEffect(() => {
-    // Reset the results when the languange changes
+    // Reset the results when the filters change
     resetState()
-  }, [postLanguage.value])
+  }, [postLanguage.value, isSaved])
 
   const observerRef = useInfiniteScroll({
     disabled: disabled || loading,
