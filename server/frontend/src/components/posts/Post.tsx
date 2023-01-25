@@ -49,10 +49,10 @@ export function ReadOnlyPost({ post }: { post: TPost }) {
 
   useEffect(() => {
     autoSize()
-    if (post.theme && post.theme != 'Default') {
-      updateStyles('Default', post.theme).then(highlightAll).then(autoSize)
+    if (post.theme) {
+      updateStyles(post.theme).then(highlightAll).then(autoSize)
     }
-    highlightAll()
+    highlightAll().then(autoSize)
   }, [post])
 
   const { uid, displayName, displayHandle, photoUrl } = post.user
