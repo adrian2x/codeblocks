@@ -52,11 +52,16 @@ export function getPost(id: string) {
 }
 
 export function getPosts(uid?: string, cursor?: string, language?: string) {
-  console.log(location)
   let url = new URL('/api/posts/', location.origin)
   if (uid) url.searchParams.set('uid', uid)
   if (cursor) url.searchParams.set('cursor', cursor)
   if (language) url.searchParams.set('language', language)
+  return request<TPost[]>(url.toString())
+}
+
+export function getSavedPosts(uid: string, cursor?: string) {
+  let url = new URL(`/api/posts/saved/${uid}`, location.origin)
+  if (cursor) url.searchParams.set('cursor', cursor)
   return request<TPost[]>(url.toString())
 }
 

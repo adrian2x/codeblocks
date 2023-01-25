@@ -84,4 +84,4 @@ def save_post(post_id: str, user_id: str):
 def retrieve_saved(user_id: str):
     "Get saved posts"
     cursor = request.args.get("cursor")
-    return jsonify(Post().get_saved_posts_by_user_id(user_id, cursor))
+    return jsonify(Post.get_saved_posts_by_user_id(user_id, cursor))

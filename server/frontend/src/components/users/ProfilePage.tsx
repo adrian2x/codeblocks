@@ -22,6 +22,7 @@ export function ProfilePage() {
   const [userProfile, setUserProfile] = useState(user)
   const [background, setBackground] = useState([user.backgroundColor] ?? generateGradient())
   const [isSaving, setSaving] = useState(false)
+  const [showSavedPosts, setShowSavedPosts] = useState(false)
   const navigate = useNavigate()
 
   const isOwner = currentUser.value?.uid === user.id
@@ -136,27 +137,28 @@ export function ProfilePage() {
             )}
           </div>
         </header>
+
         <div className='container p0'>
           {isOwner && (
             <>
               <div className='flex justify-center'>
-                <Tabs
-                  current=''
-                  onChange={(current) => {
-                    postLanguage.value = current
-                  }}>
+                <Tabs current=''>
                   <span id=''>Posts</span>
-                  <span id='saved'>Saved</span>
+                  <span id='saved' onClick={() => setShowSavedPosts(true)}>
+                    Saved
+                  </span>
                 </Tabs>
               </div>
             </>
           )}
+
           <div className='post-list grid grid-cols-1 md-grid-cols-2 p4'>
             <PostsList
               key={userProfile.id}
               uid={userProfile.id}
               language={postLanguage.value}
               noHeader
+              isSaved={showSavedPosts}
             />
           </div>
 
