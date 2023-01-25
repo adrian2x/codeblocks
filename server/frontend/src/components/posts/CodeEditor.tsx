@@ -57,9 +57,9 @@ export function CodeEditor({ post }: { post?: TPost }) {
     autoSize()
     // Load theme preferences
     if (editorState.theme !== 'Default') {
-      updateStyles('Default', editorState.theme).then(highlightAll).then(autoSize)
+      updateStyles(editorState.theme).then(highlightAll).then(autoSize)
     }
-    highlightAll()
+    highlightAll().then(autoSize)
   }, [post])
 
   useEffect(() => {
@@ -150,7 +150,7 @@ export function CodeEditor({ post }: { post?: TPost }) {
               onChange={(e: any) => {
                 let theme = editorState.theme
                 let nextTheme = e.currentTarget.value
-                updateStyles(theme, nextTheme)
+                updateStyles(nextTheme)
                 setEditor({ theme: nextTheme })
               }}>
               <option value='Default'>
@@ -452,7 +452,7 @@ export function CodeEditor({ post }: { post?: TPost }) {
 }
 
 /** Load the theme styles dynamically */
-export function updateStyles(theme: string, nextTheme: string) {
+export function updateStyles(nextTheme: string) {
   document
     .querySelectorAll(`link[href*="highlight.js/"]`)
     .forEach((link) => link.setAttribute('disabled', 'disabled'))
@@ -492,7 +492,7 @@ export function autoSize() {
   code.style.width = '0'
   code.style.width = code.scrollWidth + 2 + 'px'
   const codeWindow = document.getElementById('code-window')!
-  if (code.style.width == '0px') code.style.width = 'auto'
+  if (code.style.width == '2px') code.style.width = 'auto'
   codeWindow.style.width = '0'
   codeWindow.style.width = code.scrollWidth + 36 + 'px'
   codeWindow.style.minWidth = '16ch'
