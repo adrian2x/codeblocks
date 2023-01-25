@@ -38,10 +38,6 @@ class Post:
     def get_saved_posts_by_user_id(uid: str, cursor=None, limit: int = 10):
         "Retrieve all posts saved by a user id"
         posts = db.collection("user_posts").document(uid).collection("saved")
-
-        # Sort by created at
-        posts = posts.order_by("created", direction=firestore.Query.DESCENDING)
-
         # Set the page offset
         if cursor:
             pagination_doc = (
