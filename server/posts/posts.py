@@ -47,14 +47,14 @@ def get_posts():
 
 
 @posts_blueprint.route("/<post_id>", methods=["GET"])
-def read_post(post_id):
+def read_post(post_id: str):
     "Retrieve post by post id"
     post = Post(post_id).get().to_dict()
     return jsonify(post)
 
 
 @posts_blueprint.route("/<post_id>", methods=["POST"])
-def update_post(post_id):
+def update_post(post_id: str):
     "Update post by post id"
     data = request.get_json()
     updated_doc = Post(post_id).update(data).to_dict()
@@ -62,14 +62,14 @@ def update_post(post_id):
 
 
 @posts_blueprint.route("/<post_id>", methods=["DELETE"])
-def delete_post(post_id):
+def delete_post(post_id: str):
     "Delete post by post id"
     Post(post_id).delete()
     return jsonify(ok=True)
 
 
 @posts_blueprint.route("/save/<post_id>/<user_id>", methods=["POST"])
-def save_post(post_id, user_id):
+def save_post(post_id: str, user_id: str):
     "Save a post"
     post = Post(post_id)
     status = request.get_json().get("status")
@@ -81,6 +81,7 @@ def save_post(post_id, user_id):
 
 
 @posts_blueprint.route("/saved/<user_id>", methods=["GET"])
-def retrieve_saved(user_id):
+def retrieve_saved(user_id: str):
     "Get saved posts"
-    return jsonify(Post().get_saved_posts_by_user_id(user_id))
+    cursor = request.args.get("cursor")
+    return jsonify(Post().get_saved_posts_by_user_id(user_id, cursor))
