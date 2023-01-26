@@ -7,11 +7,20 @@
     @media (min-width: 768px) {
       max-width: 470px;
     }
+
+    &.is-skeleton {
+      opacity: 0.5;
+    }
   }
 
   .post_actions {
     justify-content: space-around;
   }
+}
+
+.skeleton-text {
+  height: 1.5rem;
+  background: var(--color-mediumGrey);
 }
 
 .post {
@@ -21,9 +30,15 @@
 
   .header {
     display: flex;
+    align-items: center;
 
     a {
       color: var(--font-color);
+    }
+
+    .avatar {
+      width: 40px;
+      margin-right: 0.5rem;
     }
   }
 

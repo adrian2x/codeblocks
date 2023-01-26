@@ -3,7 +3,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { App } from './app'
 import lazy from './common/preact-lazy'
 import { postLoader } from './components/posts/Post'
-import { userPostsLoader } from './components/users/ProfilePage'
+import { userProfileLoader } from './components/users/ProfilePage'
 import './index.scss'
 import ErrorPage from './routes/errorPage'
 
@@ -29,7 +29,12 @@ const router = createBrowserRouter([
       {
         path: '@/:user_id',
         element: <ProfileLazy />,
-        loader: userPostsLoader
+        loader: userProfileLoader
+      },
+      {
+        path: 'saved',
+        element: <ProfileLazy defaultSaved={true} />,
+        loader: userProfileLoader
       },
       {
         path: 'explore',
