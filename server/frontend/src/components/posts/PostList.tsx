@@ -51,23 +51,22 @@ const PAGE_SIZE = 10
 
 export type PostsListProps = {
   uid?: string
-  noHeader?: boolean
+  onlyImage?: boolean
   language?: string
 }
 
-export function PostsList({ uid, noHeader }: PostsListProps) {
+export function PostsList({ uid, onlyImage }: PostsListProps) {
   const [posts, setPosts] = useState<TPost[]>([])
+  const [loading, setLoading] = useState(false)
   const [disabled, setDisabled] = useState(false)
-  const [loading, setLoading] = useState(true)
 
   const resetState = useCallback(() => {
     setPosts([])
-    setDisabled(false)
     setLoading(false)
+    setDisabled(false)
   }, [setPosts, setDisabled, setLoading])
 
   async function onLoadMore() {
-    if (loading || disabled) return false
     try {
       setLoading(true)
       let nextPosts: TPost[] = []
@@ -93,21 +92,22 @@ export function PostsList({ uid, noHeader }: PostsListProps) {
     onLoadMore
   })
 
+  let isEmpty = disabled && posts.length === 0
+
   return (
     <>
       {posts.map((post) => {
-        return <PostItem isSaved p={post} noHeader={noHeader} />
+        return <PostItem isSaved p={post} onlyImage={onlyImage} />
       })}
       <div ref={observerRef}>
-        <p></p>
-        {loading && 'Loading...'}
-        {!loading && posts.length === 0 && 'No posts to show.'}
+        {loading && <PostSkeleton onlyImage={onlyImage} />}
+        {isEmpty && 'No posts to show.'}
       </div>
     </>
   )
 }
 
-export function PostItem({ isSaved, noHeader, p }: any) {
+export function PostItem({ isSaved, onlyImage, p }: any) {
   const { id, uid, displayName, displayHandle, photoUrl } = p.user ?? {}
   let profileLink = `/@/${displayHandle || uid || id}`
   let previewUrl =
@@ -116,14 +116,9 @@ export function PostItem({ isSaved, noHeader, p }: any) {
   return (
     <article key={p.id} className='post'>
       <div class='flex flex-column flex-1'>
-        {!noHeader && (
+        {!onlyImage && (
           <header class='header'>
-            <Link
-              to={profileLink}
-              style={{
-                width: 40,
-                marginRight: 8
-              }}>
+            <Link to={profileLink}>
               <img
                 class='avatar'
                 src={photoUrl ?? avatarUrl(displayName)}
@@ -154,7 +149,7 @@ export function PostItem({ isSaved, noHeader, p }: any) {
         )}
 
         <div className='content'>
-          {!noHeader && <ReactMarkdown>{p.description}</ReactMarkdown>}
+          {!onlyImage && <ReactMarkdown>{p.description}</ReactMarkdown>}
 
           <Link to={`/post/${p.id}`} className='cover'>
             <div
@@ -173,11 +168,7 @@ export function PostItem({ isSaved, noHeader, p }: any) {
   )
 }
 
-interface PostLanguagesProps {
-  title?: string
-}
-
-export function PostLanguages({ title }: PostLanguagesProps) {
+export function PostLanguages({ title }: { title?: string }) {
   const setPostLanguage = (e: any) => {
     filterByLanguage.value = e.target.id
   }
@@ -219,5 +210,55 @@ export function PostLanguages({ title }: PostLanguagesProps) {
         </div>
       </section>
     </div>
+  )
+}
+
+function SkeletonText({ width }: any) {
+  return (
+    <div
+      className='skeleton-text'
+      style={{
+        width: width ?? '100%'
+      }}
+    />
+  )
+}
+
+export function PostSkeleton({ onlyImage }: any) {
+  return (
+    <article className='post is-skeleton'>
+      <div class='flex flex-column flex-1'>
+        {!onlyImage && (
+          <header class='header'>
+            <img
+              class='avatar'
+              src='http://www.gravatar.com/avatar/?d=mp'
+              referrerpolicy='no-referrer'
+            />
+
+            <div class='post-meta'>
+              <div className='meta'>
+                <span class='sep mx1'>{`•`}</span>
+              </div>
+              <div class='title'>
+                <h4 class='title'>Loading…</h4>
+              </div>
+            </div>
+          </header>
+        )}
+
+        <div className='content'>
+          {!onlyImage && (
+            <p>
+              <SkeletonText width='80%' />
+            </p>
+          )}
+          <div className='cover'>
+            <div className='image'></div>
+          </div>
+          <p></p>
+        </div>
+      </div>
+    </article>
   )
 }

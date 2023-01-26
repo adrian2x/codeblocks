@@ -1,5 +1,6 @@
 import { signal } from '@preact/signals'
 import { useEffect, useState } from 'preact/hooks'
+import { useCallback } from 'react'
 import toast from 'react-hot-toast'
 import { Link, Params, useLoaderData, useNavigate } from 'react-router-dom'
 import { currentUser, updateCurrentUser } from '../../common/firebase'
@@ -13,13 +14,20 @@ import './profile-page.scss'
 
 export const filterBySaved = signal(false)
 
-export async function userPostsLoader({ params }: { params: Params }) {
-  if (params.user_id) {
-    return getUser(params.user_id)
+export async function userProfileLoader({ params }: { params: Params }) {
+  let userId = params.user_id ?? currentUser.value?.uid
+  if (userId) {
+    return getUser(userId)
   }
 }
 
-export default function ProfilePage() {
+export default function ProfilePage({
+  defaultLanguage,
+  defaultSaved
+}: {
+  defaultLanguage?: string
+  defaultSaved?: boolean
+}) {
   const user = useLoaderData() as TUser
   const [userProfile, setUserProfile] = useState(user)
   const [background, setBackground] = useState([user.backgroundColor] ?? generateGradient())
@@ -28,15 +36,20 @@ export default function ProfilePage() {
 
   const isEditor = currentUser.value?.uid === user.id
 
+  const setFilters = useCallback(() => {
+    filterByLanguage.value = defaultLanguage ?? ''
+    filterBySaved.value = !!defaultSaved
+  }, [defaultLanguage, defaultSaved])
+
   useEffect(() => {
-    filterByLanguage.value = ''
+    setFilters()
   }, [])
 
   useEffect(() => {
     if (user) {
       setUserProfile(user)
       setBackground([user.backgroundColor] ?? generateGradient())
-      filterBySaved.value = false
+      setFilters()
     }
   }, [user, setUserProfile, setBackground])
 
@@ -144,21 +157,17 @@ export default function ProfilePage() {
           {isEditor && (
             <>
               <div className='flex justify-center'>
-                <Tabs current=''>
-                  <span
-                    onClick={() => {
-                      filterBySaved.value = false
-                    }}
-                    id=''>
-                    Posts
-                  </span>
-                  <span
-                    id='saved'
-                    onClick={() => {
+                <Tabs
+                  current={filterBySaved ? 'saved' : ''}
+                  onChange={(current) => {
+                    if (current === 'saved') {
                       filterBySaved.value = true
-                    }}>
-                    Saved
-                  </span>
+                    } else {
+                      filterBySaved.value = false
+                    }
+                  }}>
+                  <span id=''>Posts</span>
+                  <span id='saved'>Saved</span>
                 </Tabs>
               </div>
             </>
@@ -169,7 +178,7 @@ export default function ProfilePage() {
               key={userProfile.id}
               uid={userProfile.id}
               language={filterByLanguage.value}
-              noHeader
+              onlyImage
             />
           </div>
 
