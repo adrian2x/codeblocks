@@ -16,6 +16,13 @@ export default defineConfig({
         index: new URL('./index.html', import.meta.url).pathname,
         post: new URL('./post.html', import.meta.url).pathname,
         profile: new URL('./profile.html', import.meta.url).pathname
+      },
+      output: {
+        manualChunks: {
+          firebase: ['firebase/compat/app', 'firebase/compat/auth', 'firebaseui'],
+          'react-router-dom': ['react-router-dom'],
+          'react-instantsearch-hooks-web': ['algoliasearch/lite', 'react-instantsearch-hooks-web']
+        }
       }
     }
   },
