@@ -1,3 +1,5 @@
+import { TPost, TUser } from '../types'
+
 export function request<TResponse = {}>(
   endpoint: string,
   body: any = undefined,
@@ -27,25 +29,6 @@ request.delete = <T>(url: string, body = undefined, customConfig: RequestInit = 
     method: 'DELETE',
     ...customConfig
   })
-
-export interface TPost {
-  id: string
-  title: string
-  description: string
-  created: number
-  code: string
-  windowTitle?: string
-  language: string
-  theme: string
-  user: {
-    id: string
-    uid: string
-    displayName: string
-    displayHandle: string
-    photoUrl: string | null
-  }
-  preview?: string
-}
 
 export function getPost(id: string) {
   return request<TPost>(`/api/posts/${id}`)
@@ -92,23 +75,8 @@ export async function savePost(postId: string, userId: string, status?: any) {
   })
 }
 
-export type CustomUser = {
-  id: string
-  photoUrl: string
-  photoURL: string
-  displayName: string
-  displayHandle: string
-  backgroundColor?: string
-  about?: string
-}
-
-export type GetUserResponse = {
-  user: CustomUser
-  posts: TPost[]
-}
-
 export function getUser(user_id: string) {
-  return request<GetUserResponse>(`/api/users/${user_id}`)
+  return request<TUser>(`/api/users/${user_id}`)
 }
 
 export function createUser(user: any) {

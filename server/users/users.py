@@ -28,8 +28,7 @@ def create_user():
 def read_user(uid: str):
     "Retrieve user by user id"
     user = User.get_user_by_id_handle(uid)
-    posts = Post.get_posts_by_user_id(user.id)
-    return jsonify({"user": user.to_dict(), "posts": posts})
+    return user.to_dict()
 
 
 @users_blueprint.route("/<uid>", methods=["POST"])

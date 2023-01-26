@@ -1,15 +1,18 @@
-import toast from 'react-hot-toast'
+import { signal } from '@preact/signals'
 import { useEffect, useState } from 'preact/hooks'
+import toast from 'react-hot-toast'
 import { Link, Params, useLoaderData, useNavigate } from 'react-router-dom'
 import { updateCurrentUser } from '../../common/firebase'
-import { deleteUser, getUser, GetUserResponse, updateUser } from '../../common/requests'
+import { deleteUser, getUser, updateUser } from '../../common/requests'
 import { currentUser } from '../../stores/uiState'
+import { TUser } from '../../types'
 import { generateGradient } from '../posts/CodeEditor'
-import { postLanguage, PostLanguages, PostsList } from '../posts/PostList'
-import { PhotoUploader } from './PhotoUploader'
-
-import './profile-page.scss'
+import { filterByLanguage, PostLanguages, PostsList } from '../posts/PostList'
 import { Tabs } from '../tabs/Tabs'
+import { PhotoUploader } from './PhotoUploader'
+import './profile-page.scss'
+
+export const filterBySaved = signal(false)
 
 export async function userPostsLoader({ params }: { params: Params }) {
   if (params.user_id) {
@@ -18,25 +21,25 @@ export async function userPostsLoader({ params }: { params: Params }) {
 }
 
 export function ProfilePage() {
-  const { user, posts } = useLoaderData() as GetUserResponse
+  const user = useLoaderData() as TUser
   const [userProfile, setUserProfile] = useState(user)
   const [background, setBackground] = useState([user.backgroundColor] ?? generateGradient())
   const [isSaving, setSaving] = useState(false)
-  const [showSavedPosts, setShowSavedPosts] = useState(false)
   const navigate = useNavigate()
 
-  const isOwner = currentUser.value?.uid === user.id
+  const isEditor = currentUser.value?.uid === user.id
+
+  useEffect(() => {
+    filterByLanguage.value = ''
+  }, [])
 
   useEffect(() => {
     if (user) {
       setUserProfile(user)
       setBackground([user.backgroundColor] ?? generateGradient())
+      filterBySaved.value = false
     }
   }, [user, setUserProfile, setBackground])
-
-  useEffect(() => {
-    postLanguage.value = ''
-  }, [])
 
   function setUser(data: Object) {
     setUserProfile({ ...userProfile, ...data })
@@ -64,14 +67,14 @@ export function ProfilePage() {
 
   return (
     <>
-      <div className='container profile-page' data-active={isOwner && !isSaving}>
+      <div className='container profile-page' data-active={isEditor && !isSaving}>
         <header>
           <div
             key={background[0]}
             className='banner'
             style={{ background: background[0] }}
             onClick={() => {
-              if (isOwner) {
+              if (isEditor) {
                 let backgroundGradient = generateGradient()
                 setBackground(backgroundGradient)
                 setUser({
@@ -84,7 +87,7 @@ export function ProfilePage() {
               fileName={currentUser.value?.uid ?? ''}
               value={userProfile.photoUrl ?? userProfile.photoURL}
               altText={userProfile.displayName ?? ''}
-              allowEditing={isOwner}
+              allowEditing={isEditor}
               onUpdate={(url) => {
                 setUser({ photoUrl: url })
                 updateCurrentUser({ photoURL: url })
@@ -93,7 +96,7 @@ export function ProfilePage() {
             <h1
               key={userProfile.displayName}
               className='title'
-              contentEditable={isOwner}
+              contentEditable={isEditor}
               onBlur={(e) => {
                 let value = e.currentTarget.innerHTML
                 if (value !== userProfile.displayName) {
@@ -108,9 +111,9 @@ export function ProfilePage() {
                 <Link
                   to={`/@/${user.id}`}
                   key={userProfile.displayHandle}
-                  contentEditable={isOwner}
+                  contentEditable={isEditor}
                   onClick={(e: any) => {
-                    if (isOwner) e.preventDefault()
+                    if (isEditor) e.preventDefault()
                   }}
                   onBlur={(e: any) => {
                     let value = e.currentTarget.innerHTML
@@ -124,10 +127,10 @@ export function ProfilePage() {
               </span>
               <span class='sep'>{`  •  `}</span>
             </div>
-            {(userProfile.about || isOwner) && (
+            {(userProfile.about || isEditor) && (
               <Editable
                 className='bio text-center'
-                readOnly={!isOwner}
+                readOnly={!isEditor}
                 defaultValue={userProfile.about}
                 placeholder='About me…'
                 onChange={(about) => {
@@ -139,12 +142,22 @@ export function ProfilePage() {
         </header>
 
         <div className='container p0'>
-          {isOwner && (
+          {isEditor && (
             <>
               <div className='flex justify-center'>
                 <Tabs current=''>
-                  <span id=''>Posts</span>
-                  <span id='saved' onClick={() => setShowSavedPosts(true)}>
+                  <span
+                    onClick={() => {
+                      filterBySaved.value = false
+                    }}
+                    id=''>
+                    Posts
+                  </span>
+                  <span
+                    id='saved'
+                    onClick={() => {
+                      filterBySaved.value = true
+                    }}>
                     Saved
                   </span>
                 </Tabs>
@@ -156,9 +169,8 @@ export function ProfilePage() {
             <PostsList
               key={userProfile.id}
               uid={userProfile.id}
-              language={postLanguage.value}
+              language={filterByLanguage.value}
               noHeader
-              isSaved={showSavedPosts}
             />
           </div>
 
@@ -178,7 +190,7 @@ export function ProfilePage() {
         </div>
       </div>
 
-      {isOwner && <PostLanguages key={userProfile.id} title='My Languages' />}
+      {isEditor && <PostLanguages key={userProfile.id} title='My Languages' />}
     </>
   )
 }
