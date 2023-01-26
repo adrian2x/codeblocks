@@ -1,7 +1,6 @@
+import { signal } from '@preact/signals'
 import firebase from 'firebase/compat/app'
 import 'firebase/compat/auth'
-import { currentUser } from '../stores/uiState'
-import { createUser } from './requests'
 
 firebase.initializeApp({
   apiKey: 'AIzaSyCiG1NWj4_fIo8B22HW2IGc-9BjJFgb6bU',
@@ -14,6 +13,14 @@ firebase.initializeApp({
 })
 
 export { firebase }
+
+const getUser = () => {
+  let saved = localStorage.getItem('user')
+  if (saved != null && saved != 'null') return JSON.parse(saved) as firebase.User
+  return firebase.auth().currentUser
+}
+
+export const currentUser = signal(getUser())
 
 // Handle firebase auth events
 firebase.auth().onAuthStateChanged((signedInUser) => {
@@ -58,3 +65,5 @@ export async function updateCurrentUser(data: any) {
     currentUser.value = firebase.auth().currentUser
   }
 }
+
+export const signOut = () => firebase.auth().signOut()

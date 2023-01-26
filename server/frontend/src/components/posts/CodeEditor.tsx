@@ -1,16 +1,15 @@
-// @ts-expect-error
-import domtoimg from 'dom-to-image-more'
 import escape from 'escape-html'
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
-import { createPost, deletePost, TPost, updatePost } from '../../common/requests'
+import { FaTrash } from 'react-icons/fa'
+import { useNavigate } from 'react-router-dom'
+import domtoimg from '../../common/dom-to-image-more'
+import { currentUser } from '../../common/firebase'
+import { createPost, deletePost, updatePost } from '../../common/requests'
 import { useStore } from '../../hooks/useStore'
-import { currentUser as userSignal } from '../../stores/uiState'
-import { FirebaseUser } from '../../types'
+import { FirebaseUser, TPost } from '../../types'
 import { Dropdown } from '../Dropdown'
 import { PhotoUploader, uploadImage } from '../users/PhotoUploader'
-import { FaTrash } from 'react-icons/fa'
 
 export function CodeEditor({ post }: { post?: TPost }) {
   // import highlightjs module
@@ -50,9 +49,6 @@ export function CodeEditor({ post }: { post?: TPost }) {
 
   const [isSaving, setSaving] = useState(false)
 
-  // Get signed in user
-  const currentUser = userSignal.value
-
   useEffect(() => {
     autoSize()
     // Load theme preferences
@@ -86,7 +82,7 @@ export function CodeEditor({ post }: { post?: TPost }) {
     // Let's save some state for later...
     let { id, code, title, description } = postState
     setEditor({ code, title, description })
-    let request = onSubmit(id, currentUser, postState, editorState)
+    let request = onSubmit(id, currentUser.value, postState, editorState)
       .then((value) => value && setPostState(value))
       .finally(() => setSaving(false))
     // Update the ui to show pending message
@@ -347,7 +343,7 @@ export function CodeEditor({ post }: { post?: TPost }) {
             </button>
             <button
               class='primary outline mr0'
-              disabled={isSaving || !userSignal.value}
+              disabled={isSaving || !currentUser.value}
               onClick={handleSubmit}>
               Save
             </button>
@@ -412,11 +408,11 @@ export function CodeEditor({ post }: { post?: TPost }) {
 
           <div className='credits flex justify-between'>
             <div className='flex items-center' hidden={!editorState.watermark}>
-              {currentUser && editorState.watermark === 'avatar' && (
+              {currentUser.value && editorState.watermark === 'avatar' && (
                 <PhotoUploader
-                  fileName={currentUser.uid}
-                  value={editorState.photoUrl ?? post?.user.photoUrl ?? currentUser?.photoURL}
-                  altText={editorState?.displayName ?? currentUser.displayName}
+                  fileName={currentUser.value.uid}
+                  value={editorState.photoUrl ?? post?.user.photoUrl ?? currentUser.value?.photoURL}
+                  altText={editorState?.displayName ?? currentUser.value.displayName}
                   allowEditing
                   onUpdate={(url) => {
                     setEditor({ photoUrl: url })
@@ -424,14 +420,16 @@ export function CodeEditor({ post }: { post?: TPost }) {
                 />
               )}
               <div class='text-white'>
-                {currentUser && (
+                {currentUser.value && (
                   <div
                     className='author text-shadow'
                     contentEditable
                     onBlur={(e) => {
                       setEditor({ displayName: e.currentTarget.textContent })
                     }}>
-                    {editorState.displayName ?? post?.user.displayName ?? currentUser?.displayName}
+                    {editorState.displayName ??
+                      post?.user.displayName ??
+                      currentUser.value?.displayName}
                   </div>
                 )}
                 <small

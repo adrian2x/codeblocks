@@ -2,8 +2,9 @@ import { useState } from 'react'
 import { FaRegStar, FaStar } from 'react-icons/fa'
 import { FiRepeat, FiShare2 } from 'react-icons/fi'
 import { RWebShare } from 'react-web-share'
-import { duplicatePost, savePost, TPost } from '../../common/requests'
-import { currentUser } from '../../stores/uiState'
+import { currentUser } from '../../common/firebase'
+import { duplicatePost, savePost } from '../../common/requests'
+import { TPost } from '../../types'
 import './post-actions.scss'
 
 export function PostActions({ post }: { post: TPost }) {
