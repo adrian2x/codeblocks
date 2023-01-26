@@ -1,9 +1,9 @@
+import domtoimg from 'dom-to-image-more'
 import escape from 'escape-html'
 import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { FaTrash } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
-import domtoimg from '../../common/dom-to-image-more'
 import { currentUser } from '../../common/firebase'
 import { createPost, deletePost, updatePost } from '../../common/requests'
 import { useStore } from '../../hooks/useStore'
@@ -52,7 +52,7 @@ export function CodeEditor({ post }: { post?: TPost }) {
   useEffect(() => {
     autoSize()
     // Load theme preferences
-    if (editorState.theme !== 'Default') {
+    if (editorState.theme) {
       updateStyles(editorState.theme).then(highlightAll).then(autoSize)
     }
     highlightAll().then(autoSize)
@@ -501,7 +501,7 @@ export function autoSize() {
  * Generates the code preview screenshot from the editor.
  */
 async function getScreenshot(download = false, fileName = 'codeblocks.png') {
-  let dataUrl = await domtoimg.toPng(setImageSize('code-background', 1.333))
+  let dataUrl = await domtoimg.toPng(setImageSize('code-background', 1.333)[0])
   if (download) {
     var link = document.createElement('a')
     link.download = fileName
@@ -532,10 +532,11 @@ async function onSubmit(
         }
       }))
 
-  // Upload the code screenshot
-  // await saveScreenshot(response.id, 1.91)
-  await saveScreenshot(response.id + '@1.33', 1.33)
-  saveScreenshot(response.id, 1.91)
+  if (response.id) {
+    // Upload the code screenshot
+    await saveScreenshot(response.id + '@1.33')
+    saveScreenshot(response.id, 1.91)
+  }
   return response
 }
 
