@@ -1,11 +1,15 @@
 import { render } from 'react'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { App } from './app'
-import ErrorPage from './routes/errorPage'
-import { Post, postLoader } from './components/posts/Post'
-import { PostsContainer } from './components/posts/PostList'
-import { ProfilePage, userPostsLoader } from './components/users/ProfilePage'
+import lazy from './common/preact-lazy'
+import { postLoader } from './components/posts/Post'
+import { userPostsLoader } from './components/users/ProfilePage'
 import './index.scss'
+import ErrorPage from './routes/errorPage'
+
+const PostLazy = lazy(() => import('./components/posts/Post'))
+const ProfileLazy = lazy(() => import('./components/users/ProfilePage'))
+const PostsLazy = lazy(() => import('./components/posts/PostList'))
 
 const router = createBrowserRouter([
   {
@@ -15,25 +19,25 @@ const router = createBrowserRouter([
     children: [
       {
         path: 'post/:post_id',
-        element: <Post key={Math.random()} />,
+        element: <PostLazy key={Math.random()} />,
         loader: postLoader
       },
       {
         path: 'post',
-        element: <Post key={Math.random()} />
+        element: <PostLazy key={Math.random()} />
       },
       {
         path: '@/:user_id',
-        element: <ProfilePage />,
+        element: <ProfileLazy />,
         loader: userPostsLoader
       },
       {
         path: 'explore',
-        element: <PostsContainer key='explore' />
+        element: <PostsLazy key='explore' />
       },
       {
         path: '',
-        element: <PostsContainer key='home' />
+        element: <PostsLazy key='home' />
       }
     ]
   }
