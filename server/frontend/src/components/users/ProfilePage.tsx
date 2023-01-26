@@ -2,9 +2,8 @@ import { signal } from '@preact/signals'
 import { useEffect, useState } from 'preact/hooks'
 import toast from 'react-hot-toast'
 import { Link, Params, useLoaderData, useNavigate } from 'react-router-dom'
-import { updateCurrentUser } from '../../common/firebase'
+import { currentUser, updateCurrentUser } from '../../common/firebase'
 import { deleteUser, getUser, updateUser } from '../../common/requests'
-import { currentUser } from '../../stores/uiState'
 import { TUser } from '../../types'
 import { generateGradient } from '../posts/CodeEditor'
 import { filterByLanguage, PostLanguages, PostsList } from '../posts/PostList'
@@ -20,7 +19,7 @@ export async function userPostsLoader({ params }: { params: Params }) {
   }
 }
 
-export function ProfilePage() {
+export default function ProfilePage() {
   const user = useLoaderData() as TUser
   const [userProfile, setUserProfile] = useState(user)
   const [background, setBackground] = useState([user.backgroundColor] ?? generateGradient())

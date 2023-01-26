@@ -1,12 +1,19 @@
+import { firebase, currentUser } from '../common/firebase'
 import { useEffect } from 'preact/hooks'
-import { currentUser } from '../stores/uiState'
-import { firebase } from '../common/firebase'
-import 'firebaseui/dist/firebaseui.css'
 import { createUser } from '../common/requests'
+import 'firebaseui/dist/firebaseui.css'
 
-export { showDialog, closeDialog }
+export function showDialog(id = 'firebaseAuthDialog') {
+  let dialog = document.getElementById(id)
+  return (dialog as HTMLDialogElement).showModal()
+}
 
-export function FirebaseAuth() {
+export function closeDialog(id = 'firebaseAuthDialog') {
+  let dialog = document.getElementById(id)
+  return (dialog as HTMLDialogElement).close()
+}
+
+export default function FirebaseAuth() {
   useEffect(onRender, [])
   return (
     <dialog id='firebaseAuthDialog'>
@@ -20,16 +27,6 @@ export function FirebaseAuth() {
       </form>
     </dialog>
   )
-}
-
-function showDialog(id = 'firebaseAuthDialog') {
-  let dialog = document.getElementById(id)
-  return (dialog as HTMLDialogElement).showModal()
-}
-
-function closeDialog(id = 'firebaseAuthDialog') {
-  let dialog = document.getElementById(id)
-  return (dialog as HTMLDialogElement).close()
 }
 
 function onRender() {

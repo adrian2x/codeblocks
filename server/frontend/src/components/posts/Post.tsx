@@ -1,12 +1,11 @@
-// @ts-expect-error
-import { ago } from 'time-ago'
 import escape from 'escape-html'
 import { useEffect, useMemo } from 'react'
 import ReactMarkdown from 'react-markdown'
 import { Link, useLoaderData } from 'react-router-dom'
-import { getPost, TPost } from '../../common/requests'
-import { currentUser } from '../../stores/uiState'
-import { RouteProps } from '../../types'
+import { currentUser } from '../../common/firebase'
+import { getPost } from '../../common/requests'
+import { ago } from '../../common/time-ago'
+import { RouteProps, TPost } from '../../types'
 import './code-editor.scss'
 import { autoSize, CodeEditor, updateStyles } from './CodeEditor'
 import './post.scss'
@@ -22,7 +21,7 @@ export function postImageHref(id: string) {
   return `https://firebasestorage.googleapis.com/v0/b/codeblocks-991a2.appspot.com/o/${id}.png?alt=media`
 }
 
-export function Post() {
+export default function Post() {
   const post = useLoaderData() as TPost
 
   const isEditor = useMemo(() => {

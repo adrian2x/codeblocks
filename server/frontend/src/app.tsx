@@ -1,12 +1,16 @@
-import { Link, NavLink, Outlet } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
-import { FirebaseAuth, showDialog } from './components/FirebaseAuth'
-import { currentUser } from './stores/uiState'
-import { firebase } from './common/firebase'
-import { Dropdown } from './components/Dropdown'
 import { FaBars } from 'react-icons/fa'
-import { avatarUrl } from './components/users/avatarUrl'
+import { Link, NavLink, Outlet } from 'react-router-dom'
+import { currentUser, signOut } from './common/firebase'
+
+import { firebase } from './common/firebase'
+import lazy from './common/preact-lazy'
+import { Dropdown } from './components/Dropdown'
+import { showDialog } from './components/FirebaseAuth'
 import { Search } from './components/search/Search'
+import { avatarUrl } from './components/users/avatarUrl'
+
+const FirebaseAuth = lazy(() => import('./components/FirebaseAuth'))
 
 function Navbar() {
   return (
@@ -41,7 +45,9 @@ function Navbar() {
 }
 
 function NavMenu() {
-  if (currentUser.value != null) return <AuthMenu user={currentUser.value} />
+  if (currentUser.value != null) {
+    return <AuthMenu user={currentUser.value} />
+  }
 
   return (
     <>
@@ -69,7 +75,7 @@ function AuthMenu({ user }: { user: firebase.User }) {
           <Link to={`/@/${user.uid}`}>Hi, {user?.displayName}</Link>
           <Link to={`/@/${user.uid}`}>Profile</Link>
           <Link to={`/settings`}>Settings</Link>
-          <Link to={`/`} onClick={() => firebase.auth().signOut()}>
+          <Link to={`/`} onClick={signOut}>
             Sign out
           </Link>
         </Dropdown>
@@ -80,7 +86,7 @@ function AuthMenu({ user }: { user: firebase.User }) {
         <Link to={`/saved`}>Saved</Link>
         <Link to={`/@/${user.uid}`}>Profile</Link>
         <Link to={`/post`}>Create</Link>
-        <Link to={`/`} onClick={() => firebase.auth().signOut()}>
+        <Link to={`/`} onClick={signOut}>
           Sign out
         </Link>
       </div>
