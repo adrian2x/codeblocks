@@ -1,22 +1,18 @@
-// @ts-expect-error
-import { ago } from 'time-ago'
 import { signal } from '@preact/signals'
 import { useCallback, useEffect } from 'preact/hooks'
 import { useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import { Link, useLoaderData } from 'react-router-dom'
-import { getPosts, getSavedPosts, TPost } from '../../common/requests'
+import { getPosts, getSavedPosts } from '../../common/requests'
 import useInfiniteScroll from '../../hooks/useInfiniteScroll'
 import { avatarUrl } from '../users/avatarUrl'
+import { filterBySaved } from '../users/ProfilePage'
 import { PostActions } from './PostActions'
-
+import { TPost } from '../../types'
+import { ago } from '../../common/time-ago'
 import './post-list.scss'
 
-export const postLanguage = signal('')
-
-export async function loadPosts() {
-  return await getPosts()
-}
+export const filterByLanguage = signal('')
 
 function parseURLParams() {
   return new URLSearchParams(location.search)
@@ -37,10 +33,9 @@ function setURLParam(name: string, value: string) {
   window.history.replaceState(null, '', url)
 }
 
-export function PostsContainer() {
-  const posts = useLoaderData() as TPost[]
+export default function PostsContainer() {
   useEffect(() => {
-    postLanguage.value = ''
+    filterByLanguage.value = ''
   }, [])
   return (
     <div className='flex w-100 justify-between'>
@@ -58,10 +53,9 @@ export type PostsListProps = {
   uid?: string
   noHeader?: boolean
   language?: string
-  isSaved?: boolean
 }
 
-export function PostsList({ uid, noHeader, isSaved }: PostsListProps) {
+export function PostsList({ uid, noHeader }: PostsListProps) {
   const [posts, setPosts] = useState<TPost[]>([])
   const [disabled, setDisabled] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -77,10 +71,10 @@ export function PostsList({ uid, noHeader, isSaved }: PostsListProps) {
     try {
       setLoading(true)
       let nextPosts: TPost[] = []
-      if (isSaved && uid) {
+      if (filterBySaved.value && uid) {
         nextPosts = await getSavedPosts(uid, posts[posts.length - 1]?.id)
       } else {
-        nextPosts = await getPosts(uid, posts[posts.length - 1]?.id, postLanguage.value)
+        nextPosts = await getPosts(uid, posts[posts.length - 1]?.id, filterByLanguage.value)
       }
       setPosts(posts.concat(nextPosts))
       setDisabled(nextPosts.length < PAGE_SIZE)
@@ -92,7 +86,7 @@ export function PostsList({ uid, noHeader, isSaved }: PostsListProps) {
   useEffect(() => {
     // Reset the results when the filters change
     resetState()
-  }, [postLanguage.value, isSaved])
+  }, [filterByLanguage.value, filterBySaved.value])
 
   const observerRef = useInfiniteScroll({
     disabled: disabled || loading,
@@ -102,7 +96,7 @@ export function PostsList({ uid, noHeader, isSaved }: PostsListProps) {
   return (
     <>
       {posts.map((post) => {
-        return <PostItem p={post} noHeader={noHeader} />
+        return <PostItem isSaved p={post} noHeader={noHeader} />
       })}
       <div ref={observerRef}>
         <p></p>
@@ -113,8 +107,8 @@ export function PostsList({ uid, noHeader, isSaved }: PostsListProps) {
   )
 }
 
-export function PostItem({ noHeader, p }: any) {
-  const { id, uid, displayName, displayHandle, photoUrl } = p.user
+export function PostItem({ isSaved, noHeader, p }: any) {
+  const { id, uid, displayName, displayHandle, photoUrl } = p.user ?? {}
   let profileLink = `/@/${displayHandle || uid || id}`
   let previewUrl =
     p.preview ??
@@ -185,7 +179,7 @@ interface PostLanguagesProps {
 
 export function PostLanguages({ title }: PostLanguagesProps) {
   const setPostLanguage = (e: any) => {
-    postLanguage.value = e.target.id
+    filterByLanguage.value = e.target.id
   }
 
   return (
