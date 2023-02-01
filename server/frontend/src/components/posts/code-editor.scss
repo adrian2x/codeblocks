@@ -23,11 +23,11 @@
 }
 
 @mixin round-btn($bg: 0, $border: 0) {
-  $size: 10px;
+  $size: 12px;
   width: $size;
   height: $size;
   border-radius: 50%;
-  margin-right: 5px;
+  margin-right: 6px;
   position: relative;
   overflow: hidden;
   @if ($bg != 0) {
@@ -144,6 +144,7 @@
     .buttons {
       padding: 0.5rem 0.25rem;
       margin-right: -54px;
+      align-items: center;
 
       & > div {
         @include round-btn;
