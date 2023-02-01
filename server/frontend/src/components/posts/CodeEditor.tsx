@@ -1,6 +1,7 @@
+import { debounce } from 'atomic-fns'
 import domtoimg from 'dom-to-image-more'
 import escape from 'escape-html'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import toast from 'react-hot-toast'
 import { FaTrash } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
@@ -11,6 +12,18 @@ import { FirebaseUser, TPost } from '../../types'
 import { Dropdown } from '../Dropdown'
 import { PhotoUploader, uploadImage } from '../users/PhotoUploader'
 
+export const autoSize = debounce(() => {
+  let code = document.getElementById('code')!
+  code.style.width = '0'
+  code.style.width = code.scrollWidth + 2 + 'px'
+  const codeWindow = document.getElementById('code-window')!
+  if (code.style.width == '2px') code.style.width = 'auto'
+  codeWindow.style.width = '0'
+  codeWindow.style.width = code.scrollWidth + 36 + 'px'
+  codeWindow.style.minWidth = '16ch'
+  return codeWindow
+}, 50)
+
 export function CodeEditor({ post }: { post?: TPost }) {
   // import highlightjs module
   let hljs = import('highlight.js/es/common').then((module) => module.default)
@@ -18,6 +31,7 @@ export function CodeEditor({ post }: { post?: TPost }) {
 
   // Get editor preferences
   const [editorState, updateEditorState] = useStore('editorState', {
+    fontSize: 20,
     background: true,
     showTitle: true,
     theme: post?.theme ?? 'Default',
@@ -25,6 +39,8 @@ export function CodeEditor({ post }: { post?: TPost }) {
   })
 
   const setEditor = (obj: Object) => updateEditorState({ ...editorState, ...obj })
+
+  const codeInputRef = useRef<any>()
 
   // This is the initial post state
   const [postState, setPostState] = useState(
@@ -69,13 +85,23 @@ export function CodeEditor({ post }: { post?: TPost }) {
       } else {
         setPost({ language: '' })
       }
+      autoSize()
     })
   }, [postState.code, post])
 
   useEffect(() => {
     // Update highlighted when language changes
-    hljs.then((hljs) => hljs.highlightAll())
+    highlightAll().then(autoSize)
   }, [postState.language, post])
+
+  // Update the window size when font size changes
+  useEffect(() => {
+    autoSize()
+  }, [editorState.fontSize])
+
+  useEffect(() => {
+    autoSize()
+  }, [])
 
   async function handleSubmit(e: any) {
     setSaving(true)
@@ -140,11 +166,33 @@ export function CodeEditor({ post }: { post?: TPost }) {
         <div class='toolbar'>
           <div>
             <select
+              title='Font size'
+              value={editorState.fontSize ?? 20}
+              onChange={(e) => {
+                let fontSize = parseInt(e.currentTarget.value)
+                setEditor({ fontSize })
+              }}>
+              <option value={16}>16</option>
+              <option value={18}>18</option>
+              <option value={19}>19</option>
+              <option value={20}>20</option>
+              <option value={21}>21</option>
+              <option value={22}>22</option>
+              <option value={23}>23</option>
+              <option value={24}>24</option>
+              <option value={25}>25</option>
+              <option value={28}>28</option>
+              <option value={30}>30</option>
+              <option value={32}>32</option>
+            </select>
+          </div>
+
+          <div>
+            <select
               class='field'
               title='Theme'
               value={editorState.theme}
               onChange={(e: any) => {
-                let theme = editorState.theme
                 let nextTheme = e.currentTarget.value
                 updateStyles(nextTheme)
                 setEditor({ theme: nextTheme })
@@ -352,7 +400,10 @@ export function CodeEditor({ post }: { post?: TPost }) {
 
         <div
           id='code-background'
-          style={{ background: editorState.background ? background[0] : 'transparent' }}>
+          style={{
+            background: editorState.background ? background[0] : 'transparent',
+            fontSize: editorState.fontSize ?? 20
+          }}>
           <div class='flex flex-column flex-1 justify-center'>
             <div class='flex flex-justify-center'>
               <h5
@@ -387,6 +438,7 @@ export function CodeEditor({ post }: { post?: TPost }) {
                 <pre class={`${postState.language ?? ''}`}>
                   <code
                     id='code'
+                    ref={codeInputRef}
                     class={
                       postState.code
                         ? `hljs ${postState.language ? 'language-' + postState.language : ''}`
@@ -394,11 +446,15 @@ export function CodeEditor({ post }: { post?: TPost }) {
                     }
                     dangerouslySetInnerHTML={{ __html: escape(postState.code) }}
                     contentEditable
+                    onFocus={(e) => autoSize()}
                     onBlur={(e) => {
                       const self = e.currentTarget
                       const code = self.innerText.replace(/\n\n\n/gm, '\n\n')
                       setPost({ code: code })
                       if (code.trim()) autoSize()
+                    }}
+                    onInput={() => {
+                      autoSize()
                     }}
                   />
                 </pre>
@@ -483,18 +539,6 @@ function createHex() {
     hexCode1 += hexValues1.charAt(Math.floor(Math.random() * hexValues1.length))
   }
   return '#' + hexCode1
-}
-
-export function autoSize() {
-  let code = document.getElementById('code')!
-  code.style.width = '0'
-  code.style.width = code.scrollWidth + 2 + 'px'
-  const codeWindow = document.getElementById('code-window')!
-  if (code.style.width == '2px') code.style.width = 'auto'
-  codeWindow.style.width = '0'
-  codeWindow.style.width = code.scrollWidth + 36 + 'px'
-  codeWindow.style.minWidth = '16ch'
-  return codeWindow
 }
 
 /**
