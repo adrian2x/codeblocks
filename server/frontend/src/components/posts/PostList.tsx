@@ -97,7 +97,7 @@ export function PostsList({ uid, onlyImage }: PostsListProps) {
   return (
     <>
       {posts.map((post) => {
-        return <PostItem isSaved p={post} onlyImage={onlyImage} />
+        return <PostItem key={post.id} p={post} onlyImage={onlyImage} />
       })}
       <div ref={observerRef}>
         {loading && <PostSkeleton onlyImage={onlyImage} />}
@@ -107,14 +107,14 @@ export function PostsList({ uid, onlyImage }: PostsListProps) {
   )
 }
 
-export function PostItem({ isSaved, onlyImage, p }: any) {
+export function PostItem({ onlyImage, p }: any) {
   const { id, uid, displayName, displayHandle, photoUrl } = p.user ?? {}
-  let profileLink = `/@/${displayHandle || uid || id}`
+  let profileLink = `/@/${uid || id}`
   let previewUrl =
     p.preview ??
     `https://firebasestorage.googleapis.com/v0/b/codeblocks-991a2.appspot.com/o/${p.id}.png?alt=media`
   return (
-    <article key={p.id} className='post'>
+    <article id={p.id} className='post'>
       <div class='flex flex-column flex-1'>
         {!onlyImage && (
           <header class='header'>
