@@ -158,7 +158,7 @@ export default function ProfilePage({
             <>
               <div className='flex justify-center'>
                 <Tabs
-                  current={filterBySaved ? 'saved' : ''}
+                  current={filterBySaved.value ? 'saved' : ''}
                   onChange={(current) => {
                     if (current === 'saved') {
                       filterBySaved.value = true

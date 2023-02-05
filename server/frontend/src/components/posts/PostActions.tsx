@@ -5,13 +5,14 @@ import { RWebShare } from 'react-web-share'
 import { currentUser } from '../../common/firebase'
 import { duplicatePost, savePost } from '../../common/requests'
 import { TPost } from '../../types'
+import { filterBySaved } from '../users/ProfilePage'
 import './post-actions.scss'
 
 export function PostActions({ post }: { post: TPost }) {
   const postUrl = `${location.origin}/post/${post.id}`
 
   // TODO: check if post was previously saved...
-  const [isSaved, setSaved] = useState(false)
+  const [isSaved, setSaved] = useState(filterBySaved.value)
 
   const [isDuplicated, setDuplicated] = useState(false)
 
