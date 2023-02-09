@@ -21,6 +21,7 @@ export const autoSize = debounce(() => {
   codeWindow.style.width = '0'
   codeWindow.style.width = code.scrollWidth + 36 + 'px'
   codeWindow.style.minWidth = '16ch'
+  codeWindow.style.maxWidth = '80ch'
   return codeWindow
 }, 50)
 
@@ -494,7 +495,7 @@ export function CodeEditor({ post }: { post?: TPost }) {
                   onBlur={(e) => {
                     setEditor({ displayHandle: e.currentTarget.textContent })
                   }}>
-                  {editorState.displayHandle ?? post?.user.displayHandle ?? 'your@email.com'}
+                  {editorState.displayHandle ?? post?.user.displayHandle ?? 'codeblocks.cloud'}
                 </small>
               </div>
             </div>

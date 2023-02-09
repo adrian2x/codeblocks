@@ -65,7 +65,7 @@ export function ReadOnlyPost({ post }: { post: TPost }) {
             style={{
               marginRight: 8
             }}>
-            <img class='avatar' src={photoUrl!} alt={displayName} referrerpolicy='no-referrer' />
+            <img loading="lazy" class='avatar' src={photoUrl!} alt={displayName} referrerpolicy='no-referrer' />
           </Link>
 
           <div class='flex-column'>

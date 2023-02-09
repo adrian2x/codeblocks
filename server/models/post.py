@@ -58,6 +58,7 @@ class Post:
 
     def update(self, data: dict):
         "Update a post document"
+        data['preview'] = self.get_preview()
         self.doc.update(data)
         return self.doc.get()
 
