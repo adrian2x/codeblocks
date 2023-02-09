@@ -119,7 +119,7 @@ export function PostItem({ onlyImage, p }: any) {
         {!onlyImage && (
           <header class='header'>
             <Link to={profileLink}>
-              <img
+              <img loading="lazy"
                 class='avatar'
                 src={photoUrl ?? avatarUrl(displayName)}
                 alt={displayName}
@@ -158,7 +158,7 @@ export function PostItem({ onlyImage, p }: any) {
                 background: `url(${previewUrl}) 50% 0 no-repeat`,
                 backgroundSize: 'cover'
               }}
-              title={`${p.description}`}></div>
+              title={p.title}></div>
           </Link>
 
           <PostActions post={p} />
@@ -230,7 +230,7 @@ export function PostSkeleton({ onlyImage }: any) {
       <div class='flex flex-column flex-1'>
         {!onlyImage && (
           <header class='header'>
-            <img
+            <img loading="lazy"
               class='avatar'
               src='http://www.gravatar.com/avatar/?d=mp'
               referrerpolicy='no-referrer'
